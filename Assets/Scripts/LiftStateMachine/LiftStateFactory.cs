@@ -4,9 +4,9 @@ namespace LiftStateMachine
 {
     public class LiftStateFactory
     {
-        private LiftControllerBase _context;
+        private LiftControllerData _context;
 
-        public LiftStateFactory(LiftControllerBase currentContext)
+        public LiftStateFactory(LiftControllerData currentContext)
         {
             _context = currentContext;
         }
@@ -14,6 +14,7 @@ namespace LiftStateMachine
         public ILiftState Idle()
         {
             return new IdleState();
+            
         }
 
         public ILiftState Moving()

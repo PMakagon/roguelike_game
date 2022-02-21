@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace LiftStateMachine.states
 {
@@ -10,14 +11,24 @@ namespace LiftStateMachine.states
             Debug.Log("Enter StopState");
         }
 
+        public void EnterState(Action enterAction)
+        {
+            Debug.Log("Enter StopState");
+        }
+
         public void ExitState()
         {
             Debug.Log("Exit StopState");
         }
 
-        public void UpdateState()
+        public void ExitState(Action exitAction)
         {
-            Debug.Log("Enter UpdateState");
+            Debug.Log("Exit StopState");
+        }
+
+        public void SwitchState(ILiftState newState)
+        {
+            Debug.Log("Switched StopState to " + newState.GetType());
         }
     }
 }
