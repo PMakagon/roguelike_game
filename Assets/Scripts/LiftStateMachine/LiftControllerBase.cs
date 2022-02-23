@@ -14,7 +14,7 @@ namespace LiftStateMachine
         [SerializeField] private GameObject[] levels;
         [SerializeField] private LiftControllerData liftControllerData;
         [SerializeField] private float liftSpeed = 1f;
-        [SerializeField] private int holdTime = 3;
+        [SerializeField] private float holdTime;
         private Transform currentLevel;
         private Transform destinationLevel;
         private ILiftState _state;
@@ -32,7 +32,7 @@ namespace LiftStateMachine
             // механика движения лифта между уровнями
             if (liftControllerData.CurrentState.GetType() == typeof(MovingState))
             {
-                if (!liftControllerData.IsDoorsOpen)
+                if (liftControllerData.IsReadyToMove)
                 {
                     if(liftBox.transform.position != destinationLevel.position)
                     {
@@ -44,10 +44,11 @@ namespace LiftStateMachine
                 // остановка
                 if (liftBox.transform.position == destinationLevel.position)
                 {
+                    liftControllerData.IsReadyToMove = false;
                     liftControllerData.CurrentState = liftControllerData.StateFactory.Idle();
                 }
-
-                if (liftControllerData.isStopped)
+                // нажата кнопка STOP
+                if (liftControllerData.IsStopped)
                 {
                     liftControllerData.CurrentState = liftControllerData.StateFactory.Stop();
                 }
@@ -60,19 +61,17 @@ namespace LiftStateMachine
             currentLevel = levels[liftControllerData.CurrentFloor].transform;
             destinationLevel = levels[liftControllerData.DestinationFloor].transform;
             _action = liftControllerData.ActionFromData;
-
             if (liftControllerData.CurrentState.GetType() == typeof(IdleState))
             {
                 // поведение при вызове лифта по кнопке когда он уже на уровне
-                if (liftControllerData.IsLiftCalled && currentLevel.position ==
-                    levels[liftControllerData.CurrentFloor].transform.position)
+                if (liftControllerData.IsLiftCalled && IsOnLevel())
                 {
                     EnterLevel();
                 }
                 // поведение лифта по прибытию на уровень
-                if (currentLevel.position == levels[liftControllerData.CurrentFloor].transform.position)
+                if (IsOnLevel())
                 {
-                    if (!liftControllerData.IsDoorsOpen)
+                    if (!liftControllerData.IsReadyToMove && !liftControllerData.IsDoorsOpen)
                     {
                         EnterLevel();
                         if (liftControllerData.CurrentFloor != liftControllerData.DestinationFloor)
@@ -82,49 +81,45 @@ namespace LiftStateMachine
                     }
                 }
                 // поведение при выборе уровня 
-                if (liftControllerData.IsReadyToMove)
+                if (liftControllerData.IsCodeEntered)
                 {
-                    liftControllerData.IsReadyToMove = false;
-                    liftControllerData.CurrentState = liftControllerData.StateFactory.Moving();
-                    innerDoors.ActivateDoors();
-                    
+                    if (liftControllerData.CurrentFloor != liftControllerData.DestinationFloor)
+                    {
+                        liftControllerData.IsCodeEntered = false;
+                        liftControllerData.IsReadyToMove = true;
+                        StartCoroutine(StartMoving());
+                    }
                 }
             }
-
             if (liftControllerData.CurrentState.GetType() == typeof(StopState))
             {
-                if (!liftControllerData.isStopped)
+                if (!liftControllerData.IsStopped)
                 {
                     liftControllerData.CurrentState = liftControllerData.StateFactory.Moving();
                 }
             }
         }
 
-        // private IEnumerator Movement()
-        // {
-        //     yield return new WaitForSeconds(holdTime);
-        //     Debug.Log(liftBox.transform.position == destinationLevel.position);
-        //     Debug.Log(currentLevel.position);
-        //     while (liftBox.transform.position != destinationLevel.position) yield return null;
-        //     {
-        //         var floorAt = liftBox.transform.position;
-        //         var floorTo = destinationLevel.position;
-        //         liftBox.transform.position = Vector3.MoveTowards(floorAt, floorTo, liftSpeed * Time.deltaTime);
-        //     }
-        //     if (liftBox.transform.position == destinationLevel.position)
-        //     {
-        //         liftControllerData.CurrentState = liftControllerData.StateFactory.Idle();
-        //     }
-        //
-        //     yield return new WaitForSeconds(holdTime);
-        //     EnterLevel();
-        //     yield return null;
-        // }
-
+        IEnumerator StartMoving()
+        {
+            innerDoors.CloseDoors();
+            yield return new WaitForSeconds(holdTime);
+            liftControllerData.CurrentState = liftControllerData.StateFactory.Moving();
+            liftControllerData.IsOnLevel = false;
+            Debug.Log("END OF COROUTINE");
+            StopCoroutine(StartMoving());
+        }
+        
+        private bool IsOnLevel()
+        {
+            return currentLevel.position == levels[liftControllerData.CurrentFloor].transform.position;
+        }
+        
         private void EnterLevel()
         {
             innerDoors.OpenDoors();
             liftControllerData.IsLiftCalled = false;
+            liftControllerData.IsOnLevel = true;
         }
 
 

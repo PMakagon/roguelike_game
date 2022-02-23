@@ -18,10 +18,25 @@ namespace LiftStateMachine
         [SerializeField] private Text currentFloor;
         [SerializeField] private Text destinationFloor;
         [SerializeField] private Text panelCommand;
+        [SerializeField] private Text isOnLevel;
+        [SerializeField] private Text isCodeEntered;
         
-        private string state;
+        private bool isActive = true;
 
         private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Tilde))
+            {
+                isActive=!isActive;
+            }
+
+            if (isActive)
+            {
+                PrintData();
+            }
+        }
+
+        private void PrintData()
         {
             _currentState.text = "currentState " + _liftControllerData.CurrentState.GetType().Name;
             currentFloor.text = "currentFloor " +_liftControllerData.CurrentFloor.ToString();
@@ -31,6 +46,8 @@ namespace LiftStateMachine
             IsReadyToMove.text ="IsReadyToMove " + _liftControllerData.IsReadyToMove.ToString();
             IsStopped.text = "IsStopped " +_liftControllerData.IsStopped.ToString();
             panelCommand.text = "panelCommand " + _panel._command.ToString();
+            isOnLevel.text = "isOnLevel " + _liftControllerData.IsOnLevel.ToString();
+            isCodeEntered.text = "isCodeEntered " + _liftControllerData.IsCodeEntered.ToString();
         }
     }
 }

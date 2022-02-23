@@ -31,7 +31,7 @@ namespace LiftStateMachine
             }
         }
         
-        public void ActivateDoors()
+        private void ActivateDoors()
         {
             if (liftControllerData.CurrentState.GetType() == typeof(MovingState))
             {
@@ -43,12 +43,12 @@ namespace LiftStateMachine
             }
         }
 
-        public void OpenDoors()
+        private void OpenDoors()
         {
             _animator.SetBool("IsOpened",liftControllerData.IsDoorsOpen);
         }
 
-        public void CloseDoors()
+        private void CloseDoors()
         {
             _animator.SetBool("IsOpened",liftControllerData.IsDoorsOpen);
         }

@@ -16,7 +16,14 @@ namespace LiftStateMachine
 
         public void OnButtonInteract()
         {
-            liftControllerData.CurrentFloor = thisFloorNumber;
+            if (liftControllerData.CurrentFloor != thisFloorNumber)
+            { 
+                liftControllerData.CurrentFloor = thisFloorNumber;
+            }
+            else
+            {
+                liftControllerData.DestinationFloor = thisFloorNumber;
+            }
             liftControllerData.IsLiftCalled = true;
             // buttonAnimation.SetBool("IsPressed",liftControllerData.IsLiftCalled);
             button.GetComponent<Renderer>().material.color=Color.black;

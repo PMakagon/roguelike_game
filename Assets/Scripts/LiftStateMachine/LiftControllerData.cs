@@ -10,14 +10,27 @@ namespace LiftStateMachine
     {
         private ILiftState _currentState;
         private LiftStateFactory _stateFactory;
-        private int _waitingTime = 10;
         private bool isDoorsOpen;
         private bool isLiftCalled;
-        public bool isReadyToMove;
-        public bool isStopped;
+        private bool isReadyToMove;
+        private bool isStopped;
         private Action actionFromData;
         private int currentFloor;
         private int destinationFloor;
+        private bool isOnLevel;
+        private bool isCodeEntered;
+
+        public bool IsOnLevel
+        {
+            get => isOnLevel;
+            set => isOnLevel = value;
+        }
+
+        public bool IsCodeEntered
+        {
+            get => isCodeEntered;
+            set => isCodeEntered = value;
+        }
 
         public void ResetData()
         {
@@ -25,6 +38,7 @@ namespace LiftStateMachine
             isLiftCalled = false;
             isReadyToMove = false;
             isStopped = false;
+            isCodeEntered = false;
             currentFloor = 0;
             destinationFloor = 0;
         }
@@ -47,12 +61,6 @@ namespace LiftStateMachine
         {
             get => _stateFactory;
             set => _stateFactory = value;
-        }
-
-        public int WaitingTime
-        {
-            get => _waitingTime;
-            set => _waitingTime = value;
         }
 
         public bool IsDoorsOpen

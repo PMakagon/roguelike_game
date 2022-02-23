@@ -6,7 +6,6 @@ namespace LiftStateMachine.Interactables
     public class InnerPanel : MonoBehaviour
     {
         [SerializeField] private LiftControllerData liftControllerData;
-        // [SerializeField] private PanelButton[] buttons;
         public int _command=500;
         public bool buttonPressed;
 
@@ -14,6 +13,10 @@ namespace LiftStateMachine.Interactables
        
         private void Update()
         {
+            if (!buttonPressed)
+            {
+                _command = 500;
+            }
             if (buttonPressed)
             {
                 if (liftControllerData.CurrentState.GetType() == typeof(IdleState))
@@ -21,18 +24,16 @@ namespace LiftStateMachine.Interactables
                     if (_command == 0)
                     {
                         liftControllerData.DestinationFloor = 0;
-                        liftControllerData.IsReadyToMove = true;
+                        // liftControllerData.IsReadyToMove = true;
+                        liftControllerData.IsCodeEntered = true;
                         buttonPressed = false;
                     }
                     if (_command == 1)
                     {
                         liftControllerData.DestinationFloor = 1;
-                        liftControllerData.IsReadyToMove = true;
+                        // liftControllerData.IsReadyToMove = true;
+                        liftControllerData.IsCodeEntered = true;
                         buttonPressed = false;
-                    }
-                    if (!buttonPressed)
-                    {
-                        _command = 500;
                     }
                 }
             
@@ -41,7 +42,7 @@ namespace LiftStateMachine.Interactables
                     if (_command == 111)
                     {
                         liftControllerData.IsReadyToMove = false;
-                        liftControllerData.isStopped = true;
+                        liftControllerData.IsStopped = true;
                         buttonPressed = false;
                     }
                 }
@@ -51,7 +52,7 @@ namespace LiftStateMachine.Interactables
                     if (_command == 111)
                     {
                         liftControllerData.IsReadyToMove = true;
-                        liftControllerData.isStopped = false;
+                        liftControllerData.IsStopped = false;
                         buttonPressed = false;
                     }
                 }

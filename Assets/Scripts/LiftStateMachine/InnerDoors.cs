@@ -1,5 +1,5 @@
-﻿
-using System;
+﻿using System;
+using System.Collections;
 using LiftStateMachine.states;
 using UnityEngine;
 
@@ -18,42 +18,35 @@ namespace LiftStateMachine
             _animator = GetComponent<Animator>();
         }
 
-        private bool AnimatorIsPlaying(){
-            return _animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1;
-        }
-        
         public void ActivateDoors()
         {
             if (liftControllerData.CurrentState.GetType() == typeof(MovingState))
             {
                 CloseDoors();
             }
+            
             if (liftControllerData.CurrentState.GetType() == typeof(IdleState))
             {
                 OpenDoors();
             }
         }
+        
 
         public void OpenDoors()
         {
             _isOpen = true;
-            _animator.SetBool("IsOpened",_isOpen);
-            liftControllerData.IsDoorsOpen = true;
+            _animator.SetBool("IsOpened", _isOpen);
+            liftControllerData.IsDoorsOpen = true; 
             Debug.Log("Doors Open");
-            if (AnimatorIsPlaying())
-            {
-            }
         }
 
         public void CloseDoors()
         {
             _isOpen = false;
-            _animator.SetBool("IsOpened",_isOpen);
+            _animator.SetBool("IsOpened", _isOpen);
             liftControllerData.IsDoorsOpen = false;
             Debug.Log("Doors Closed");
-            if (AnimatorIsPlaying())
-            {
-            }
         }
+        
     }
 }
