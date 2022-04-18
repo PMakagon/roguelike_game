@@ -17,8 +17,30 @@ namespace LiftStateMachine
         private Action actionFromData;
         private int currentFloor;
         private int destinationFloor;
+        private Transform currentLevel;
+        private Transform destinationLevel;
         private bool isOnLevel;
         private bool isCodeEntered;
+
+        private string enteredCombination;
+
+        public Transform CurrentLevel
+        {
+            get => currentLevel;
+            set => currentLevel = value;
+        }
+
+        public Transform DestinationLevel
+        {
+            get => destinationLevel;
+            set => destinationLevel = value;
+        }
+
+        public string EnteredCombination
+        {
+            get => enteredCombination;
+            set => enteredCombination = value;
+        }
 
         public bool IsOnLevel
         {
@@ -48,7 +70,7 @@ namespace LiftStateMachine
             _stateFactory = new LiftStateFactory(this);
             _currentState = _stateFactory.Idle();
             _currentState.EnterState();
-            Debug.Log("FSM STARTED");
+            Debug.Log("LIFT FSM STARTED");
         }
 
         public ILiftState CurrentState

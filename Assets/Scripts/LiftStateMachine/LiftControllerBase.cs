@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using LiftStateMachine.Interactables;
 using LiftStateMachine.states;
 using UnityEngine;
 
@@ -58,9 +57,11 @@ namespace LiftStateMachine
         private void Update()
         {
             UpdateState();
-            currentLevel = levels[liftControllerData.CurrentFloor].transform;
-            destinationLevel = levels[liftControllerData.DestinationFloor].transform;
-            _action = liftControllerData.ActionFromData;
+            // currentLevel = levels[liftControllerData.CurrentFloor].transform;
+            // destinationLevel = levels[liftControllerData.DestinationFloor].transform;
+            currentLevel = liftControllerData.CurrentLevel;
+            destinationLevel = liftControllerData.DestinationLevel;
+            _action = liftControllerData.ActionFromData;//полная хуета убрать
             if (liftControllerData.CurrentState.GetType() == typeof(IdleState))
             {
                 // поведение при вызове лифта по кнопке когда он уже на уровне
@@ -83,12 +84,17 @@ namespace LiftStateMachine
                 // поведение при выборе уровня 
                 if (liftControllerData.IsCodeEntered)
                 {
-                    if (liftControllerData.CurrentFloor != liftControllerData.DestinationFloor)
+                    ///звуки и прочее при введении корректного кода
+                    if (liftControllerData.IsReadyToMove)
                     {
-                        liftControllerData.IsCodeEntered = false;
-                        liftControllerData.IsReadyToMove = true;
-                        StartCoroutine(StartMoving());
+                        if (liftControllerData.CurrentLevel.position != liftControllerData.DestinationLevel.position)
+                        {
+                            liftControllerData.IsCodeEntered = false;
+                            // liftControllerData.IsReadyToMove = true;
+                            StartCoroutine(StartMoving());
+                        }
                     }
+                   
                 }
             }
             if (liftControllerData.CurrentState.GetType() == typeof(StopState))
@@ -100,7 +106,7 @@ namespace LiftStateMachine
             }
         }
 
-        IEnumerator StartMoving()
+        private IEnumerator StartMoving()
         {
             innerDoors.CloseDoors();
             yield return new WaitForSeconds(holdTime);
@@ -112,7 +118,8 @@ namespace LiftStateMachine
         
         private bool IsOnLevel()
         {
-            return currentLevel.position == levels[liftControllerData.CurrentFloor].transform.position;
+            // return currentLevel.position == levels[liftControllerData.CurrentFloor].transform.position;
+            return currentLevel.position == liftControllerData.CurrentLevel.position;
         }
         
         private void EnterLevel()
@@ -121,8 +128,7 @@ namespace LiftStateMachine
             liftControllerData.IsLiftCalled = false;
             liftControllerData.IsOnLevel = true;
         }
-
-
+        
         private void UpdateState()
         {
             if (!_state.Equals(liftControllerData.CurrentState))
