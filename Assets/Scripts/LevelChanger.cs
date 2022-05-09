@@ -14,69 +14,64 @@ public class LevelChanger : MonoBehaviour
     [SerializeField] private Transform newLevelStartPoint;
     [Range(5f,20f)]
     [SerializeField] private float distanceToLevel = 5f;
-
-    private Dictionary<string, Transform> levels = new Dictionary<string, Transform>();
-
-    public bool UpdateCode;
-    private string nextLevelCode;
+    private Dictionary<string, Transform> _levels;
+    public bool updateCode;
+    private string _nextLevelCode;
+    private int _codeLenght = 3;
 
     private void Awake()
     {
         liftControllerData.CurrentLevel = currentLevelStartPoint.transform;
-        nextLevelCode= "Not Created";
+        _nextLevelCode= "Not Created";
         CreateNextLevelCode();
+        _levels = new Dictionary<string, Transform>();
     }
 
-    public string NextLevelCode
+    private void Update()
     {
-        get => nextLevelCode;
-        set => nextLevelCode = value;
-    }
+        if (updateCode)
+        {
+            CreateNextLevelCode();
+        }
 
+        if ( liftControllerData.IsCodeEntered)
+        {
+            if (!liftControllerData.DestinationLevel)
+            {
+                CreateLevelStartPoint();
+                levelGenerator.enableGeneration = true;
+            }
+        }
+    }
 
     [ContextMenu("CREATE NEW LEVEL TRANSFORM")]
     private void CreateLevelStartPoint()
     {
-        var dist = (liftControllerData.CurrentLevel.transform.position + Vector3.down*distanceToLevel);
+        var dist = (liftControllerData.CurrentLevel.transform.position + Vector3.up*distanceToLevel);
         newLevelStartPoint = Instantiate(currentLevelStartPoint.gameObject, dist, Quaternion.identity).transform;
         liftControllerData.DestinationLevel = newLevelStartPoint;
         levelGenerator.StartPoint = newLevelStartPoint;
         currentLevelStartPoint = newLevelStartPoint;
-        levels.Add(nextLevelCode,newLevelStartPoint);
+        _levels.Add(_nextLevelCode,newLevelStartPoint);
         CreateNextLevelCode();
     }
-    
-    private void Update()
-    {
-        if (UpdateCode)
-        {
-            CreateNextLevelCode();
-        }
-        // if (liftControllerData.IsOnLevel)
-        // {
-        //     UpdateCode = true;
-        // }
 
-        if (liftControllerData.EnteredCombination.Equals(nextLevelCode))
-        {
-            liftControllerData.IsCodeEntered = true;
-            CreateLevelStartPoint();
-            levelGenerator.enableGeneration = true;
-        }
-    }
 
     private void CreateNextLevelCode()
     {
-        UpdateCode = false;
-        nextLevelCode=string.Empty;
-        for (int i = 0; i <= 2; i++)
+        updateCode = false;
+        _nextLevelCode=string.Empty;
+        for (int i = 0; i < _codeLenght; i++)
         {
             var randomInt = Random.Range(1, 9); 
-            nextLevelCode += randomInt;
+            _nextLevelCode += randomInt;
         }
-      
+        liftControllerData.NextLevelCode = _nextLevelCode;
     }
-    
-    
-    
+
+    public string NextLevelCode
+    {
+        get => _nextLevelCode;
+        set => _nextLevelCode = value;
+    }
 }

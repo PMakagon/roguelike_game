@@ -46,7 +46,7 @@ namespace LiftStateMachine
             isLiftCalled.text ="isLiftCalled " + _liftControllerData.IsLiftCalled.ToString();
             IsReadyToMove.text ="IsReadyToMove " + _liftControllerData.IsReadyToMove.ToString();
             IsStopped.text = "IsStopped " +_liftControllerData.IsStopped.ToString();
-            panelCommand.text = "panelCommand " + _panel._command.ToString();
+            panelCommand.text = "panelCommand " + _panel.Command.ToString();
             isOnLevel.text = "isOnLevel " + _liftControllerData.IsOnLevel.ToString();
             isCodeEntered.text = "isCodeEntered " + _liftControllerData.IsCodeEntered.ToString();
             nextLevelCode.text = "nextLevelCode " + levelChanger.NextLevelCode;

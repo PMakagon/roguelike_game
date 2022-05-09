@@ -14,16 +14,18 @@ namespace LiftStateMachine
         [SerializeField] private LiftControllerData liftControllerData;
         [SerializeField] private float liftSpeed = 1f;
         [SerializeField] private float holdTime;
-        private Transform currentLevel;
-        private Transform destinationLevel;
+        private Transform _currentLevel;
+        private Transform _destinationLevel;
         private ILiftState _state;
         private Action _action;
+        private LiftBoxLight _liftBoxLight;
 
         private void Awake()
         {
             liftControllerData.ResetData();
             liftControllerData.StartFSM();
             GetState();
+            _liftBoxLight = GetComponentInChildren<LiftBoxLight>();
         }
         
         private void FixedUpdate()
@@ -33,22 +35,24 @@ namespace LiftStateMachine
             {
                 if (liftControllerData.IsReadyToMove)
                 {
-                    if(liftBox.transform.position != destinationLevel.position)
+                    if(liftBox.transform.position != _destinationLevel.position)
                     {
                         var floorAt = liftBox.transform.position;
-                        var floorTo = destinationLevel.position;
+                        var floorTo = _destinationLevel.position;
                         liftBox.transform.position = Vector3.MoveTowards(floorAt, floorTo, liftSpeed * Time.deltaTime);
                     }
                 }
                 // остановка
-                if (liftBox.transform.position == destinationLevel.position)
+                if (liftBox.transform.position == _destinationLevel.position)
                 {
                     liftControllerData.IsReadyToMove = false;
                     liftControllerData.CurrentState = liftControllerData.StateFactory.Idle();
+                    liftControllerData.IsOnLevel = true;
                 }
                 // нажата кнопка STOP
                 if (liftControllerData.IsStopped)
                 {
+                    liftControllerData.IsReadyToMove = false;
                     liftControllerData.CurrentState = liftControllerData.StateFactory.Stop();
                 }
             }
@@ -59,9 +63,10 @@ namespace LiftStateMachine
             UpdateState();
             // currentLevel = levels[liftControllerData.CurrentFloor].transform;
             // destinationLevel = levels[liftControllerData.DestinationFloor].transform;
-            currentLevel = liftControllerData.CurrentLevel;
-            destinationLevel = liftControllerData.DestinationLevel;
+            _currentLevel = liftControllerData.CurrentLevel;
+            _destinationLevel = liftControllerData.DestinationLevel;
             _action = liftControllerData.ActionFromData;//полная хуета убрать
+            
             if (liftControllerData.CurrentState.GetType() == typeof(IdleState))
             {
                 // поведение при вызове лифта по кнопке когда он уже на уровне
@@ -81,27 +86,30 @@ namespace LiftStateMachine
                         }
                     }
                 }
+
+                if (liftControllerData.IsReadyToMove && liftControllerData.IsOnLevel)
+                {
+                    if (liftControllerData.CurrentLevel.position != liftControllerData.DestinationLevel.position)
+                    {
+                        liftControllerData.IsCodeEntered = false;
+                        StartCoroutine(StartMoving());
+                    }
+                }
+                
                 // поведение при выборе уровня 
                 if (liftControllerData.IsCodeEntered)
                 {
-                    ///звуки и прочее при введении корректного кода
-                    if (liftControllerData.IsReadyToMove)
-                    {
-                        if (liftControllerData.CurrentLevel.position != liftControllerData.DestinationLevel.position)
-                        {
-                            liftControllerData.IsCodeEntered = false;
-                            // liftControllerData.IsReadyToMove = true;
-                            StartCoroutine(StartMoving());
-                        }
-                    }
-                   
+                    liftControllerData.IsReadyToMove = true;
+                    
                 }
             }
+            
             if (liftControllerData.CurrentState.GetType() == typeof(StopState))
             {
                 if (!liftControllerData.IsStopped)
                 {
                     liftControllerData.CurrentState = liftControllerData.StateFactory.Moving();
+                    liftControllerData.IsReadyToMove = true;
                 }
             }
         }
@@ -112,14 +120,13 @@ namespace LiftStateMachine
             yield return new WaitForSeconds(holdTime);
             liftControllerData.CurrentState = liftControllerData.StateFactory.Moving();
             liftControllerData.IsOnLevel = false;
-            Debug.Log("END OF COROUTINE");
-            StopCoroutine(StartMoving());
+            // Debug.Log("END OF COROUTINE");
         }
         
         private bool IsOnLevel()
         {
             // return currentLevel.position == levels[liftControllerData.CurrentFloor].transform.position;
-            return currentLevel.position == liftControllerData.CurrentLevel.position;
+            return _currentLevel.position == liftControllerData.CurrentLevel.position;
         }
         
         private void EnterLevel()

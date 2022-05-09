@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using FPSController;
 using UnityEditor;
 using UnityEngine;
@@ -7,50 +9,39 @@ namespace LiftStateMachine
 {
     public class Button : Interactable
     {
-        [SerializeField]  private int buttonCommand;
-        private InnerPanel _panel;
+        [SerializeField] private int buttonCommand;
         private Light _buttonLight;
-        // [SerializeField] private Animation flashAnimation;
-        // [SerializeField] private Animation pressAnimation;
-
+        private InnerPanel _panel;
 
         private void Awake()
         {
             _buttonLight = GetComponentInChildren<Light>();
             _buttonLight.enabled = false;
-            // flashAnimation = GetComponent<Animation>();
             _panel = gameObject.GetComponentInParent<InnerPanel>();
         }
 
-        public int ButtonCommand => buttonCommand;
-
-        public void FlashIncorrect()
+        public void TurnLightOn()
         {
-            // flashAnimation.Play();
-            _buttonLight.enabled = false;
-
-        } 
-        public void FlashCorrect()
-        {
-            // flashAnimation.Play();
-            _buttonLight.enabled = false;
-
+            _buttonLight.enabled = true;
         }
 
-        private void LightOff()
+        public void TurnLightOff()
         {
             _buttonLight.enabled = false;
         }
 
         public override void OnInteract()
         {
-            // pressAnimation.Play();
             _buttonLight.enabled = true;
             _panel.buttonPressed = true;
-            _panel._command = buttonCommand;
+            _panel.Command = buttonCommand;
+            _panel.CurrentSelection.Add(this);
             base.OnInteract();
         }
+
+
+        public Light ButtonLight => _buttonLight;
+        public int ButtonCommand => buttonCommand;
     }
-    
     
 }
