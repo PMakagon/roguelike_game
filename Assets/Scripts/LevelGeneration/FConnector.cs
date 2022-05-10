@@ -16,7 +16,14 @@ namespace LevelGeneration
         [Tooltip("FORWARD = +Z,BACK = -Z,RIGHT = +X,LEFT = -X")] 
         [SerializeField] private ConnectorDirection spawnDirection;
         private Vector3 _direction;
-        
+        private int _iterationsBeforeWall = 25;// пахнет слабостью
+
+        public int IterationsBeforeWall
+        {
+            get => _iterationsBeforeWall;
+            set => _iterationsBeforeWall = value;
+        }
+
         public Vector3 Direction => _direction;
         public Room.RoomType[] AllowedRoomTypes => allowedRoomTypes;
 

@@ -42,19 +42,6 @@ namespace LiftStateMachine
                         liftBox.transform.position = Vector3.MoveTowards(floorAt, floorTo, liftSpeed * Time.deltaTime);
                     }
                 }
-                // остановка
-                if (liftBox.transform.position == _destinationLevel.position)
-                {
-                    liftControllerData.IsReadyToMove = false;
-                    liftControllerData.CurrentState = liftControllerData.StateFactory.Idle();
-                    liftControllerData.IsOnLevel = true;
-                }
-                // нажата кнопка STOP
-                if (liftControllerData.IsStopped)
-                {
-                    liftControllerData.IsReadyToMove = false;
-                    liftControllerData.CurrentState = liftControllerData.StateFactory.Stop();
-                }
             }
         }
 
@@ -80,13 +67,9 @@ namespace LiftStateMachine
                     if (!liftControllerData.IsReadyToMove && !liftControllerData.IsDoorsOpen)
                     {
                         EnterLevel();
-                        if (liftControllerData.CurrentFloor != liftControllerData.DestinationFloor)
-                        {
-                            liftControllerData.CurrentFloor = liftControllerData.DestinationFloor;
-                        }
                     }
                 }
-
+                
                 if (liftControllerData.IsReadyToMove && liftControllerData.IsOnLevel)
                 {
                     if (liftControllerData.CurrentLevel.position != liftControllerData.DestinationLevel.position)
@@ -100,10 +83,32 @@ namespace LiftStateMachine
                 if (liftControllerData.IsCodeEntered)
                 {
                     liftControllerData.IsReadyToMove = true;
-                    
                 }
             }
-            
+
+            if (liftControllerData.CurrentState.GetType() == typeof(MovingState))
+            {
+                // переместить в update?
+                // остановка
+                if (liftBox.transform.position == _destinationLevel.position)
+                {
+                    liftControllerData.IsReadyToMove = false;
+                    liftControllerData.CurrentState = liftControllerData.StateFactory.Idle();
+                    liftControllerData.IsOnLevel = true;
+                    // смена текущего уровня
+                    if (liftControllerData.CurrentLevel.transform.position != liftControllerData.DestinationLevel.transform.position)
+                    {
+                        liftControllerData.CurrentLevel = liftControllerData.DestinationLevel;
+                    }
+                }
+                // нажата кнопка STOP
+                if (liftControllerData.IsStopped)
+                {
+                    liftControllerData.IsReadyToMove = false;
+                    liftControllerData.CurrentState = liftControllerData.StateFactory.Stop();
+                }
+            }
+
             if (liftControllerData.CurrentState.GetType() == typeof(StopState))
             {
                 if (!liftControllerData.IsStopped)

@@ -22,6 +22,7 @@ namespace LevelGeneration
         [SerializeField] private Room[] medium;
         [SerializeField] private Room[] small;
         [SerializeField] private Room[] cross;
+        [SerializeField] private Wall wall;
 
         private Dictionary<Room.RoomType, Room[]> roomsMap = new Dictionary<Room.RoomType, Room[]>();
         private List<Room> spawnedRooms = new List<Room>();
@@ -31,7 +32,7 @@ namespace LevelGeneration
         private bool rootReady;
 
         private int destroyedRooms;
-        private int attempts;
+        private int spawnAttempts;
         
         [Header("CONTROLS")]
         public bool enableGeneration;
@@ -58,6 +59,7 @@ namespace LevelGeneration
                     SpawnRoot();
                 }
                 GenerateFirstRooms();
+                
             }
 
             if (showReport)
@@ -72,8 +74,11 @@ namespace LevelGeneration
             if (destroyLevel)
             {
                 destroyLevel = false;
-                Destroy(currentRoot.gameObject);
-                spawnedRooms.Clear();
+                if (currentRoot)
+                {
+                    Destroy(currentRoot.gameObject);
+                    spawnedRooms.Clear();
+                }
             }
         }
 
@@ -116,26 +121,40 @@ namespace LevelGeneration
             Debug.Log("<b>Rooms NOT ready - </b>" + notReadyCount);
             Debug.Log("<b>Rooms INVALID - </b>" + invalidCount);
             Debug.Log("<b>Rooms destroyed - </b>" + destroyedRooms);
-            Debug.Log("<b>Attempts done - </b>" + attempts);
+            Debug.Log("<b>Attempts done - </b>" + spawnAttempts);
             Debug.Log("<color=red><b>-------------------</b></color>");
         }
 
         private IEnumerator SpawnRoom(FConnector connector)
         {
             isGenerating = true;
-            attempts++;
-            var randomTypeIndex = Random.Range(0, connector.AllowedRoomTypes.Length);
-            var randomRoomType = connector.AllowedRoomTypes[randomTypeIndex];
-            var roomsOfType = roomsMap[randomRoomType];
-            var randomRoomIndex = Random.Range(0, roomsOfType.Length);
-            var newRoom = Instantiate(roomsOfType[randomRoomIndex]);
-            newRoom.Align(newRoom.transform, newRoom.Entrance.transform, connector.transform);
-            newRoom.transform.SetParent(connector.transform, true);
+            spawnAttempts++;
+            var randomTypeIndex = Random.Range(0, connector.AllowedRoomTypes.Length);//случайный разрешенный тип комнаты
+            var randomRoomType = connector.AllowedRoomTypes[randomTypeIndex];//определяем тип комнаты для коннектора
+            var roomsOfType = roomsMap[randomRoomType];// берем массив с выбранными комнатами
+            var randomRoomIndex = Random.Range(0, roomsOfType.Length);// случайная комната выбранного типа
+            var newRoom = Instantiate(roomsOfType[randomRoomIndex]);// спавним случайную комнату из массива
+            newRoom.Align(newRoom.transform, newRoom.Entrance.transform, connector.transform);// выпрямляем комнату
             yield return null;
-            
-            if (!newRoom.IsConnected || newRoom.IsInvalid)
+
+            if (!newRoom.IsConnected || newRoom.IsInvalid) // валидация новой комнаты
             {
                 Destroy(newRoom.gameObject);
+                if (connector.IterationsBeforeWall<=0)
+                {
+                    var newWall = Instantiate(wall);
+                    Align(newWall.transform, newWall.Joint.transform, connector.transform);
+                    if (newWall.Joint.transform.position==connector.transform.position)
+                    {
+                        newWall.IsConnected= true;
+                        newWall.transform.SetParent(connector.transform, true);
+                        yield break;
+                    }
+                }
+                else
+                {
+                    connector.IterationsBeforeWall--;
+                }
                 StartCoroutine(SpawnRoom(connector));
                 isGenerating = false;
                 destroyedRooms++;
@@ -145,6 +164,7 @@ namespace LevelGeneration
             yield return null;
             if (newRoom.IsReady)
             {
+                newRoom.transform.SetParent(connector.transform, true);
                 connector.IsConnected = true;///мне не нравится что я это снаружи делаю
                 if (newRoom.HasExit)
                 {
@@ -155,9 +175,10 @@ namespace LevelGeneration
                     spawnedRooms.Add(newRoom);
                 }
             }
+
             isGenerating = false;
         }
-
+        
         private void GenerateFirstRooms()
         {
             foreach (var rootConnector in currentRoot.Connectors)
@@ -168,6 +189,7 @@ namespace LevelGeneration
                 }
             }
             rootReady = true;
+            currentRoot = null;
         }
 
         private void SpawnNextRooms(Room spawnedRoom)
@@ -177,19 +199,20 @@ namespace LevelGeneration
                 StartCoroutine(SpawnRoom(exit));
             }
         }
-        
+
         private void Align(Transform room, Transform mConnector, Transform fConnector)
         {
             if (!room || !mConnector || !fConnector) return;
             room.rotation = fConnector.rotation * Quaternion.Inverse(Quaternion.Inverse(room.rotation) * mConnector.rotation);
             room.position = fConnector.position + (room.position - mConnector.position);
-
         }
-        
+
         public Transform StartPoint
         {
             get => startPoint;
             set => startPoint = value;
         }
+
+        public RootRoom CurrentRoot => currentRoot;
     }
 }

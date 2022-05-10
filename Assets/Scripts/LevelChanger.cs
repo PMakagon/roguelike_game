@@ -22,9 +22,14 @@ public class LevelChanger : MonoBehaviour
     private void Awake()
     {
         liftControllerData.CurrentLevel = currentLevelStartPoint.transform;
+        liftControllerData.StartLevel = liftControllerData.CurrentLevel;
         _nextLevelCode= "Not Created";
-        CreateNextLevelCode();
         _levels = new Dictionary<string, Transform>();
+    }
+
+    private void Start()
+    {
+        CreateLevelStartPoint();
     }
 
     private void Update()
@@ -36,11 +41,9 @@ public class LevelChanger : MonoBehaviour
 
         if ( liftControllerData.IsCodeEntered)
         {
-            if (!liftControllerData.DestinationLevel)
-            {
-                CreateLevelStartPoint();
-                levelGenerator.enableGeneration = true;
-            }
+            CreateLevelStartPoint();
+            levelGenerator.enableGeneration = true;
+            
         }
     }
 

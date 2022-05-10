@@ -102,8 +102,17 @@ namespace LiftStateMachine
                 }
                 else
                 {
-                    StartCoroutine(FlashIncorrect());
-                    Debug.Log("WRONG CODE");
+                    if (enteredCode.Equals(1.ToString()))
+                    {
+                        liftControllerData.DestinationLevel = liftControllerData.StartLevel;
+                        liftControllerData.IsReadyToMove = true;
+                        Debug.Log("HOME");
+                    }
+                    else
+                    {
+                        StartCoroutine(FlashIncorrect());
+                        Debug.Log("WRONG CODE");
+                    }
                 }
                 enteredCode = string.Empty;
                 CurrentSelection.Clear();

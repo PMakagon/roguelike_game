@@ -11,6 +11,8 @@ namespace LiftStateMachine
         public string NextLevelCode { get; set; }
 
         public Transform CurrentLevel { get; set; }
+        
+        public Transform StartLevel { get; set; }
 
         public Transform DestinationLevel { get; set; }
 
