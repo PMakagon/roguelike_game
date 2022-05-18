@@ -25,11 +25,17 @@ public class EnemyController : MonoBehaviour
     private bool isLightDetected;
     public float anger ;
     private Vector3 originalPosition;
+    private Animator animator;
+
+    private void Awake()
+    {
+        animator = GetComponent<Animator>();
+    }
 
     private void Start()
     {
         originalPosition = transform.position;
-        gameObject.GetComponent<Renderer>().material.color = Color.clear;
+        // gameObject.GetComponent<Renderer>().material.color = Color.clear;
     }
 
     private void FixedUpdate()
@@ -48,6 +54,7 @@ public class EnemyController : MonoBehaviour
             if (isPlayerDetected || isPointed)
             {
                 _sphereState = SphereStates.Spotted;
+                animator.SetBool("IsPlayerDetected",isPlayerDetected);
             }
             LookForPlayer();
             
@@ -56,7 +63,7 @@ public class EnemyController : MonoBehaviour
         if (_sphereState == SphereStates.Spotted)
         {
             originalPosition = transform.position;
-            gameObject.GetComponent<Renderer>().material.color = Color.red;
+            // gameObject.GetComponent<Renderer>().material.color = Color.red;
             if (anger<=0 && (isPlayerDetected && isPointed) )
             {
                 _sphereState = SphereStates.Idle;
@@ -83,6 +90,7 @@ public class EnemyController : MonoBehaviour
     {
         var Offset = 0.03f * Mathf.Sin (Time.fixedTime * 1);
         transform.position = originalPosition + new Vector3 (0, Offset, 0);
+        
     }
 
     private void Shake()
@@ -109,6 +117,7 @@ public class EnemyController : MonoBehaviour
         else
         {
             isPlayerDetected = false;
+            animator.SetBool("IsPlayerDetected",isPlayerDetected);
         }
     }
 
@@ -122,28 +131,28 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    private void CheckForLight()
-    {
-    }
-
-    private void OnTriggerStay(Collider other)
-    {
-        
-        if (other.GetComponent<LightExtended>())
-        {
-            Debug.Log("LOL");
-            other.GetComponent<LightExtended>().LightTypeP = LightExtended.LightType.Flickering;
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.GetComponent<LightExtended>())
-        {
-            Debug.Log("LOL EXIT");
-            other.GetComponent<LightExtended>().isOn= false;
-        }
-    }
+    // private void CheckForLight()
+    // {
+    // }
+    //
+    // private void OnTriggerStay(Collider other)
+    // {
+    //     
+    //     if (other.GetComponent<LightExtended>())
+    //     {
+    //         Debug.Log("LOL");
+    //         other.GetComponent<LightExtended>().LightTypeP = LightExtended.LightType.Flickering;
+    //     }
+    // }
+    //
+    // private void OnTriggerExit(Collider other)
+    // {
+    //     if (other.GetComponent<LightExtended>())
+    //     {
+    //         Debug.Log("LOL EXIT");
+    //         other.GetComponent<LightExtended>().isOn= false;
+    //     }
+    // }
 
 
 #if UNITY_EDITOR

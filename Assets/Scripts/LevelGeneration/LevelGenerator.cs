@@ -41,7 +41,6 @@ namespace LevelGeneration
         public bool showReport;
         private void Awake()
         {
-            // startPosition = startPoint.position;
             roomsMap.Add(Room.RoomType.Hall, halls);
             roomsMap.Add(Room.RoomType.Big, big);
             roomsMap.Add(Room.RoomType.Medium, medium);
