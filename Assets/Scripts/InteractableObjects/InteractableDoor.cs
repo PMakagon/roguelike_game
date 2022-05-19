@@ -1,5 +1,6 @@
 ﻿using System;
 using FPSController;
+using LevelGeneration;
 using NaughtyAttributes;
 using UnityEngine;
 
@@ -8,40 +9,32 @@ namespace InteractableObjects
     public class InteractableDoor : InteractableBase
     {
         [SerializeField] private GameObject door;
-        public Animator animator;
-        private Rigidbody doorRigidbody;
         [SerializeField] private bool isLocked;
         [ShowIf("isLocked")] [SerializeField] private string keyName;
-        public bool isOpen;
         [SerializeField] private InventoryData _inventoryData;
+        private Animator _animator;
+        private MConnector _doorConnector;
+        public bool isOpen;
 
-        private void Start()
+        private void Awake()
         {
-            // doorRigidbody = door.GetComponent<Rigidbody>();
-            // doorRigidbody.isKinematic = true;
-            // animator = GetComponent<Animator>();
-
-            if (TryGetComponent(typeof(Animator), out Component component))
-            {
-                animator = component.GetComponent<Animator>();
-            }
-            
+            _animator = GetComponentInChildren<Animator>();
+            _doorConnector = GetComponentInChildren<MConnector>();
         }
+
+        public MConnector DoorConnector => _doorConnector;
 
         private void OpenDoor()
         {
             isOpen = true;
-            animator.SetBool("Open", isOpen);
-            // doorRigidbody.isKinematic = false;
+            _animator.SetBool("Open", isOpen);
             Debug.Log("OPEN");
-
         }
 
         private void CloseDoor()
         {
             isOpen = false;
-            animator.SetBool("Open", isOpen);
-            // doorRigidbody.isKinematic = true;
+            _animator.SetBool("Open", isOpen);
             Debug.Log("CLOSED");
         }
 
@@ -59,10 +52,12 @@ namespace InteractableObjects
                         return;
                     }
                 }
-                animator.SetBool("TryOpen",true);
+
+                _animator.SetBool("TryOpen", true);
                 return;
             }
-            if(isOpen)
+
+            if (isOpen)
             {
                 CloseDoor();
             }

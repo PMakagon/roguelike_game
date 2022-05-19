@@ -81,6 +81,8 @@ namespace LevelGeneration
             }
         }
 
+        public List<Room> SpawnedRooms => spawnedRooms;
+
         private void SpawnRoot()
         {
             if (levelType == LevelType.Dorm)

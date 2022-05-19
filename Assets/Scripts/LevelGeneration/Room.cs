@@ -19,21 +19,19 @@ namespace LevelGeneration
         [SerializeField] private MConnector entrance;
         [SerializeField] private FConnector[] exits;
         [SerializeField] private bool hasExit;
+        [SerializeField] private bool hasDoorMarks;
         [SerializeField] private RoomTrigger roomTrigger;//удалить если не нужно
-
+        [SerializeField] private MConnector[] doorMarks;
         private bool isConnected;
         private bool isReady;
-
         public bool IsInvalid { get; set; }
-
         public bool IsConnected => isConnected;
-
         public bool IsReady => isReady;
-
         public MConnector Entrance => entrance;
+        public MConnector[] DoorMarks => doorMarks;
         public FConnector[] Exits => exits;
         public bool HasExit => hasExit;
-
+        
         private void Awake()
         {
         
