@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace LevelGeneration
@@ -6,9 +7,14 @@ namespace LevelGeneration
     {
         [SerializeField] private Room myRoom;
         [SerializeField] private Collider myTrigger;
-        private bool isTriggered;
+        private bool _isTriggered;
 
-        public bool IsTriggered => isTriggered;
+        public bool IsTriggered => _isTriggered;
+
+        // private void Awake()
+        // {
+        //     myRoom = GetComponentInParent<Room>();
+        // }
 
         private void Start()
         {
@@ -19,7 +25,7 @@ namespace LevelGeneration
         {
             if (other.CompareTag("RoomTrigger"))
             {
-                isTriggered = true;
+                _isTriggered = true;
                 if (myRoom)
                 {
                     myRoom.IsInvalid = true;
@@ -27,10 +33,6 @@ namespace LevelGeneration
                 // Debug.Log("ROOM IS INVALID",myRoom);
             }
         }
-
-        void Update()
-        {
         
-        }
     }
 }

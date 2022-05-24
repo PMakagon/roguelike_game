@@ -2,12 +2,14 @@
 
 namespace LevelGeneration
 {
-    public class RootRoom : MonoBehaviour 
+    public class RootRoom : MonoBehaviour
 
     {
         [SerializeField] private Transform floorTransform;
+
         [SerializeField] private FConnector[] connectors;
 
+        // [SerializeField] private int difficulty;
         private bool isReady;
 
         public bool IsReady => isReady;
@@ -18,7 +20,6 @@ namespace LevelGeneration
             {
                 Debug.Log("NO FLOOR POSITION");
             }
-
         }
 
         public Transform FloorTransform

@@ -34,20 +34,18 @@ namespace LevelGeneration
         
         private void Awake()
         {
-        
             if (exits.Length!=0)
             {
                 hasExit = true;
-            }
+            } 
         }
 
         private void Update()
         {
             if (isConnected && !IsInvalid)
-            {
+            { 
                 isReady = true;
             }
-            
         }
         
         public void Align(Transform room, Transform mConnector, Transform fConnector)

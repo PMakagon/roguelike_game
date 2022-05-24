@@ -8,21 +8,18 @@ namespace InteractableObjects
 {
     public class InteractableDoor : InteractableBase
     {
-        [SerializeField] private GameObject door;
         [SerializeField] private bool isLocked;
         [ShowIf("isLocked")] [SerializeField] private string keyName;
         [SerializeField] private InventoryData _inventoryData;
         private Animator _animator;
-        private MConnector _doorConnector;
         public bool isOpen;
 
         private void Awake()
         {
-            _animator = GetComponentInChildren<Animator>();
-            _doorConnector = GetComponentInChildren<MConnector>();
+            // _animator = GetComponentInChildren<Animator>();
+            _animator = GetComponentInParent<Animator>();
         }
-
-        public MConnector DoorConnector => _doorConnector;
+        
 
         private void OpenDoor()
         {
