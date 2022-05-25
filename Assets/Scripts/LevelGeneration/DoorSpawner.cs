@@ -12,6 +12,7 @@ namespace LevelGeneration
         [SerializeField] private List<Room> spawnedRooms;
 
         [SerializeField] private Entry[] dormPrefabs;
+        [SerializeField] private Entry[] electricDoorPrefabs;
 
         //пока так
         private LevelGenerator.LevelType _levelType;

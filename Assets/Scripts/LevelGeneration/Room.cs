@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using LightingSystem;
+using UnityEngine;
 
 namespace LevelGeneration
 {
@@ -22,6 +23,22 @@ namespace LevelGeneration
         [SerializeField] private bool hasDoorMarks;
         [SerializeField] private RoomTrigger roomTrigger;//удалить если не нужно
         [SerializeField] private MConnector[] doorMarks;
+        // [SerializeField] private LightSpawnPoint[] lightSpawnPoints;
+        [SerializeField] private SlaveSwitcher[] slaveSwitchers;
+        [SerializeField] private LightExtended[] lightExtended;
+
+        public SlaveSwitcher[] SlaveSwitchers
+        {
+            get => slaveSwitchers;
+            set => slaveSwitchers = value;
+        }
+
+        public LightExtended[] LightExtended
+        {
+            get => lightExtended;
+            set => lightExtended = value;
+        }
+
         private bool isConnected;
         private bool isReady;
         public bool IsInvalid { get; set; }

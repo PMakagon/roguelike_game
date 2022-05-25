@@ -10,6 +10,7 @@ namespace LevelGeneration
         [SerializeField] private LevelChanger levelChanger;
         [SerializeField] private LevelGenerator levelGenerator;
         [SerializeField] private DoorSpawner doorSpawner;
+        [SerializeField] private ElectricitySpawner electricitySpawner;
 
         private List<Room> _spawnedRooms;
         private RootRoom _currentRoot;
@@ -55,6 +56,10 @@ namespace LevelGeneration
             levelGenerator.ResetLevelGenerator();
             doorSpawner.SpawnedRooms = _spawnedRooms;
             doorSpawner.EnableDoorSpawner = true;
+            electricitySpawner.CurrentRoot = _currentRoot;
+            electricitySpawner.SpawnedRooms = _spawnedRooms;
+            yield return null;
+            electricitySpawner.enableElectricityGeneration = true;
         }
         
         

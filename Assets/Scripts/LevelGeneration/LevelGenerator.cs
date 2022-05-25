@@ -18,9 +18,8 @@ namespace LevelGeneration
         [SerializeField] private LevelType levelType;
         [SerializeField] private RootRoom rootRoom;
         private Vector3 _startPosition;
-        
-        [Header("PREFABS")]
-        [SerializeField] private Room[] halls;
+
+        [Header("PREFABS")] [SerializeField] private Room[] halls;
         [SerializeField] private Room[] big;
         [SerializeField] private Room[] medium;
         [SerializeField] private Room[] small;
@@ -31,20 +30,27 @@ namespace LevelGeneration
         private bool _rootReady;
         private bool _isGenerating = false;
 
-        [Header("GENERATOR OUTPUT")]
-        private List<Room> _spawnedRooms = new List<Room>();
+        [Header("GENERATOR OUTPUT")] private List<Room> _spawnedRooms = new List<Room>();
         private RootRoom _currentRoot;
 
-        [Header("STATS FOR REPORT")]
-        private int _destroyedRooms;
+        [Header("STATS FOR REPORT")] private int _destroyedRooms;
         private int _spawnAttempts;
-        
-        [Header("CONTROLS")]
-        public bool enableGeneration;
+
+        [Header("CONTROLS")] public bool enableGeneration;
         public bool destroyLevel;
         public bool reportRealTime = true;
         public bool showReport;
-        
+
+        [Header("GENERATION PARAM")] private int _levelSize;
+        private int _hallsAllowed;
+        private int _stairsAllowed;
+        private int _bossRoomsAllowed;
+
+        private int _hallsCounter;
+        private int _stairsCounter;
+        private int _bossRoomsCounter;
+
+
         private int _spawnCounter;
         private bool _levelReady;
 
@@ -87,7 +93,7 @@ namespace LevelGeneration
                     WriteReport();
                 }
             }
-            
+
             if (destroyLevel)
             {
                 destroyLevel = false;
@@ -100,29 +106,10 @@ namespace LevelGeneration
                 }
             }
 
-            if (_rootReady && _spawnCounter==0)
+            if (_rootReady && _spawnCounter == 0)
             {
                 _levelReady = true;
             }
-            
-        }
-
-        public bool LevelReady => _levelReady;
-
-        public bool RootReady => _rootReady;
-
-        private void SpawnRoot()
-        {
-            if (levelType == LevelType.Dorm)
-            {
-                _currentRoot = Instantiate(rootRoom, startPoint.position, Quaternion.identity);
-                Align(_currentRoot.transform,_currentRoot.FloorTransform,startPoint);
-            }
-            if (reportRealTime)
-            {
-                Debug.Log("Root Spawned");
-            }
-            
         }
 
         [ContextMenu("STOP GENERATION")]
@@ -133,22 +120,23 @@ namespace LevelGeneration
 
         private void WriteReport()
         {
-            var invalidCount=0;
-            var notReadyCount=0;
+            var invalidCount = 0;
+            var notReadyCount = 0;
             foreach (var spawnedRoom in _spawnedRooms)
             {
                 if (!spawnedRoom.IsReady)
                 {
                     // if (reportRealTime) Debug.Log("<b>ROOM NOT READY</b>", spawnedRoom);
                     notReadyCount++;
-
                 }
+
                 if (spawnedRoom.IsInvalid)
                 {
                     // if (reportRealTime) Debug.Log("<b>ROOM IS INVALID</b>", spawnedRoom);
                     invalidCount++;
                 }
             }
+
             Debug.Log("<color=red><b>-------------------</b></color>");
             Debug.Log("<b>Rooms spawned - </b>" + _spawnedRooms.Count);
             Debug.Log("<b>Rooms NOT ready - </b>" + notReadyCount);
@@ -158,30 +146,77 @@ namespace LevelGeneration
             Debug.Log("<color=red><b>-------------------</b></color>");
         }
 
+        private void SetLevelSize(int levelSize)
+        {
+            switch (levelSize)
+            {
+                case 1:
+                    _hallsAllowed = 2;
+                    _bossRoomsAllowed = 1;
+                    _stairsAllowed = 1;
+                    return;
+                case 2:
+                    _hallsAllowed = 4;
+                    _bossRoomsAllowed = 1;
+                    _stairsAllowed = 2;
+                    return;
+                case 3:
+                    _hallsAllowed = 8;
+                    _bossRoomsAllowed = 2;
+                    _stairsAllowed = 4;
+                    return;
+                case 4:
+                    _hallsAllowed = 10;
+                    _bossRoomsAllowed = 3;
+                    _stairsAllowed = 5;
+                    return;
+            }
+        }
+        
+        private bool ApproveRoomType(Room.RoomType roomType)
+        {
+            if (roomType == Room.RoomType.Hall)
+            {
+                if (_hallsCounter + 1 > _hallsAllowed)
+                {
+                    return false;
+                }
+
+                _hallsCounter++;
+                return true;
+            }
+            return true;
+        }
+
         private IEnumerator SpawnRoom(FConnector connector)
         {
             _isGenerating = true;
             _spawnAttempts++;
             _spawnCounter++;
-            var randomTypeIndex = Random.Range(0, connector.AllowedRoomTypes.Length);//случайный разрешенный тип комнаты
-            var randomRoomType = connector.AllowedRoomTypes[randomTypeIndex];//определяем тип комнаты для коннектора
-            var roomsOfType = _roomsMap[randomRoomType];// берем массив с выбранными комнатами
-            var randomRoomIndex = Random.Range(0, roomsOfType.Length);// случайная комната выбранного типа
-            var newRoom = Instantiate(roomsOfType[randomRoomIndex]);// спавним случайную комнату из массива
-            newRoom.Align(newRoom.transform, newRoom.Entrance.transform, connector.transform);// выпрямляем комнату
+            Room.RoomType randomRoomType;
+            do
+            {
+                var randomAllowedTypeIndex = Random.Range(0, connector.AllowedRoomTypes.Length); //случайный разрешенный тип комнаты
+                randomRoomType = connector.AllowedRoomTypes[randomAllowedTypeIndex]; //определяем тип комнаты для коннектора
+            } while (!ApproveRoomType(randomRoomType));
+
+            var roomsOfChosenType = _roomsMap[randomRoomType]; // берем массив с выбранными комнатами
+            var randomRoomIndex = Random.Range(0, roomsOfChosenType.Length); // случайная комната выбранного типа
+            var newRoom = Instantiate(roomsOfChosenType[randomRoomIndex]); // спавним случайную комнату из массива
+            newRoom.Align(newRoom.transform, newRoom.Entrance.transform, connector.transform); // выпрямляем комнату
             yield return null;
             yield return null;
             if (!newRoom.IsConnected || newRoom.IsInvalid) // валидация новой комнаты
             {
                 Destroy(newRoom.gameObject);
                 _destroyedRooms++;
-                if (connector.IterationsBeforeWall<=0)
+                if (connector.IterationsBeforeWall <= 0)
                 {
                     var newWall = Instantiate(wall);
                     Align(newWall.transform, newWall.Joint.transform, connector.transform);
-                    if (newWall.Joint.transform.position==connector.transform.position)
+                    if (newWall.Joint.transform.position == connector.transform.position)
                     {
-                        newWall.IsConnected= true;
+                        newWall.IsConnected = true;
                         newWall.transform.SetParent(connector.transform, true);
                         _isGenerating = false;
                         _spawnCounter--;
@@ -192,29 +227,43 @@ namespace LevelGeneration
                 {
                     connector.IterationsBeforeWall--;
                 }
+
                 StartCoroutine(SpawnRoom(connector));
                 _isGenerating = false;
                 _spawnCounter--;
                 yield break;
             }
+
             //возможно проверка isInvalid слишком рано, стоит попробовать сделать isInvalid по умолчанию true или проверять позже
             yield return null;
             if (newRoom.IsReady)
             {
                 newRoom.transform.SetParent(connector.transform, true);
-                connector.IsConnected = true;///мне не нравится что я это снаружи делаю
+                connector.IsConnected = true; ///мне не нравится что я это снаружи делаю
                 if (newRoom.HasExit)
                 {
                     SpawnNextRooms(newRoom);
                 }
-                else
-                {
-                    _spawnedRooms.Add(newRoom);
-                }
+
+                _spawnedRooms.Add(newRoom);
             }
 
             _spawnCounter--;
             _isGenerating = false;
+        }
+
+        private void SpawnRoot()
+        {
+            if (levelType == LevelType.Dorm)
+            {
+                _currentRoot = Instantiate(rootRoom, startPoint.position, Quaternion.identity);
+                Align(_currentRoot.transform, _currentRoot.FloorTransform, startPoint);
+            }
+
+            if (reportRealTime)
+            {
+                Debug.Log("Root Spawned");
+            }
         }
 
         private void GenerateFirstRooms()
@@ -226,6 +275,7 @@ namespace LevelGeneration
                     StartCoroutine(SpawnRoom(rootConnector));
                 }
             }
+
             _rootReady = true;
         }
 
@@ -240,7 +290,8 @@ namespace LevelGeneration
         private void Align(Transform room, Transform mConnector, Transform fConnector)
         {
             if (!room || !mConnector || !fConnector) return;
-            room.rotation = fConnector.rotation * Quaternion.Inverse(Quaternion.Inverse(room.rotation) * mConnector.rotation);
+            room.rotation = fConnector.rotation *
+                            Quaternion.Inverse(Quaternion.Inverse(room.rotation) * mConnector.rotation);
             room.position = fConnector.position + (room.position - mConnector.position);
         }
 
@@ -249,6 +300,10 @@ namespace LevelGeneration
             get => startPoint;
             set => startPoint = value;
         }
+
+        public bool LevelReady => _levelReady;
+
+        public bool RootReady => _rootReady;
 
         public int SpawnCounter => _spawnCounter;
         public RootRoom CurrentRoot => _currentRoot;

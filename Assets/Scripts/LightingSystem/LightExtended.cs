@@ -33,11 +33,11 @@ namespace LightingSystem
         [SerializeField] private bool isActive;
         [SerializeField] public bool isOn;
 
-        [Space] [Header("Light Control")] [SerializeField]
-        private MasterSwitcher masterSwitcher;
-
+        [Space] [Header("Light Control")] 
+        [SerializeField] private MasterSwitcher masterSwitcher;
         [SerializeField] private SlaveSwitcher slaveSwitcher;
 
+        private bool isBroken;
 
         private float startIntensity;
         private float randomTimerValue;
@@ -49,9 +49,9 @@ namespace LightingSystem
         public float detectionRadius = 10.0f;
         public float detectionAngle = 90.0f;
 
-        private void Start()
+        private void Awake()
         {
-            _light = GetComponent<Light>();
+            _light = GetComponentInChildren<Light>();
             startIntensity = _light.intensity;
             if (objectWithEmission)
             {
@@ -61,6 +61,7 @@ namespace LightingSystem
 
             pointer = transform.position - Vector3.forward;
         }
+        
 
         private IEnumerator Blinking()
         {
@@ -75,8 +76,9 @@ namespace LightingSystem
                 _light.enabled = !_light.enabled;
                 FetchEmission();
             }
+
             ////ЗАТЫЧКА
-            if (!isOn || _lightType!=LightType.Blinking)
+            if (!isOn || _lightType != LightType.Blinking)
             {
                 Debug.Log("STOP");
                 StopAllCoroutines();
@@ -107,8 +109,8 @@ namespace LightingSystem
             if (toPlayer.magnitude <= detectionRadius)
             {
                 if (Vector3.Dot(toPlayer.normalized, transform.forward) >
-                    Mathf.Cos(detectionAngle * 0.5f * Mathf.Deg2Rad)) {
-
+                    Mathf.Cos(detectionAngle * 0.5f * Mathf.Deg2Rad))
+                {
                     Debug.Log("Player has been detected!");
                 }
             }
@@ -116,10 +118,16 @@ namespace LightingSystem
 
         private void Update()
         {
+            if (isBroken)
+            {
+                return;
+            }
+            
             if (isOn)
             {
                 LookForPlayer();
             }
+
             if (masterSwitcher)
             {
                 isActive = masterSwitcher.IsSwitchedOn;
@@ -150,7 +158,6 @@ namespace LightingSystem
             if (_lightType == LightType.Blinking)
             {
                 if (!isOn) return;
-                Debug.Log("SOSU");
                 StartCoroutine(Blinking());
             }
 
@@ -158,12 +165,36 @@ namespace LightingSystem
             {
                 if (isOn)
                 {
-                    _light.intensity = Mathf.Lerp(minIntensity, maxIntensity, 
+                    _light.intensity = Mathf.Lerp(minIntensity, maxIntensity,
                         Mathf.PerlinNoise(10, Time.time / noiseSpeed));
                 }
 
                 FetchEmission();
             }
+        }
+
+        public bool IsBroken
+        {
+            get => isBroken;
+            set => isBroken = value;
+        }
+
+        public Light Light
+        {
+            get => _light;
+            set => _light = value;
+        }
+
+        public MasterSwitcher MasterSwitcher
+        {
+            get => masterSwitcher;
+            set => masterSwitcher = value;
+        }
+
+        public SlaveSwitcher SlaveSwitcher
+        {
+            get => slaveSwitcher;
+            set => slaveSwitcher = value;
         }
 
         public bool IsActive
@@ -184,27 +215,25 @@ namespace LightingSystem
             set => _lightType = value;
         }
 
-#if UNITY_EDITOR
-        private void OnDrawGizmosSelected()
-        {
-            Color c = new Color(0.8f, 0, 0, 0.4f);
-            UnityEditor.Handles.color = c;
-
-            Vector3 rotatedForward = Quaternion.Euler(
-                0,
-                -detectionAngle * 0.5f,
-                0) * transform.forward;
-            UnityEditor.Handles.DrawSolidDisc(pointer,gameObject.transform.forward,_light.range);
-            UnityEditor.Handles.DrawSolidArc(
-                transform.position,
-                Vector3.up,
-                rotatedForward,
-                detectionAngle,
-                detectionRadius);
-
-        }
-#endif
-
-        
+// #if UNITY_EDITOR
+//         private void OnDrawGizmosSelected()
+//         {
+//             Color c = new Color(0.8f, 0, 0, 0.4f);
+//             UnityEditor.Handles.color = c;
+//
+//             Vector3 rotatedForward = Quaternion.Euler(
+//                 0,
+//                 -detectionAngle * 0.5f,
+//                 0) * transform.forward;
+//             UnityEditor.Handles.DrawSolidDisc(pointer,gameObject.transform.forward,_light.range);
+//             UnityEditor.Handles.DrawSolidArc(
+//                 transform.position,
+//                 Vector3.up,
+//                 rotatedForward,
+//                 detectionAngle,
+//                 detectionRadius);
+//
+//         }
+// #endif
     }
 }
