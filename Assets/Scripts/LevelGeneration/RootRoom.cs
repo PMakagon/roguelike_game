@@ -7,6 +7,7 @@ namespace LevelGeneration
 
     {
         [SerializeField] private Transform floorTransform;
+
         [SerializeField] private FConnector[] connectors;
         [SerializeField] private LightExtended[] lightExtended;
         [SerializeField] private ElectricPanel electricPanel;
