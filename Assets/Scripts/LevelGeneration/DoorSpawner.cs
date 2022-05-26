@@ -10,17 +10,9 @@ namespace LevelGeneration
     public class DoorSpawner : MonoBehaviour
     {
         [SerializeField] private List<Room> spawnedRooms;
-
         [SerializeField] private Entry[] dormPrefabs;
         [SerializeField] private Entry[] electricDoorPrefabs;
-
-        //пока так
-        private LevelGenerator.LevelType _levelType;
-
-        //эти данные должны предоставлять извне
-        private int _amountOfBossRooms;
-        private int _amountOfSpecialRooms;
-        
+        public LevelBlueprint LevelBlueprint { get; set; }
         private bool _enableDoorSpawner;
 
 

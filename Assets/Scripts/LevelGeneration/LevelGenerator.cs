@@ -41,7 +41,8 @@ namespace LevelGeneration
         public bool reportRealTime = true;
         public bool showReport;
 
-        [Header("GENERATION PARAM")] private int _levelSize;
+        [Header("GENERATION PARAM")] 
+        [SerializeField] private int _levelSize;
         private int _hallsAllowed;
         private int _stairsAllowed;
         private int _bossRoomsAllowed;
@@ -50,6 +51,7 @@ namespace LevelGeneration
         private int _stairsCounter;
         private int _bossRoomsCounter;
 
+        public LevelBlueprint LevelBlueprint { get; set; }
 
         private int _spawnCounter;
         private bool _levelReady;
@@ -80,6 +82,7 @@ namespace LevelGeneration
                 enableGeneration = false;
                 if (!_currentRoot)
                 {
+                    SetLevelSize(LevelBlueprint.LevelSize);
                     SpawnRoot();
                     GenerateFirstRooms();
                 }

@@ -26,6 +26,19 @@ namespace LevelGeneration
 
         //параметры NPCSpawner
         public bool HasRootBoss { get; set; }
-        
+
+        public LevelBlueprint(LevelGenerator.LevelType levelType, int levelSize, int bossRoomsCount, bool hasElectricDoors, bool hasGenerator, float lightOverloadLevel, float darknessLevel, bool hasElectricPanel, int jumpscareCount, bool hasRootBoss)
+        {
+            LevelType = levelType;
+            LevelSize = levelSize;
+            BossRoomsCount = bossRoomsCount;
+            HasElectricDoors = hasElectricDoors;
+            HasGenerator = hasGenerator;
+            LightOverloadLevel = lightOverloadLevel;
+            DarknessLevel = darknessLevel;
+            HasElectricPanel = hasElectricPanel;
+            JumpscareCount = jumpscareCount;
+            HasRootBoss = hasRootBoss;
+        }
     }
 }
