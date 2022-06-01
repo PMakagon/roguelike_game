@@ -7,18 +7,19 @@ namespace LiftStateMachine
     public class LiftBoxLight : MonoBehaviour
     {
         [SerializeField]private LiftControllerData _liftControllerData;
+        [SerializeField] private float minIntensity = 0.2f;
+        [SerializeField] private float maxIntensity = 10f;
+        [SerializeField] private float noiseSpeed = 0.15f;
         private Light _light;
         private Color _standartColor;
         private Color _stopColor;
         private bool _isTurnedOn;
-        [SerializeField] private float minIntensity = 0.2f;
-        [SerializeField] private float maxIntensity = 10f;
-        [SerializeField] private float noiseSpeed = 0.15f;
-        [SerializeField]  private Material _materialWithEmission;
+        private Material _materialWithEmission;
        
         private void Awake()
         {
             _light = GetComponent<Light>();
+            _materialWithEmission = GetComponentInParent<Renderer>().material;
             _standartColor = _light.color;
             if (_materialWithEmission)
             {

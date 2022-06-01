@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using FPSController;
 using LightingSystem;
 using UnityEngine;
+using VHS;
 
 public class EnemyController : MonoBehaviour
 {

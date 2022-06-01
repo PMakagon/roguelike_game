@@ -29,8 +29,8 @@ namespace LevelGeneration
 
         private void Awake()
         {
-            // SetDirection();
-            SetZero();
+            SetDirection();
+            // SetZero();
         }
 
         private void SetZero()

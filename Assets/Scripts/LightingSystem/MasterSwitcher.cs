@@ -1,26 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
 using FPSController;
-using LightingSystem;
+using InventorySystem;
 using UnityEngine;
 
-public class MasterSwitcher : Interactable
+namespace LightingSystem
 {
-    [SerializeField] private bool isSwitchedOn;
-    [SerializeField] private Animation switchAnimation;
+    public class MasterSwitcher : Interactable
+    {
+        [SerializeField] private bool isSwitchedOn;
+        [SerializeField] private Animation switchAnimation;
     
     
 
-    public bool IsSwitchedOn
-    {
-        get => isSwitchedOn;
-        set => isSwitchedOn = value;
-    }
+        public bool IsSwitchedOn
+        {
+            get => isSwitchedOn;
+            set => isSwitchedOn = value;
+        }
 
-    public override void OnInteract()
-    {
-        // switchAnimation.Play();
-        isSwitchedOn = !isSwitchedOn;
-        base.OnInteract();
+        public override void OnInteract(InventoryData inventoryData)
+        {
+            // switchAnimation.Play();
+            isSwitchedOn = !isSwitchedOn;
+        }
     }
 }

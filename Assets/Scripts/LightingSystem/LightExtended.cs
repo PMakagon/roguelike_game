@@ -3,6 +3,7 @@ using System.Collections;
 using FPSController;
 using NaughtyAttributes;
 using UnityEngine;
+using VHS;
 using Random = UnityEngine.Random;
 
 namespace LightingSystem

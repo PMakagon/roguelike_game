@@ -1,16 +1,17 @@
 ﻿using System;
 using FPSController;
+using InventorySystem;
 using LevelGeneration;
 using NaughtyAttributes;
 using UnityEngine;
+using VHS;
 
 namespace InteractableObjects
 {
-    public class InteractableDoor : InteractableBase
+    public class InteractableDoor : Interactable
     {
         [SerializeField] private bool isLocked;
         [ShowIf("isLocked")] [SerializeField] private string keyName;
-        [SerializeField] private InventoryData _inventoryData;
         private Animator _animator;
         public bool isOpen;
 
@@ -35,11 +36,11 @@ namespace InteractableObjects
             Debug.Log("CLOSED");
         }
 
-        public override void OnInteract()
+        public override void OnInteract(InventoryData inventoryData)
         {
             if (!isOpen && isLocked)
             {
-                foreach (var key in _inventoryData.Items)
+                foreach (var key in inventoryData.Items)
                 {
                     if (key.Name == keyName)
                     {

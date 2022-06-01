@@ -6,20 +6,31 @@ namespace LevelGeneration
     public class LevelDesigner : MonoBehaviour
     {
         private LevelBlueprint _levelBlueprint;
+        [SerializeField] private bool isAuto;
+
         [Header("LEVEL GENERATION")]
         //параметры LevelGenerator
         [SerializeField] private LevelGenerator.LevelType levelType;
+
         [Range(1, 4)] [SerializeField] private int levelSize;
         [SerializeField] private int bossRoomsCount;
+
+
         //параметры doorSpawner
         [SerializeField] private bool hasElectricDoors;
+
+
         //параметры ElectricSpawner
         [SerializeField] private bool hasElectricPanel;
         [SerializeField] private bool hasGenerator;
         [Range(10, 50)] [SerializeField] private float lightOverloadLevel;
-        [Range(1, 0.1f)] [SerializeField] private float darknessLevel;
+        [Range(1, 0.1f)] [SerializeField] private float darknessLevel = 1;
+
+
         //Параметры EventSpawner
         private int jumpscareCount;
+
+
         //параметры NPCSpawner
         private bool hasRootBoss;
         private bool createBlueprint;
@@ -29,7 +40,10 @@ namespace LevelGeneration
         {
             if (createBlueprint)
             {
-                CreateLevelBluePrint();
+                createBlueprint = false;
+                // CreateLevelBluePrint();
+                _levelBlueprint = new LevelBlueprint(levelType, levelSize, bossRoomsCount, hasElectricDoors, hasGenerator,
+                    lightOverloadLevel, darknessLevel, hasElectricPanel, jumpscareCount, hasRootBoss);
             }
         }
 
@@ -39,17 +53,19 @@ namespace LevelGeneration
             _levelBlueprint = new LevelBlueprint(levelType, levelSize, bossRoomsCount, hasElectricDoors, hasGenerator,
                 lightOverloadLevel, darknessLevel, hasElectricPanel, jumpscareCount, hasRootBoss);
         }
-        
+
         public LevelBlueprint LevelBlueprint
         {
             get => _levelBlueprint;
             set => _levelBlueprint = value;
         }
+
         public bool CreateBlueprint
         {
             get => createBlueprint;
             set => createBlueprint = value;
         }
+
         public LevelGenerator.LevelType LevelType
         {
             get => levelType;
@@ -85,5 +101,7 @@ namespace LevelGeneration
             get => jumpscareCount;
             set => jumpscareCount = value;
         }
+
+        public bool IsAuto => isAuto;
     }
 }

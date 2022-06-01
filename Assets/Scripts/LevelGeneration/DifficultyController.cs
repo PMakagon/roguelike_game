@@ -7,24 +7,25 @@ namespace LevelGeneration
     {
         [SerializeField] private LevelDesigner levelDesigner;
         public int LevelCount { get; set; } 
-        public bool EnableDifficultySetting { get; set; }
-        public bool isDisabled;
+        public bool IsDifficultySettingEnabled { get; set; }
 
         private void Update()
         {
-            if (EnableDifficultySetting)
+            if (IsDifficultySettingEnabled)
             {
-                EnableDifficultySetting = false;
+                IsDifficultySettingEnabled = false;
+                LevelCount++;
                 SetDifficulty();
             }
         }
 
         private void SetDifficulty()
         {
-            if (!isDisabled)
+            if (levelDesigner.IsAuto)
             {
                 levelDesigner.LevelType = SetLevelType();
                 levelDesigner.DarknessLevel = SetDarknessLevel();
+                levelDesigner.LevelSize = SetLevelSize();
             }
         }
 
@@ -42,9 +43,35 @@ namespace LevelGeneration
             float darkness = 1;
             if (SetLevelType()==LevelGenerator.LevelType.Dorm)
             {
-                return darkness /= LevelCount;
+                darkness /= LevelCount;
+                return darkness;
             }
             return darkness;
+        }
+
+        private int SetLevelSize()
+        {
+            if (LevelCount<2)
+            {
+                return 1;
+            }
+
+            if (LevelCount>3 && LevelCount<5)
+            {
+                return 2;
+            }
+
+            if (LevelCount>5 && LevelCount<8)
+            {
+                return 3;
+            }
+
+            if (LevelCount>=8)
+            {
+                return 4;
+            }
+
+            return 1;
         }
     }
 }

@@ -9,18 +9,19 @@ namespace LevelGeneration
 {
     public class DoorSpawner : MonoBehaviour
     {
-        [SerializeField] private List<Room> spawnedRooms;
         [SerializeField] private Entry[] dormPrefabs;
         [SerializeField] private Entry[] electricDoorPrefabs;
+        private List<Room> spawnedRooms;
         public LevelBlueprint LevelBlueprint { get; set; }
-        private bool _enableDoorSpawner;
+        private bool _isDoorSpawnerEnabled;
 
 
         private void Update()
         {
-            if (_enableDoorSpawner)
+            if (_isDoorSpawnerEnabled)
             {
-                _enableDoorSpawner = false;
+                _isDoorSpawnerEnabled = false;
+                spawnedRooms = LevelBlueprint.SpawnedRooms;
                 GenerateFirstDoors();
             }
         }
@@ -60,8 +61,8 @@ namespace LevelGeneration
 
         public bool EnableDoorSpawner
         {
-            get => _enableDoorSpawner;
-            set => _enableDoorSpawner = value;
+            get => _isDoorSpawnerEnabled;
+            set => _isDoorSpawnerEnabled = value;
         }
     }
 }

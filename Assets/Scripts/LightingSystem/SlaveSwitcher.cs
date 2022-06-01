@@ -1,5 +1,5 @@
-﻿using System;
-using FPSController;
+﻿using FPSController;
+using InventorySystem;
 using UnityEngine;
 
 namespace LightingSystem
@@ -14,10 +14,9 @@ namespace LightingSystem
             set => isEnabled = value;
         }
 
-        public override void OnInteract()
+        public override void OnInteract(InventoryData inventoryData)
         {
             isEnabled = !isEnabled;
-            base.OnInteract();
         }
     }
 }

@@ -13,6 +13,4 @@ MonoBehaviour:
   m_Name: InventoryData
   m_EditorClassIdentifier: 
   capacity: 3
-  items:
-  - {fileID: 11400000, guid: d08cad30456ffe34f9d5927ad0e85901, type: 2}
-  keys: []
+  items: []

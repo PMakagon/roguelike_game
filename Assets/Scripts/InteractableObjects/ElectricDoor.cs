@@ -1,11 +1,14 @@
 ﻿using System;
 using FPSController;
+using InventorySystem;
+using LightingSystem;
 using NaughtyAttributes;
 using UnityEngine;
+using VHS;
 
 namespace InteractableObjects
 {
-    public class ElectricDoor : InteractableBase
+    public class ElectricDoor : Interactable
     {
         // [SerializeField] private InventoryData _inventoryData;
         [SerializeField] private MasterSwitcher masterSwitcher;
@@ -31,8 +34,8 @@ namespace InteractableObjects
             _animator.SetBool("Open", isOpen);
             Debug.Log("CLOSED");
         }
-        
-        public override void OnInteract()
+
+        public override void OnInteract(InventoryData inventoryData)
         {
             if (!masterSwitcher.IsSwitchedOn && !isOpen)
             {

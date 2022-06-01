@@ -7,6 +7,7 @@ namespace LevelGeneration
 {
     public class LevelChanger : MonoBehaviour
     {
+        [SerializeField] private LevelGenerationManager levelGenerationManager;
         [SerializeField] private LiftControllerData liftControllerData;
         [SerializeField] private LevelGenerator levelGenerator;
         [SerializeField] private Transform currentLevelStartPoint;
@@ -16,9 +17,10 @@ namespace LevelGeneration
         private Dictionary<string, Transform> _levels;
         private string _nextLevelCode;
         private int _codeLenght = 3;
+        private int _levelCount;
 
         public bool UpdateCode { get; set; }
-        public bool SwitchLevel { get; set; }
+        public bool TestSwitchLevel { get; set; }
 
         private void Awake()
         {
@@ -27,7 +29,7 @@ namespace LevelGeneration
             _nextLevelCode= "Not Created";
             _levels = new Dictionary<string, Transform>();
         }
-
+        //убрать
         private void Start()
         {
             CreateLevelStartPoint();
@@ -35,6 +37,7 @@ namespace LevelGeneration
 
         private void Update()
         {
+            
             if (UpdateCode)
             {
                 CreateNextLevelCode();
@@ -42,19 +45,30 @@ namespace LevelGeneration
 
             if ( liftControllerData.IsCodeEntered)
             {
-                CreateLevelStartPoint();
-                //переместить в LevelManager
-                levelGenerator.enableGeneration = true;
-            
-            }
-
-            if (SwitchLevel)
-            {
-                SwitchLevel = false;
                 if (!newLevelStartPoint)
                 {
                     CreateLevelStartPoint();
                 }
+                //переместить в LevelManager
+                _levelCount += 1;
+                levelGenerationManager.StartGeneration=true;
+
+            }
+            //для тестов
+            if (TestSwitchLevel)
+            {
+                TestSwitchLevel = false;
+                if (!newLevelStartPoint)
+                {
+                    // CreateLevelStartPoint();
+                    var dist = (currentLevelStartPoint.transform.position + Vector3.up*distanceBetweenLevels);
+                    newLevelStartPoint = Instantiate(currentLevelStartPoint.gameObject, dist, Quaternion.identity).transform;
+                    levelGenerator.StartPoint = newLevelStartPoint;
+                    currentLevelStartPoint = newLevelStartPoint;
+                    newLevelStartPoint = null;
+                    CreateNextLevelCode();
+                }
+                _levelCount += 1;
             }
         }
 
@@ -67,7 +81,6 @@ namespace LevelGeneration
             levelGenerator.StartPoint = newLevelStartPoint;
             currentLevelStartPoint = newLevelStartPoint;
             newLevelStartPoint = null;
-            _levels.Add(_nextLevelCode,newLevelStartPoint);
             CreateNextLevelCode();
         }
 
@@ -88,6 +101,12 @@ namespace LevelGeneration
         {
             get => _nextLevelCode;
             set => _nextLevelCode = value;
+        }
+
+        public int LevelCount
+        {
+            get => _levelCount;
+            set => _levelCount = value;
         }
     }
 }

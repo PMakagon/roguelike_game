@@ -1,96 +1,65 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using InventorySystem;
 using UnityEngine;
-using FPSController;
 
-
-[CreateAssetMenu(fileName = "InventoryData", menuName = "InventorySystem/InventoryData")]
-public class InventoryData : ScriptableObject
+namespace InventorySystem
 {
-    [SerializeField] private int capacity = 3;
-    private EquipableBase _equipable;
-    [SerializeField]private List<Item> items;
-    [SerializeField]private List<Key> keys;
-    private bool isNeedUpdate = false;
-
-    public void ResetData() => _equipable = null;
-    public bool IsSameEquipable(EquipableBase _newEquipable) => _equipable == _newEquipable;
-    
-    public bool HasNothing() => items.Count == 0;
-    public bool IsFull() => items.Count >= capacity;
-    public bool IsEmpty() => _equipable == null;
-    public void ClearInventory() => items.Clear();
-    
-    
-    #region Methods
-    
-    private void Awake()
+    [CreateAssetMenu(fileName = "InventoryData", menuName = "InventorySystem/InventoryData")]
+    public class InventoryData : ScriptableObject
     {
-        items = new List<Item>(capacity);
-        keys = new List<Key>(10); ///определяется дизайном интерфейса
-    }
+        [SerializeField] private int capacity = 3;
+        [SerializeField]private List<Item> items;
     
-    public void Equip()
-    {
-        _equipable.OnEquip(this);
-        ResetData();
-    }
-
-    public bool AddItem(Item item)
-    {
-        if (IsFull())
+        private bool _isNeedUpdate = false;
+        public bool HasNothing() => items.Count == 0;
+        public bool IsFull() => items.Count >= capacity;
+        public void ClearInventory() => items.Clear();
+    
+    
+        #region Methods
+    
+        private void Awake()
         {
-            Debug.Log("inventory is full");
-            return false;
+            items = new List<Item>(capacity);
         }
 
-        if (!items.Contains(item))
+        public bool AddItem(Item item)
         {
+            if (IsFull())
+            {
+                Debug.Log("inventory is full");
+                return false;
+            }
+            if (items.Contains(item))
+            {
+                Debug.Log("Already Equipped " + item.Name);
+                return false;
+            }
             items.Add(item);
-            isNeedUpdate = true;
-            Debug.Log(" equipped: " + item.ToString());
+            _isNeedUpdate = true;
             return true;
         }
-        else
+    
+        public void RemoveItem(Item item)
         {
-            Debug.Log("Already Equipped " + item.Name);
-            return false;
+            items.Remove(item);
+            _isNeedUpdate = true;
         }
-    }
+        #endregion
     
-    // пройтись по двум массивам сразу
-    public void RemoveItem(Item item)
-    {
-        items.Remove(item);
-        isNeedUpdate = true;
-    }
-    #endregion
+        #region Properties
+
+        public bool IsNeedUpdate
+        {
+            get => _isNeedUpdate;
+            set => _isNeedUpdate = value;
+        }
+
+        public List<Item> Items
+        {
+            get => items;
+            set => items = value;
+        }
     
-    #region Properties
-    public EquipableBase Equipable
-    {
-        get => _equipable;
-        set => _equipable = value;
+        #endregion
     }
-
-    public bool IsNeedUpdate
-    {
-        get => isNeedUpdate;
-        set => isNeedUpdate = value;
-    }
-
-    public List<Item> Items
-    {
-        get => items;
-        set => items = value;
-    }
-
-    public List<Key> Keys
-    {
-        get => keys;
-        set => keys = value;
-    }
-    #endregion
 }

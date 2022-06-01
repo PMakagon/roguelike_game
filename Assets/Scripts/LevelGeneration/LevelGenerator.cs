@@ -8,7 +8,7 @@ namespace LevelGeneration
 {
     public class LevelGenerator : MonoBehaviour
     {
-        //убрать его отсюда
+        //убрать это отсюда
         public enum LevelType
         {
             Dorm
@@ -17,7 +17,6 @@ namespace LevelGeneration
         [SerializeField] private Transform startPoint;
         [SerializeField] private LevelType levelType;
         [SerializeField] private RootRoom rootRoom;
-        private Vector3 _startPosition;
 
         [Header("PREFABS")] [SerializeField] private Room[] halls;
         [SerializeField] private Room[] big;
@@ -41,8 +40,9 @@ namespace LevelGeneration
         public bool reportRealTime = true;
         public bool showReport;
 
-        [Header("GENERATION PARAM")] 
-        [SerializeField] private int _levelSize;
+        [Header("GENERATION PARAM")] [SerializeField]
+        private int _levelSize;
+
         private int _hallsAllowed;
         private int _stairsAllowed;
         private int _bossRoomsAllowed;
@@ -82,7 +82,7 @@ namespace LevelGeneration
                 enableGeneration = false;
                 if (!_currentRoot)
                 {
-                    SetLevelSize(LevelBlueprint.LevelSize);
+                    GetLevelSize(LevelBlueprint.LevelSize);
                     SpawnRoot();
                     GenerateFirstRooms();
                 }
@@ -149,7 +149,7 @@ namespace LevelGeneration
             Debug.Log("<color=red><b>-------------------</b></color>");
         }
 
-        private void SetLevelSize(int levelSize)
+        private void GetLevelSize(int levelSize)
         {
             switch (levelSize)
             {
@@ -173,9 +173,14 @@ namespace LevelGeneration
                     _bossRoomsAllowed = 3;
                     _stairsAllowed = 5;
                     return;
+                default:
+                    _hallsAllowed = 2;
+                    _bossRoomsAllowed = 1;
+                    _stairsAllowed = 1;
+                    return;
             }
         }
-        
+
         private bool ApproveRoomType(Room.RoomType roomType)
         {
             if (roomType == Room.RoomType.Hall)
@@ -188,6 +193,7 @@ namespace LevelGeneration
                 _hallsCounter++;
                 return true;
             }
+
             return true;
         }
 
@@ -199,8 +205,10 @@ namespace LevelGeneration
             Room.RoomType randomRoomType;
             do
             {
-                var randomAllowedTypeIndex = Random.Range(0, connector.AllowedRoomTypes.Length); //случайный разрешенный тип комнаты
-                randomRoomType = connector.AllowedRoomTypes[randomAllowedTypeIndex]; //определяем тип комнаты для коннектора
+                var randomAllowedTypeIndex =
+                    Random.Range(0, connector.AllowedRoomTypes.Length); //случайный разрешенный тип комнаты
+                randomRoomType =
+                    connector.AllowedRoomTypes[randomAllowedTypeIndex]; //определяем тип комнаты для коннектора
             } while (!ApproveRoomType(randomRoomType));
 
             var roomsOfChosenType = _roomsMap[randomRoomType]; // берем массив с выбранными комнатами
@@ -230,14 +238,11 @@ namespace LevelGeneration
                 {
                     connector.IterationsBeforeWall--;
                 }
-
                 StartCoroutine(SpawnRoom(connector));
                 _isGenerating = false;
                 _spawnCounter--;
                 yield break;
             }
-
-            //возможно проверка isInvalid слишком рано, стоит попробовать сделать isInvalid по умолчанию true или проверять позже
             yield return null;
             if (newRoom.IsReady)
             {
