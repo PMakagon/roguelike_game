@@ -2,27 +2,26 @@
 using FPSController;
 using FPSController.Interaction_System;
 using InventorySystem;
-using LevelGeneration;
+using LightingSystem;
 using NaughtyAttributes;
 using UnityEngine;
 using VHS;
 
 namespace InteractableObjects
 {
-    public class InteractableDoor : Interactable
+    public class ElectricDoor : Interactable
     {
-        [SerializeField] private bool isLocked;
-        [ShowIf("isLocked")] [SerializeField] private string keyName;
+        // [SerializeField] private InventoryData _inventoryData;
+        [SerializeField] private MasterSwitcher masterSwitcher;
         private Animator _animator;
+        private bool _isPoweredOn;
         public bool isOpen;
 
         private void Awake()
         {
-            // _animator = GetComponentInChildren<Animator>();
             _animator = GetComponentInParent<Animator>();
         }
         
-
         private void OpenDoor()
         {
             isOpen = true;
@@ -39,19 +38,8 @@ namespace InteractableObjects
 
         public override void OnInteract(InventoryData inventoryData)
         {
-            if (!isOpen && isLocked)
+            if (!masterSwitcher.IsSwitchedOn && !isOpen)
             {
-                foreach (var key in inventoryData.Items)
-                {
-                    if (key.Name == keyName)
-                    {
-                        isLocked = false;
-                        OpenDoor();
-                        Debug.Log("Opened with " + key.Name);
-                        return;
-                    }
-                }
-
                 _animator.SetBool("TryOpen", true);
                 return;
             }

@@ -13,7 +13,7 @@ namespace LiftStateMachine
         [SerializeField] private GameObject[] levels;
         [SerializeField] private LiftControllerData liftControllerData;
         [SerializeField] private float liftSpeed = 1f;
-        [SerializeField] private float holdTime;
+        [SerializeField] private float holdTime = 1f;
         private Transform _currentLevel;
         private Transform _destinationLevel;
         private ILiftState _state;
@@ -130,7 +130,6 @@ namespace LiftStateMachine
         
         private bool IsOnLevel()
         {
-            // return currentLevel.position == levels[liftControllerData.CurrentFloor].transform.position;
             return _currentLevel.position == liftControllerData.CurrentLevel.position;
         }
         

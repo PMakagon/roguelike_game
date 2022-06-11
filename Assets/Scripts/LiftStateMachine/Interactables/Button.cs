@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using FPSController;
+using FPSController.Interaction_System;
+using InventorySystem;
 using UnityEditor;
 using UnityEngine;
 
@@ -30,13 +32,12 @@ namespace LiftStateMachine
             _buttonLight.enabled = false;
         }
 
-        public override void OnInteract()
+        public override void OnInteract(InventoryData inventoryData)
         {
             _buttonLight.enabled = true;
             _panel.buttonPressed = true;
             _panel.Command = buttonCommand;
             _panel.CurrentSelection.Add(this);
-            base.OnInteract();
         }
 
 

@@ -1,11 +1,14 @@
 ﻿using System;
 using FPSController;
+using FPSController.Interaction_System;
+using InventorySystem;
 using UnityEngine;
 using UnityEngine.Events;
+using VHS;
 
 namespace LiftStateMachine
 {
-    public class FrontPanel : InteractableBase
+    public class FrontPanel : Interactable
     {
         [SerializeField] private Light buttonLight;
         [SerializeField] private LiftControllerData liftControllerData;
@@ -22,7 +25,7 @@ namespace LiftStateMachine
             }
         }
 
-        public override void OnInteract()
+        public override void OnInteract(InventoryData inventoryData)
         {
             // buttonAnimation.Play();
             if (liftControllerData.CurrentFloor != thisFloorNumber)
@@ -31,7 +34,6 @@ namespace LiftStateMachine
                 liftControllerData.DestinationFloor = thisFloorNumber;
                 liftControllerData.IsLiftCalled = true;
             }
-            
         }
 
         

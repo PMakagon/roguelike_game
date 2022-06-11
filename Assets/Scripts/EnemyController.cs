@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using FPSController;
+using FPSController.First_Person_Controller;
 using LightingSystem;
 using UnityEngine;
+using VHS;
 
 public class EnemyController : MonoBehaviour
 {

@@ -6,7 +6,6 @@ namespace InventorySystem.Equipable
     {
         float HoldDuration { get; }
         bool HoldInteract { get; }
-        bool MultipleUse { get; }
         string TooltipMessage { get; }
 
         void Equip();

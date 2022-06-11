@@ -1,5 +1,7 @@
 ﻿using System;
 using FPSController;
+using FPSController.Interaction_System;
+using InventorySystem;
 using UnityEngine;
 
 namespace LiftStateMachine
@@ -22,12 +24,10 @@ namespace LiftStateMachine
             _buttonLight.enabled  = _startPressed;
         }
 
-        public override void OnInteract()
+        public override void OnInteract(InventoryData inventoryData)
         {
             _buttonLight.enabled = true;
             _startPressed = true;
-            base.OnInteract();
-            // Debug.Log("Start pressed");
         }
 
         public bool StartPressed

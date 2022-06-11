@@ -1,4 +1,5 @@
 ﻿using System;
+using LevelGeneration;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,9 +15,6 @@ namespace LiftStateMachine
         [SerializeField] private Text isLiftCalled;
         [SerializeField] public Text IsReadyToMove;
         [SerializeField] public Text IsStopped;
-        [SerializeField] private Text currentFloor;
-        [SerializeField] private Text destinationFloor;
-        [SerializeField] private Text panelCommand;
         [SerializeField] private Text isOnLevel;
         [SerializeField] private Text isCodeEntered;
         [SerializeField] private Text EnteredCombination;
@@ -40,18 +38,14 @@ namespace LiftStateMachine
         private void PrintData()
         {
             _currentState.text = "currentState " + _liftControllerData.CurrentState.GetType().Name;
-            currentFloor.text = "currentFloor " +_liftControllerData.CurrentFloor.ToString();
-            destinationFloor.text = "destinationFloor " +_liftControllerData.DestinationFloor.ToString();
             isDoorsOpen.text = "isDoorsOpen " +_liftControllerData.IsDoorsOpen.ToString();
             isLiftCalled.text ="isLiftCalled " + _liftControllerData.IsLiftCalled.ToString();
             IsReadyToMove.text ="IsReadyToMove " + _liftControllerData.IsReadyToMove.ToString();
             IsStopped.text = "IsStopped " +_liftControllerData.IsStopped.ToString();
-            panelCommand.text = "panelCommand " + _panel.Command.ToString();
             isOnLevel.text = "isOnLevel " + _liftControllerData.IsOnLevel.ToString();
             isCodeEntered.text = "isCodeEntered " + _liftControllerData.IsCodeEntered.ToString();
             nextLevelCode.text = "nextLevelCode " + levelChanger.NextLevelCode;
             EnteredCombination.text = "EnteredCombination " + _liftControllerData.EnteredCombination;
-           
             
         }
     }
