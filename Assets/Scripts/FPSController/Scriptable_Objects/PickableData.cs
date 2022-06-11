@@ -1,7 +1,7 @@
 ﻿using FPSController.Interaction_System;
 using UnityEngine;
 
-namespace VHS
+namespace FPSController.Scriptable_Objects
 {
     [CreateAssetMenu(fileName = "PickableData", menuName = "FirstPersonController/Data/PickableData", order = 0)]
     public class PickableData : ScriptableObject

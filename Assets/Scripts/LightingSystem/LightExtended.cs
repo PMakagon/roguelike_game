@@ -4,7 +4,6 @@ using FPSController;
 using FPSController.First_Person_Controller;
 using NaughtyAttributes;
 using UnityEngine;
-using VHS;
 using Random = UnityEngine.Random;
 
 namespace LightingSystem

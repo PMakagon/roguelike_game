@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using VHS;
+﻿using FPSController.Scriptable_Objects;
+using UnityEngine;
 
 namespace FPSController.First_Person_Controller
 {    

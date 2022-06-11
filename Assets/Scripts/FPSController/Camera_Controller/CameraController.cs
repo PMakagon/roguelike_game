@@ -1,7 +1,6 @@
 ﻿using FPSController.Scriptable_Objects;
 using NaughtyAttributes;
 using UnityEngine;
-using VHS;
 
 namespace FPSController.Camera_Controller
 {    

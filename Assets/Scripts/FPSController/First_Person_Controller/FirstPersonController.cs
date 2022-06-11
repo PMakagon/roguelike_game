@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using FPSController.Camera_Controller;
+using FPSController.Scriptable_Objects;
 using NaughtyAttributes;
 using UnityEngine;
-using VHS;
 
 namespace FPSController.First_Person_Controller
 {

@@ -1,32 +1,36 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-
-namespace VHS
+namespace FPSController.Scriptable_Objects
 {    
     [CreateAssetMenu(fileName = "InteractionInputData", menuName = "InteractionSystem/InputData")]
     public class InteractionInputData : ScriptableObject
     {
-        private bool m_interactedClicked;
-        private bool m_interactedRelease;
+        private bool _interactedClicked;
+        private bool _interactedRelease;
+        private bool _flashlightClicked;
+
+        public bool FlashlightClicked
+        {
+            get => _flashlightClicked;
+            set => _flashlightClicked = value;
+        }
 
         public bool InteractedClicked
         {
-            get => m_interactedClicked;
-            set => m_interactedClicked = value;
+            get => _interactedClicked;
+            set => _interactedClicked = value;
         }
 
         public bool InteractedReleased
         {
-            get => m_interactedRelease;
-            set => m_interactedRelease = value;
+            get => _interactedRelease;
+            set => _interactedRelease = value;
         }
 
         public void ResetInput()
         {
-            m_interactedClicked = false;
-            m_interactedRelease = false;
+            _interactedClicked = false;
+            _interactedRelease = false;
         }
     }
 }
