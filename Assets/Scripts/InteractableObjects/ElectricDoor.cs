@@ -5,7 +5,6 @@ using InventorySystem;
 using LightingSystem;
 using NaughtyAttributes;
 using UnityEngine;
-using VHS;
 
 namespace InteractableObjects
 {

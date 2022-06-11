@@ -4,7 +4,6 @@ using FPSController.Interaction_System;
 using InventorySystem;
 using UnityEngine;
 using UnityEngine.Events;
-using VHS;
 
 namespace LiftStateMachine
 {

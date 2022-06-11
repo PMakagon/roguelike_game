@@ -1,11 +1,7 @@
-﻿using System;
-using FPSController;
-using FPSController.Interaction_System;
+﻿using FPSController.Interaction_System;
 using InventorySystem;
-using LevelGeneration;
 using NaughtyAttributes;
 using UnityEngine;
-using VHS;
 
 namespace InteractableObjects
 {

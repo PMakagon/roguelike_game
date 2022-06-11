@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-using NaughtyAttributes;
+﻿using NaughtyAttributes;
+using UnityEngine;
 
-namespace VHS
+namespace FPSController.Scriptable_Objects
 {
     [CreateAssetMenu(fileName = "HeadBobData", menuName = "FirstPersonController/Data/HeadBobData", order = 3)]
     public class HeadBobData : ScriptableObject

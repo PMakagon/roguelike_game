@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace VHS
+namespace FPSController.Scriptable_Objects
 {
     public enum TransformTarget
     {

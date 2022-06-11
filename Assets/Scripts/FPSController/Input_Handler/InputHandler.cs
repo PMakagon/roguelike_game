@@ -1,6 +1,5 @@
 using FPSController.Scriptable_Objects;
 using UnityEngine;
-using VHS;
 
 namespace FPSController.Input_Handler
 {    
@@ -34,6 +33,7 @@ namespace FPSController.Input_Handler
             {
                 interactionInputData.InteractedClicked = Input.GetKeyDown(KeyCode.E);
                 interactionInputData.InteractedReleased = Input.GetKeyUp(KeyCode.E);
+                interactionInputData.FlashlightClicked = Input.GetKeyDown(KeyCode.F);
             }
 
             void GetCameraInput()
