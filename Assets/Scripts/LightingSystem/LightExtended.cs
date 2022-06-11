@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using FPSController;
+using FPSController.First_Person_Controller;
 using NaughtyAttributes;
 using UnityEngine;
 using VHS;
@@ -46,10 +47,6 @@ namespace LightingSystem
         private Material _materialWithEmission;
         private Color _color;
 
-        public Vector3 pointer;
-        public float detectionRadius = 10.0f;
-        public float detectionAngle = 90.0f;
-
         private void Awake()
         {
             _light = GetComponentInChildren<Light>();
@@ -59,8 +56,10 @@ namespace LightingSystem
                 _materialWithEmission = objectWithEmission.GetComponent<Renderer>().material;
                 _color = _materialWithEmission.color;
             }
-
-            pointer = transform.position - Vector3.forward;
+            if (slaveSwitcher)
+            {
+                slaveSwitcher.IsPowered = true;
+            }
         }
         
 
@@ -71,17 +70,14 @@ namespace LightingSystem
             yield return new WaitForSeconds(startTimerValue);
             while (isOn)
             {
-                Debug.Log("WHILE IS ON");
                 randomTimerValue = Random.Range(randomTimerValueMIN, randomTimerValueMAX);
                 yield return new WaitForSeconds(randomTimerValue);
                 _light.enabled = !_light.enabled;
                 FetchEmission();
             }
-
             ////ЗАТЫЧКА
             if (!isOn || _lightType != LightType.Blinking)
             {
-                Debug.Log("STOP");
                 StopAllCoroutines();
                 FetchEmission();
             }
@@ -104,19 +100,23 @@ namespace LightingSystem
 
         public void LookForPlayer()
         {
+            bool playerSpotted = false;
             Vector3 lightPosition = transform.position;
             Vector3 toPlayer = FirstPersonController.Instance.transform.position - lightPosition;
             toPlayer.y = 0;
-            if (toPlayer.magnitude <= detectionRadius)
+            if (toPlayer.magnitude <= _light.range*0.9)
             {
-                if (Vector3.Dot(toPlayer.normalized, transform.forward) >
-                    Mathf.Cos(detectionAngle * 0.5f * Mathf.Deg2Rad))
-                {
-                    Debug.Log("Player has been detected!");
-                }
+                playerSpotted = true;
+                Debug.DrawRay(lightPosition,toPlayer,playerSpotted ? Color.green : Color.red);
+                // if (Vector3.Dot(toPlayer.normalized, transform.forward) >
+                //     Mathf.Cos(detectionAngle * 0.5f * Mathf.Deg2Rad))
+                // {
+                //     Debug.Log("Player has been detected!");
+                // }
             }
         }
 
+        //упрстить и переместить что нибудь из апдейта
         private void Update()
         {
             if (isBroken)
@@ -133,10 +133,15 @@ namespace LightingSystem
             {
                 isActive = masterSwitcher.IsSwitchedOn;
             }
+            else
+            {
+                isActive = true;
+            }
 
             if (slaveSwitcher)
             {
                 isOn = slaveSwitcher.IsEnabled;
+                slaveSwitcher.IsPowered = isActive;
             }
             else
             {
@@ -147,10 +152,8 @@ namespace LightingSystem
             {
                 isOn = false;
             }
-
             _light.enabled = isOn;
-
-
+            
             if (_lightType == LightType.Static)
             {
                 FetchEmission();
@@ -169,7 +172,6 @@ namespace LightingSystem
                     _light.intensity = Mathf.Lerp(minIntensity, maxIntensity,
                         Mathf.PerlinNoise(10, Time.time / noiseSpeed));
                 }
-
                 FetchEmission();
             }
         }
@@ -215,26 +217,5 @@ namespace LightingSystem
             get => _lightType;
             set => _lightType = value;
         }
-
-// #if UNITY_EDITOR
-//         private void OnDrawGizmosSelected()
-//         {
-//             Color c = new Color(0.8f, 0, 0, 0.4f);
-//             UnityEditor.Handles.color = c;
-//
-//             Vector3 rotatedForward = Quaternion.Euler(
-//                 0,
-//                 -detectionAngle * 0.5f,
-//                 0) * transform.forward;
-//             UnityEditor.Handles.DrawSolidDisc(pointer,gameObject.transform.forward,_light.range);
-//             UnityEditor.Handles.DrawSolidArc(
-//                 transform.position,
-//                 Vector3.up,
-//                 rotatedForward,
-//                 detectionAngle,
-//                 detectionRadius);
-//
-//         }
-// #endif
     }
 }

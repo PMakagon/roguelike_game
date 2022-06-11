@@ -1,5 +1,6 @@
 ﻿using System;
 using FPSController;
+using FPSController.Interaction_System;
 using InventorySystem;
 using LevelGeneration;
 using NaughtyAttributes;

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using FPSController;
+using FPSController.Interaction_System;
 using InventorySystem;
 using UnityEditor;
 using UnityEngine;

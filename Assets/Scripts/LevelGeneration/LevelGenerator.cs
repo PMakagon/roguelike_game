@@ -23,6 +23,7 @@ namespace LevelGeneration
         [SerializeField] private Room[] medium;
         [SerializeField] private Room[] small;
         [SerializeField] private Room[] cross;
+        [SerializeField] private Room[] corners;
         [SerializeField] private Wall wall;
 
         private Dictionary<Room.RoomType, Room[]> _roomsMap = new Dictionary<Room.RoomType, Room[]>();
@@ -63,6 +64,7 @@ namespace LevelGeneration
             _roomsMap.Add(Room.RoomType.Medium, medium);
             _roomsMap.Add(Room.RoomType.Small, small);
             _roomsMap.Add(Room.RoomType.Cross, cross);
+            _roomsMap.Add(Room.RoomType.Corner, corners);
         }
 
         public void ResetLevelGenerator()

@@ -1,4 +1,5 @@
 ﻿using FPSController;
+using FPSController.Interaction_System;
 using InventorySystem;
 using NaughtyAttributes;
 using UnityEngine;

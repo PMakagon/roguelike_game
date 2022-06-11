@@ -8,7 +8,7 @@ namespace LevelGeneration
         public enum RoomType
         {
             Hall,
-            // Corner,
+            Corner,
             Cross,
             Big,
             Medium,
@@ -21,7 +21,7 @@ namespace LevelGeneration
         [SerializeField] private FConnector[] exits;
         [SerializeField] private bool hasExit;
         [SerializeField] private bool hasDoorMarks;
-        [SerializeField] private RoomTrigger roomTrigger;//удалить если не нужно
+        // [SerializeField] private RoomTrigger roomTrigger;//удалить если не нужно
         [SerializeField] private MConnector[] doorMarks;
         // [SerializeField] private LightSpawnPoint[] lightSpawnPoints;
         [SerializeField] private SlaveSwitcher[] slaveSwitchers;
