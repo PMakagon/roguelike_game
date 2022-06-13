@@ -7,13 +7,6 @@ namespace FPSController.Scriptable_Objects
     {
         private bool _interactedClicked;
         private bool _interactedRelease;
-        private bool _flashlightClicked;
-
-        public bool FlashlightClicked
-        {
-            get => _flashlightClicked;
-            set => _flashlightClicked = value;
-        }
 
         public bool InteractedClicked
         {
