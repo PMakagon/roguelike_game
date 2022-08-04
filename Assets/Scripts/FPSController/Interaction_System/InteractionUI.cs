@@ -51,7 +51,7 @@ namespace FPSController.Interaction_System
             m_canvasTransform.LookAt(_player,Vector3.up);
         }
 
-        public void UnparentToltip()
+        public void UnparentTooltip()
         {
             m_canvasTransform.SetParent(null);
         }

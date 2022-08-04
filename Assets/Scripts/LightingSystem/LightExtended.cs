@@ -4,52 +4,55 @@ using FPSController;
 using FPSController.First_Person_Controller;
 using NaughtyAttributes;
 using UnityEngine;
+using UnityEngine.Rendering;
 using Random = UnityEngine.Random;
 
 namespace LightingSystem
 {
     public class LightExtended : MonoBehaviour
     {
-        public enum LightType
+        public enum LightMode // StateMode
         {
             Static,
             Blinking,
             Flickering
         }
 
-        [SerializeField] private LightType _lightType = LightType.Static;
+        [SerializeField] private LightMode _currentLightMode = LightMode.Static;
         [SerializeField] private Light _light;
+        [SerializeField] private Light _hotSpotLight;
         [SerializeField] private GameObject objectWithEmission;
+        [SerializeField] private LensFlareComponentSRP lensFlare;
 
-        [Header("Flickering Settings")] [SerializeField]
-        private float minIntensity = 0.3f;
-
+        [Header("Flickering Settings")] 
+        [SerializeField] private float minIntensity = 0.3f;
         [SerializeField] private float maxIntensity = 10f;
         [SerializeField] private float noiseSpeed = 0.15f;
 
-        [Header("Blinking Settings")] [SerializeField]
-        private float randomTimerValueMIN = 5f;
-
+        [Header("Blinking Settings")] 
+        [SerializeField] private float randomTimerValueMIN = 5f;
         [SerializeField] private float randomTimerValueMAX = 20f;
-        [SerializeField] private bool isActive;
-        [SerializeField] public bool isOn;
 
         [Space] [Header("Light Control")] 
+        [SerializeField] private bool directControl = false;
+        [ShowIf("directControl")] [SerializeField] private bool isPowered;
+        [SerializeField] private bool isOn;
         [SerializeField] private MasterSwitcher masterSwitcher;
         [SerializeField] private SlaveSwitcher slaveSwitcher;
+        
+        
+        [SerializeField] private bool isBroken;
 
-        private bool isBroken;
-
-        private float startIntensity;
-        private float randomTimerValue;
-        private float startTimerValue = 0.01f;
+        private float _startIntensity;
+        private float _randomTimerValue;
+        private float _startTimerValue = 0.01f;
         private Material _materialWithEmission;
         private Color _color;
 
         private void Awake()
         {
-            _light = GetComponentInChildren<Light>();
-            startIntensity = _light.intensity;
+            // _light = GetComponentInChildren<Light>();
+            _startIntensity = _light.intensity;
             if (objectWithEmission)
             {
                 _materialWithEmission = objectWithEmission.GetComponent<Renderer>().material;
@@ -61,25 +64,47 @@ namespace LightingSystem
             }
         }
         
-
         private IEnumerator Blinking()
         {
-            _light.enabled = isOn;
-            FetchEmission();
-            yield return new WaitForSeconds(startTimerValue);
+            ChangeState(isOn);
+            yield return new WaitForSeconds(_startTimerValue);
             while (isOn)
             {
-                randomTimerValue = Random.Range(randomTimerValueMIN, randomTimerValueMAX);
-                yield return new WaitForSeconds(randomTimerValue);
-                _light.enabled = !_light.enabled;
-                FetchEmission();
+                _randomTimerValue = Random.Range(randomTimerValueMIN, randomTimerValueMAX);
+                yield return new WaitForSeconds(_randomTimerValue);
+                ChangeState(GetState());
+                ////ЗАТЫЧКА
+                if (!isOn || _currentLightMode != LightMode.Blinking)
+                {
+                    StopAllCoroutines();
+                    FetchEmission();
+                }
             }
-            ////ЗАТЫЧКА
-            if (!isOn || _lightType != LightType.Blinking)
+        }
+
+        public void SwitchState()
+        {
+            isPowered = !isPowered;
+        }
+
+        private void ChangeState(bool state)
+        {
+            _light.enabled = state;
+            if (_hotSpotLight)
             {
-                StopAllCoroutines();
-                FetchEmission();
+                _hotSpotLight.enabled = state;
             }
+            
+            if (lensFlare)
+            {
+                lensFlare.enabled = state;
+            }
+            FetchEmission();
+        } 
+        
+        public bool GetState()
+        {
+            return _light.enabled;
         }
 
         private void FetchEmission()
@@ -115,7 +140,7 @@ namespace LightingSystem
             }
         }
 
-        //упрстить и переместить что нибудь из апдейта
+        //Причесать
         private void Update()
         {
             if (isBroken)
@@ -130,41 +155,45 @@ namespace LightingSystem
 
             if (masterSwitcher)
             {
-                isActive = masterSwitcher.IsSwitchedOn;
+                isPowered = masterSwitcher.IsSwitchedOn; //если есть автомат то запитываемся от него
             }
             else
             {
-                isActive = true;
+                if (!directControl)
+                {
+                    isPowered = true;  // если нет всегда запитано
+                }
             }
 
             if (slaveSwitcher)
             {
                 isOn = slaveSwitcher.IsEnabled;
-                slaveSwitcher.IsPowered = isActive;
+                slaveSwitcher.IsPowered = isPowered; //если есть выключатель 
             }
             else
             {
-                isOn = isActive;
+                isOn = isPowered; // если нет то автомат управляет светом
             }
 
-            if (!isActive)
+            if (!isPowered)
             {
                 isOn = false;
             }
-            _light.enabled = isOn;
             
-            if (_lightType == LightType.Static)
+            ChangeState(isOn);
+            
+            if (_currentLightMode == LightMode.Static)
             {
                 FetchEmission();
             }
 
-            if (_lightType == LightType.Blinking)
+            if (_currentLightMode == LightMode.Blinking)
             {
                 if (!isOn) return;
                 StartCoroutine(Blinking());
             }
 
-            if (_lightType == LightType.Flickering)
+            if (_currentLightMode == LightMode.Flickering)
             {
                 if (isOn)
                 {
@@ -199,10 +228,10 @@ namespace LightingSystem
             set => slaveSwitcher = value;
         }
 
-        public bool IsActive
+        public bool IsPowered
         {
-            get => isActive;
-            set => isActive = value;
+            get => isPowered;
+            set => isPowered = value;
         }
 
         public bool IsOn
@@ -211,10 +240,10 @@ namespace LightingSystem
             set => isOn = value;
         }
 
-        public LightType LightTypeP
+        public LightMode LightModeP
         {
-            get => _lightType;
-            set => _lightType = value;
+            get => _currentLightMode;
+            set => _currentLightMode = value;
         }
     }
 }

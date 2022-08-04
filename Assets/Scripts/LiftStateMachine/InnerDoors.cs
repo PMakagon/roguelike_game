@@ -7,8 +7,6 @@ namespace LiftStateMachine
 {
     public class InnerDoors : MonoBehaviour
     {
-        [SerializeField] private GameObject _door1;
-        [SerializeField] private GameObject _door2;
         [SerializeField] private LiftControllerData liftControllerData;
         private Animator _animator;
         private bool _isOpen;
@@ -16,37 +14,56 @@ namespace LiftStateMachine
         private void Awake()
         {
             _animator = GetComponent<Animator>();
+            liftControllerData.OnDoorsAction += ActivateDoors;
+        }
+        
+        private void OnDisable()
+        {
+            liftControllerData.OnDoorsAction -= ActivateDoors;
         }
 
         public void ActivateDoors()
         {
-            if (liftControllerData.CurrentState.GetType() == typeof(MovingState))
+            if (liftControllerData.IsDoorsOpen)
+            {
+                OpenDoors();
+            }
+            else
             {
                 CloseDoors();
             }
             
-            if (liftControllerData.CurrentState.GetType() == typeof(IdleState))
-            {
-                OpenDoors();
-            }
         }
         
-
-        public void OpenDoors()
+        private void OpenDoors()
         {
-            _isOpen = true;
-            _animator.SetBool("IsOpened", _isOpen);
+            _animator.SetBool("IsOpened",liftControllerData.IsDoorsOpen);
             liftControllerData.IsDoorsOpen = true; 
             Debug.Log("Doors Open");
         }
 
-        public void CloseDoors()
+        private void CloseDoors()
         {
-            _isOpen = false;
-            _animator.SetBool("IsOpened", _isOpen);
+            _animator.SetBool("IsOpened",liftControllerData.IsDoorsOpen);
             liftControllerData.IsDoorsOpen = false;
             Debug.Log("Doors Closed");
         }
+
+        // public void OpenDoors()
+        // {
+        //     _isOpen = true;
+        //     _animator.SetBool("IsOpened", _isOpen);
+        //     liftControllerData.IsDoorsOpen = true; 
+        //     Debug.Log("Doors Open");
+        // }
+        //
+        // public void CloseDoors()
+        // {
+        //     _isOpen = false;
+        //     _animator.SetBool("IsOpened", _isOpen);
+        //     liftControllerData.IsDoorsOpen = false;
+        //     Debug.Log("Doors Closed");
+        // }
         
     }
 }

@@ -27,6 +27,16 @@ namespace PlayerPowerSystem
                                 StartCoroutine(nameof(ReducePowerOverTime));
                         }
                 }
+
+
+                public void TESTCHARGEBATTERY(float charge)
+                {
+                        powerData.CurrentPower += charge;
+                }
+                public void TESTCHARGEBATTERYFULL()
+                {
+                        powerData.ResetData();
+                }
                 
         }
 }

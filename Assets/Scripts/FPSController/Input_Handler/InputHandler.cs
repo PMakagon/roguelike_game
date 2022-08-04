@@ -93,7 +93,7 @@ namespace FPSController.Input_Handler
             equipmentInputData.ThirdEquipmentReleased = Input.GetKeyUp(KeyCode.Alpha3);
             equipmentInputData.FourthEquipmentClicked = Input.GetKeyDown(KeyCode.Alpha4);
             equipmentInputData.FourthEquipmentReleased = Input.GetKeyUp(KeyCode.Alpha4);
-
+            
         }
         
 

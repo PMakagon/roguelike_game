@@ -39,7 +39,8 @@ namespace FPSController.Interaction_System
 
         void Awake()
         {
-            _cam = FindObjectOfType<Camera>();
+            // _cam = FindObjectOfType<Camera>();
+            _cam = GetComponentInChildren<Camera>();
         }
 
         void Update()
@@ -66,17 +67,20 @@ namespace FPSController.Interaction_System
 
                 if (interactable != null)
                 {
+                    uiPanel.SetPanelActive(true);
                     if (interactionData.IsEmpty())
                     {
                         interactionData.Interactable = interactable;
-                        // uiPanel.SetTooltip(_interactable.TooltipMessage);
+                        uiPanel.SetTooltipActive(true); // включил текст
+                        uiPanel.SetTooltip(interactable.TooltipMessage); 
                     }
                     else
                     {
                         if (!interactionData.IsSameInteractable(interactable))
                         {
                             interactionData.Interactable = interactable;
-                            // uiPanel.SetTooltip(_interactable.TooltipMessage);
+                            uiPanel.SetTooltipActive(true);// включил текст
+                            uiPanel.SetTooltip(interactable.TooltipMessage);
                         }
                     }
                     return;
@@ -106,7 +110,7 @@ namespace FPSController.Interaction_System
             {
                 _interacting = false;
                 _holdTimer = 0f;
-                // uiPanel.UpdateProgressBar(0f);
+                uiPanel.UpdateProgressBar(0f);
             }
 
             if (_interacting)
@@ -116,20 +120,23 @@ namespace FPSController.Interaction_System
 
                 if (interactionData.Interactable.HoldInteract)
                 {
+                    uiPanel.SetProgressBarActive(true);
                     _holdTimer += Time.deltaTime;
 
-                    float heldPercent = _holdTimer / interactionData.Interactable.HoldDuration;
-                    // uiPanel.UpdateProgressBar(heldPercent);
+                    float heldPercent =  (_holdTimer / interactionData.Interactable.HoldDuration) * 10;
+                    uiPanel.UpdateProgressBar(heldPercent);
 
-                    if (heldPercent > 1f)
+                    if (heldPercent > uiPanel.ProgressBar.maxValue)
                     {
                         interactionData.Interact(_inventoryData);
+                        uiPanel.SetProgressBarActive(false);
                         _interacting = false;
                     }
                 }
                 else
                 {
                     interactionData.Interact(_inventoryData);
+                    uiPanel.SetProgressBarActive(false);
                     _interacting = false;
                 }
             }

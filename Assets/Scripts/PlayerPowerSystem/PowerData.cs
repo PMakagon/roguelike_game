@@ -35,6 +35,10 @@ namespace PlayerPowerSystem
                 _isPowerOn = false;
             }
 
+            if (_currentPower > _maxPower)
+            {
+                _currentPower = _maxPower;
+            }
             onPowerChange?.Invoke();
         }
 

@@ -8,6 +8,7 @@ namespace LiftStateMachine
     public class DebugWindow : MonoBehaviour
     {
         [SerializeField] private LiftControllerData _liftControllerData;
+        [SerializeField] private GameObject debugPanel;
         [SerializeField] private LevelChanger levelChanger;
         [SerializeField] private InnerPanel _panel;
         [SerializeField] private Text _currentState;
@@ -20,16 +21,17 @@ namespace LiftStateMachine
         [SerializeField] private Text EnteredCombination;
         [SerializeField] private Text nextLevelCode;
         
-        private bool isActive = true;
+        private bool _isActive;
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Tilde))
+            if (Input.GetKeyDown(KeyCode.Home))
             {
-                isActive=!isActive;
+                _isActive=!_isActive;
+                debugPanel.SetActive(_isActive);
             }
 
-            if (isActive)
+            if (_isActive)
             {
                 PrintData();
             }

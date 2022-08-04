@@ -1,4 +1,11 @@
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using InventorySystem.Items;
+using PlayerEquipment;
 using UnityEngine;
 
 namespace InventorySystem
@@ -6,60 +13,108 @@ namespace InventorySystem
     [CreateAssetMenu(fileName = "InventoryData", menuName = "InventorySystem/InventoryData")]
     public class InventoryData : ScriptableObject
     {
-        [SerializeField] private int capacity = 3;
-        [SerializeField]private List<Item> items;
-    
-        private bool _isNeedUpdate = false;
-        public bool HasNothing() => items.Count == 0;
-        public bool IsFull() => items.Count >= capacity;
-        public void ClearInventory() => items.Clear();
-    
-    
+        public string savePath;
+        [SerializeField] private int capacity = 10;
+        private List<IItem> _items;
+        private string _containerName;
+        private List<IItem> _containerItems;
+        private EquipmentItem[] _equipmentSlots;
+        private IPlayerEquipment _currentEquipment;
+
+        public Action onItemAdd;
+        public Action onContainerOpen;
+        public Action onEquipmentAdd;
+        public Action onInventoryChange;
+
+
         #region Methods
-    
-        private void Awake()
+
+        public int GetCapacity() => capacity;
+        public bool HasNothing() => _items.Count == 0;
+
+        public bool IsFull() => _items.Count >= capacity;
+
+        public void ClearContainer()
         {
-            items = new List<Item>(capacity);
+            _containerItems = null;
+            _containerName = null;
         }
 
-        public bool AddItem(Item item)
+        private void Awake()
+        {
+            _items = new List<IItem>(capacity);
+        }
+
+        public void ResetData()
+        {
+            _items = new List<IItem>(capacity);
+        }
+
+        public bool AddItem(IItem item, int amount)
         {
             if (IsFull())
             {
                 Debug.Log("inventory is full");
                 return false;
             }
-            if (items.Contains(item))
+
+            if (_items.Contains(item))
             {
-                Debug.Log("Already Equipped " + item.Name);
-                return false;
+                if (item.ItemType != ItemType.Consumable)
+                {
+                    Debug.Log("Already Equipped " + item.Name);
+                    return false;
+                }
             }
-            items.Add(item);
-            _isNeedUpdate = true;
+            
+            _items.Add(item);
+            onItemAdd?.Invoke();
+            onInventoryChange?.Invoke();
             return true;
         }
-    
-        public void RemoveItem(Item item)
+        
+
+        public void RemoveItem(IItem item)
         {
-            items.Remove(item);
-            _isNeedUpdate = true;
+            _items.Remove(item);
+            onInventoryChange?.Invoke();
         }
+
         #endregion
-    
+        
+        
         #region Properties
 
-        public bool IsNeedUpdate
+        public List<IItem> Items
         {
-            get => _isNeedUpdate;
-            set => _isNeedUpdate = value;
+            get => _items;
+            set => _items = value;
         }
 
-        public List<Item> Items
+        public string ContainerName
         {
-            get => items;
-            set => items = value;
+            get => _containerName;
+            set => _containerName = value;
         }
-    
+
+        public List<IItem> ContainerItems
+        {
+            get => _containerItems;
+            set => _containerItems = value;
+        }
+
+        public EquipmentItem[] EquipmentSlots
+        {
+            get => _equipmentSlots;
+            set => _equipmentSlots = value;
+        }
+        
+        public IPlayerEquipment CurrentEquipment
+        {
+            get => _currentEquipment;
+            set => _currentEquipment = value;
+        }
+
         #endregion
     }
 }

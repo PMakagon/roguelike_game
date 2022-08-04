@@ -31,7 +31,7 @@ namespace PlayerEquipment
         
         private bool _fourthEquipmentClicked;
         private bool _fourthEquipmentReleased;
-
+        
 
         public bool UsingClicked
         {

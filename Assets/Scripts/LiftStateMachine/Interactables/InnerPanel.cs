@@ -72,7 +72,7 @@ namespace LiftStateMachine
             {
                 button.TurnLightOff();
             }
-            Debug.Log("DONE");
+            // Debug.Log("DONE");
         }
 
         private void Awake()
@@ -97,15 +97,17 @@ namespace LiftStateMachine
                 if (liftControllerData.NextLevelCode.Equals(enteredCode))
                 {
                     StartCoroutine(FlashCorrect());
-                    liftControllerData.IsCodeEntered = true;
+                    // liftControllerData.IsCodeEntered = true;
+                    liftControllerData.OnCodeEntered.Invoke();
                     Debug.Log("CORRECT CODE");
                 }
                 else
                 {
                     if (enteredCode.Equals(1.ToString()))
                     {
-                        liftControllerData.DestinationLevel = liftControllerData.StartLevel;
-                        liftControllerData.IsReadyToMove = true;
+                        // liftControllerData.DestinationLevel = liftControllerData.StartLevel;
+                        // liftControllerData.IsReadyToMove = true;
+                        liftControllerData.OnGoingBackToStartLevel.Invoke();
                         Debug.Log("HOME");
                     }
                     else

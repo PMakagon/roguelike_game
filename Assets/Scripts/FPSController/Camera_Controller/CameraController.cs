@@ -31,6 +31,8 @@ namespace FPSController.Camera_Controller
                private float m_desiredYaw;
                private float m_desiredPitch;
 
+               private bool _isCameraFreezed;
+
                 #region Components                    
                     private Transform m_pitchTranform;
                     private Camera m_cam;
@@ -118,6 +120,28 @@ namespace FPSController.Camera_Controller
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
             }
-        #endregion
+            
+            public void LockCursor(bool state)
+            {
+                if (state)
+                {
+                   
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                }
+                else
+                {
+                    Cursor.lockState = CursorLockMode.None;
+                    Cursor.visible = true;
+                }
+            }
+
+            public bool IsCameraFreezed
+            {
+                get => _isCameraFreezed;
+                set => _isCameraFreezed = value;
+            }
+
+            #endregion
     }
 }

@@ -7,17 +7,13 @@ namespace LiftStateMachine
 {
     public class LiftControllerBase : MonoBehaviour
     {
-        [SerializeField] private GameObject liftBox;
-        [SerializeField] private InnerDoors innerDoors;
-        [SerializeField] private InnerPanel innerPanel;
-        [SerializeField] private GameObject[] levels;
+        [SerializeField] private Transform liftBox; // заменить на transform
         [SerializeField] private LiftControllerData liftControllerData;
         [SerializeField] private float liftSpeed = 1f;
         [SerializeField] private float holdTime = 1f;
         private Transform _currentLevel;
         private Transform _destinationLevel;
         private ILiftState _state;
-        private Action _action;
         private LiftBoxLight _liftBoxLight;
 
         private void Awake()
@@ -25,9 +21,19 @@ namespace LiftStateMachine
             liftControllerData.ResetData();
             liftControllerData.StartFSM();
             GetState();
-            _liftBoxLight = GetComponentInChildren<LiftBoxLight>();
+            // _liftBoxLight = GetComponentInChildren<LiftBoxLight>(); // непонятно зачем
+            liftControllerData.OnPlayerLeftLiftZone += GoBackToStartLevel; // TEST
+            liftControllerData.OnGoingBackToStartLevel += GoBackToStartLevel;
+            LiftControllerData.OnLiftCalled += ReactOnLiftCall;
         }
-        
+
+        private void OnDisable()
+        {
+            liftControllerData.OnPlayerLeftLiftZone -= GoBackToStartLevel;
+            liftControllerData.OnGoingBackToStartLevel -= GoBackToStartLevel;
+            LiftControllerData.OnLiftCalled -= ReactOnLiftCall;
+        }
+
         private void FixedUpdate()
         {
             // механика движения лифта между уровнями
@@ -35,12 +41,28 @@ namespace LiftStateMachine
             {
                 if (liftControllerData.IsReadyToMove)
                 {
-                    if(liftBox.transform.position != _destinationLevel.position)
+                    if (liftBox.position != _destinationLevel.position)
                     {
-                        var floorAt = liftBox.transform.position;
-                        var floorTo = _destinationLevel.position;
-                        liftBox.transform.position = Vector3.MoveTowards(floorAt, floorTo, liftSpeed * Time.deltaTime);
+                        var liftPosition = liftBox.position;
+                        var levelPosition = _destinationLevel.position;
+                        liftBox.position = Vector3.MoveTowards(liftPosition, levelPosition, liftSpeed * Time.deltaTime);
                     }
+                }
+            }
+        }
+
+        private void ReactOnLiftCall()
+        {
+            if (liftControllerData.CurrentState.GetType() == typeof(IdleState))
+            {
+                // поведение при вызове лифта по кнопке 
+                if (liftControllerData.IsOnStartLevel && !liftControllerData.IsPlayerLeft)
+                {
+                    EnterStartLevel();
+                }
+                else
+                {
+                    GoToCurrentLevel();
                 }
             }
         }
@@ -48,29 +70,46 @@ namespace LiftStateMachine
         private void Update()
         {
             UpdateState();
-            // currentLevel = levels[liftControllerData.CurrentFloor].transform;
-            // destinationLevel = levels[liftControllerData.DestinationFloor].transform;
+
             _currentLevel = liftControllerData.CurrentLevel;
             _destinationLevel = liftControllerData.DestinationLevel;
-            _action = liftControllerData.ActionFromData;//полная хуета убрать
-            
+
             if (liftControllerData.CurrentState.GetType() == typeof(IdleState))
             {
-                // поведение при вызове лифта по кнопке когда он уже на уровне
-                if (liftControllerData.IsLiftCalled && IsOnLevel())
+                // // поведение при вызове лифта по кнопке 
+                // if (liftControllerData.IsLiftCalled)
+                // {
+                //     if (liftControllerData.IsOnStartLevel && !liftControllerData.IsPlayerLeft)
+                //     {
+                //         EnterStartLevel();
+                //     }
+                //     else
+                //     {
+                //         GoToCurrentLevel();
+                //     }
+                //     liftControllerData.IsLiftCalled = false;
+                // }
+
+                // Debug.Log(IsOnStartLevel());
+                // Debug.Log(IsOnCurrentLevel());
+
+                /// лифт по прибытию на стартовый уровень
+                if (!liftControllerData.IsOnStartLevel && IsOnStartLevel())
                 {
-                    EnterLevel();
+                    EnterStartLevel();
                 }
+
                 // поведение лифта по прибытию на уровень
-                if (IsOnLevel())
+                if (!liftControllerData.IsOnLevel && IsOnDestinationLevel())
                 {
-                    if (!liftControllerData.IsReadyToMove && !liftControllerData.IsDoorsOpen)
+                    if (!liftControllerData.IsReadyToMove)
                     {
                         EnterLevel();
                     }
                 }
-                
-                if (liftControllerData.IsReadyToMove && liftControllerData.IsOnLevel)
+
+                //после подтверждения кода  // пересмотреть
+                if (liftControllerData.IsReadyToMove && liftControllerData.IsCodeEntered)
                 {
                     if (liftControllerData.CurrentLevel.position != liftControllerData.DestinationLevel.position)
                     {
@@ -78,8 +117,8 @@ namespace LiftStateMachine
                         StartCoroutine(StartMoving());
                     }
                 }
-                
-                // поведение при выборе уровня 
+
+                // введен вверный код 
                 if (liftControllerData.IsCodeEntered)
                 {
                     liftControllerData.IsReadyToMove = true;
@@ -88,19 +127,33 @@ namespace LiftStateMachine
 
             if (liftControllerData.CurrentState.GetType() == typeof(MovingState))
             {
-                // переместить в update?
-                // остановка
-                if (liftBox.transform.position == _destinationLevel.position)
+                // остановка на выбранном уровне
+                if (IsOnDestinationLevel())
                 {
                     liftControllerData.IsReadyToMove = false;
                     liftControllerData.CurrentState = liftControllerData.StateFactory.Idle();
-                    liftControllerData.IsOnLevel = true;
-                    // смена текущего уровня
-                    if (liftControllerData.CurrentLevel.transform.position != liftControllerData.DestinationLevel.transform.position)
+                    // проверяем где мы
+                    if (IsOnStartLevel())
                     {
-                        liftControllerData.CurrentLevel = liftControllerData.DestinationLevel;
+                        // если мы на стартовом уровне значит 
+                        // а - игрок в кабине и приехал в хаб и можно заменить CurrentLevel на StartLevel
+                        if (liftControllerData.IsPlayerInside)
+                        {
+                            liftControllerData.CurrentLevel = liftControllerData.StartLevel;
+                            // LiftControllerData.OnLevelGameLoopFinished.Invoke();
+                        }
+                        // б - игрок на уровне и может вызвать лифт обратно
+                        // ничего не делаем
+                    }
+                    else // не на стартовом уровне и можно заменить CurrentLevel // СТАРЫЙ ВАРИАНТ 
+                    {
+                        if (liftControllerData.CurrentLevel.position != liftControllerData.DestinationLevel.position)
+                        {
+                            liftControllerData.CurrentLevel = liftControllerData.DestinationLevel;
+                        }
                     }
                 }
+
                 // нажата кнопка STOP
                 if (liftControllerData.IsStopped)
                 {
@@ -121,25 +174,67 @@ namespace LiftStateMachine
 
         private IEnumerator StartMoving()
         {
-            innerDoors.CloseDoors();
+            if (liftControllerData.IsDoorsOpen)
+            {
+                liftControllerData.IsDoorsOpen = false;
+                liftControllerData.OnDoorsAction.Invoke();
+            }
             yield return new WaitForSeconds(holdTime);
+            liftControllerData.IsStopped = false; // TEST затычка чтобы нельзя было застрять на уровне
             liftControllerData.CurrentState = liftControllerData.StateFactory.Moving();
             liftControllerData.IsOnLevel = false;
-            // Debug.Log("END OF COROUTINE");
         }
-        
-        private bool IsOnLevel()
+
+        private void GoBackToStartLevel()
         {
-            return _currentLevel.position == liftControllerData.CurrentLevel.position;
+            liftControllerData.DestinationLevel = liftControllerData.StartLevel;
+            liftControllerData.IsReadyToMove = true;
+            StartCoroutine(StartMoving());
         }
-        
+
+        private void GoToCurrentLevel()
+        {
+            liftControllerData.DestinationLevel = liftControllerData.CurrentLevel;
+            liftControllerData.IsReadyToMove = true;
+            StartCoroutine(StartMoving());
+        }
+
+        private bool IsOnDestinationLevel() //проверка присутствия лифта на точке назначения
+        {
+            return liftBox.position == _destinationLevel.position;
+            // return liftControllerData.DestinationLevel.position == liftControllerData.CurrentLevel.position;
+        }
+
+        private bool IsOnStartLevel()
+        {
+            return liftBox.position == liftControllerData.StartLevel.position;
+        }
+
         private void EnterLevel()
         {
-            innerDoors.OpenDoors();
-            liftControllerData.IsLiftCalled = false;
+            if (liftControllerData.IsPlayerInside || liftControllerData.IsLiftCalled)
+            {
+                liftControllerData.IsDoorsOpen = true;
+                liftControllerData.OnDoorsAction.Invoke();
+                liftControllerData.IsLiftCalled = false;
+            }
+
             liftControllerData.IsOnLevel = true;
+            Debug.Log("Entered Current Level");
         }
-        
+
+        private void EnterStartLevel()
+        {
+            if (liftControllerData.IsPlayerInside || liftControllerData.IsLiftCalled)
+            {
+                liftControllerData.IsDoorsOpen = true;
+                liftControllerData.OnDoorsAction.Invoke();
+                liftControllerData.IsLiftCalled = false;
+            }
+            liftControllerData.IsOnStartLevel = true;
+            Debug.Log("Entered Start Level");
+        }
+
         private void UpdateState()
         {
             if (!_state.Equals(liftControllerData.CurrentState))

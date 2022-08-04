@@ -7,7 +7,7 @@ namespace LiftStateMachine.states
     {
         public void EnterState()
         {
-            Debug.Log("Enter MovingState");
+            // Debug.Log("Enter MovingState");
         }
 
         public void EnterState(Action enterAction)
@@ -18,7 +18,7 @@ namespace LiftStateMachine.states
 
         public void ExitState()
         {
-            Debug.Log("Exit MovingState");
+            // Debug.Log("Exit MovingState");
         }
 
         public void ExitState(Action exitAction)

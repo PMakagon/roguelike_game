@@ -31,7 +31,6 @@ namespace LightingSystem
             if (_isPowered)
             {
                 _material.SetColor("_EmissiveColor",Color.clear);
-                Debug.Log("color");
             }
             _buttonTransform.Rotate(-9.0f, 0.0f, 0.0f, Space.Self);
         }
@@ -41,7 +40,6 @@ namespace LightingSystem
             if (_isPowered)
             {
                 _material.SetColor("_EmissiveColor",Color.red);
-                Debug.Log("red");
             }
             _buttonTransform.Rotate(9.0f, 0.0f, 0.0f, Space.Self);
         }

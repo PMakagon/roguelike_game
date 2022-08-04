@@ -10,49 +10,30 @@ namespace InteractableObjects
         [SerializeField] private bool isLocked;
         [ShowIf("isLocked")] [SerializeField] private string keyName;
         private Animator _animator;
-        public bool isOpen;
+        private bool _isOpen;
 
         private void Awake()
         {
             // _animator = GetComponentInChildren<Animator>();
             _animator = GetComponentInParent<Animator>();
+            SetToolTip();
+        }
+
+        private void SetToolTip()
+        {
+            if (_isOpen)
+            {
+                TooltipMessage = "Close";
+            }
+            else
+            {
+                TooltipMessage = "Open";
+            }
         }
         
-
-        private void OpenDoor()
+        public void ChangeState()
         {
-            isOpen = true;
-            _animator.SetBool("Open", isOpen);
-            Debug.Log("OPEN");
-        }
-
-        private void CloseDoor()
-        {
-            isOpen = false;
-            _animator.SetBool("Open", isOpen);
-            Debug.Log("CLOSED");
-        }
-
-        public override void OnInteract(InventoryData inventoryData)
-        {
-            if (!isOpen && isLocked)
-            {
-                foreach (var key in inventoryData.Items)
-                {
-                    if (key.Name == keyName)
-                    {
-                        isLocked = false;
-                        OpenDoor();
-                        Debug.Log("Opened with " + key.Name);
-                        return;
-                    }
-                }
-
-                _animator.SetBool("TryOpen", true);
-                return;
-            }
-
-            if (isOpen)
+            if (_isOpen)
             {
                 CloseDoor();
             }
@@ -60,6 +41,61 @@ namespace InteractableObjects
             {
                 OpenDoor();
             }
+        }
+
+        private void OpenDoor()
+        {
+            _isOpen = true;
+            _animator.SetBool("Open", _isOpen);
+           SetToolTip();
+            // Debug.Log("OPEN");
+        }
+
+        private void CloseDoor()
+        {
+            _isOpen = false;
+            _animator.SetBool("Open", _isOpen);
+            SetToolTip();
+            // Debug.Log("CLOSED");
+        }
+
+        public override void OnInteract(InventoryData inventoryData)
+        {
+            if (!_isOpen)
+            {
+                if (isLocked)
+                {
+                    foreach (var key in inventoryData.Items)
+                    {
+                        if (key.Name == keyName)
+                        {
+                            isLocked = false;
+                            OpenDoor();
+                            // Debug.Log("Opened with " + key.Name);
+                            return;
+                        }
+                    }
+                    _animator.SetBool("TryOpen", true);
+                    return;
+                }
+                OpenDoor();
+            }
+            else
+            {
+                CloseDoor();
+            }
+        }
+
+        public bool IsLocked
+        {
+            get => isLocked;
+            set => isLocked = value;
+        }
+
+        public string KeyName
+        {
+            get => keyName;
+            set => keyName = value;
         }
     }
 }

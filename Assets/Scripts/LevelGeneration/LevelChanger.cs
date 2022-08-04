@@ -24,17 +24,37 @@ namespace LevelGeneration
 
         private void Awake()
         {
-            liftControllerData.CurrentLevel = currentLevelStartPoint.transform;
+            liftControllerData.CurrentLevel = currentLevelStartPoint.transform; // бред
             liftControllerData.StartLevel = liftControllerData.CurrentLevel;
             _nextLevelCode= "Not Created";
             _levels = new Dictionary<string, Transform>();
+            liftControllerData.OnCodeEntered += InitializeLevelChange;
+            LiftControllerData.OnLevelGameLoopFinished += CreateNextLevelCode;
         }
+        private void OnDisable()
+        {
+            liftControllerData.OnCodeEntered -= InitializeLevelChange;
+        }
+        
         //убрать
         private void Start()
         {
             CreateLevelStartPoint();
+            CreateNextLevelCode();
         }
 
+        private void InitializeLevelChange()
+        {
+            if (!newLevelStartPoint)
+            {
+                CreateLevelStartPoint();
+            }
+            //переместить в LevelManager
+            _levelCount += 1;
+            levelGenerationManager.StartGeneration=true;
+            liftControllerData.IsCodeEntered = true;
+        }
+        
         private void Update()
         {
             
@@ -43,18 +63,19 @@ namespace LevelGeneration
                 CreateNextLevelCode();
             }
 
-            if ( liftControllerData.IsCodeEntered)
-            {
-                if (!newLevelStartPoint)
-                {
-                    CreateLevelStartPoint();
-                }
-                //переместить в LevelManager
-                _levelCount += 1;
-                levelGenerationManager.StartGeneration=true;
-
-            }
+            // if ( liftControllerData.IsCodeEntered)
+            // {
+            //     if (!newLevelStartPoint)
+            //     {
+            //         CreateLevelStartPoint();
+            //     }
+            //     //переместить в LevelManager
+            //     _levelCount += 1;
+            //     levelGenerationManager.StartGeneration=true;
+            // }
+            
             //для тестов
+
             if (TestSwitchLevel)
             {
                 TestSwitchLevel = false;
@@ -81,7 +102,7 @@ namespace LevelGeneration
             levelGenerator.StartPoint = newLevelStartPoint;
             currentLevelStartPoint = newLevelStartPoint;
             newLevelStartPoint = null;
-            CreateNextLevelCode();
+            // CreateNextLevelCode();
         }
 
 

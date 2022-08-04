@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01df267625d9aaa4baa698e98e561807, type: 3}
   m_Name: InventoryData
   m_EditorClassIdentifier: 
-  capacity: 3
-  items: []
+  savePath: 
+  capacity: 9

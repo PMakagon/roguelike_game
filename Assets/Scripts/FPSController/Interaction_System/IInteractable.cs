@@ -7,8 +7,7 @@ namespace FPSController.Interaction_System
         float HoldDuration { get; }
         bool HoldInteract { get; }
         bool IsInteractable { get; }
-        string TooltipMessage { get; }
-        // void OnInteract();
+        string TooltipMessage { get; set; }
         void OnInteract(InventoryData inventoryData);
     }
 }  

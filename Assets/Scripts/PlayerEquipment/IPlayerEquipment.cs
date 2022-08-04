@@ -1,12 +1,15 @@
-﻿namespace PlayerEquipment
+﻿using UnityEngine;
+
+namespace PlayerEquipment
 {
     public interface IPlayerEquipment
+
     {
-        bool IsTurnedOn { get; set; } 
+        Transform EquipmentTransform { get; }
+        Animator EquipmentAnimator { get; set; }
+        bool IsEquipped { get; set; }
         void Use();
         void Equip();
         void UnEquip();
-        void TurnOn();
-        void TurnOff();
     }
 }

@@ -15,7 +15,6 @@ namespace LightingSystem
 
         private void OnInteract()
         {
-        
         }
     }
 }

@@ -12,8 +12,8 @@ namespace FPSController.Interaction_System
     [SerializeField] private bool isInteractable = true;
     [ShowIf("isInteractable")][SerializeField] private bool holdInteract = true;
     [ShowIf("holdInteract")] [SerializeField] private float holdDuration = 1f;
-    [SerializeField] private string tooltipMessage = "interact";
-    // [SerializeField] private UnityEvent interacted;
+    [SerializeField] private string tooltipMessage = "Interact";
+    
     #endregion
 
     #region Properties
@@ -22,7 +22,13 @@ namespace FPSController.Interaction_System
     public bool HoldInteract => holdInteract;
     public float HoldDuration => holdDuration;
 
-    public string TooltipMessage => tooltipMessage;
+    public string TooltipMessage
+    {
+        get => tooltipMessage;
+        set => tooltipMessage = value;
+    }
+    
+    // public string TooltipMessage => tooltipMessage;
     
 
     #endregion
@@ -33,12 +39,6 @@ namespace FPSController.Interaction_System
     {
         Debug.Log("INTERACTED: " + gameObject.name);
     }
-    // public virtual void OnInteract()
-    // {
-    //     // interacted?.Invoke();
-    //     Debug.Log("INTERACTED: " + gameObject.name);
-    // }
-    //
     #endregion
 
     }

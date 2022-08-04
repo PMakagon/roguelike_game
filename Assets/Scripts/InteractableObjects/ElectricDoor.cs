@@ -10,40 +10,40 @@ namespace InteractableObjects
 {
     public class ElectricDoor : Interactable
     {
-        // [SerializeField] private InventoryData _inventoryData;
+        [SerializeField] private bool isLocked;
+        [ShowIf("isLocked")] [SerializeField] private string keyName;
         [SerializeField] private MasterSwitcher masterSwitcher;
+        [SerializeField] private Light stateLight;
         private Animator _animator;
-        private bool _isPoweredOn;
-        public bool isOpen;
+        private bool _isOpen;
 
         private void Awake()
         {
             _animator = GetComponentInParent<Animator>();
-        }
-        
-        private void OpenDoor()
-        {
-            isOpen = true;
-            _animator.SetBool("Open", isOpen);
-            Debug.Log("OPEN");
+            stateLight.enabled = !masterSwitcher.IsSwitchedOn;
         }
 
-        private void CloseDoor()
+        public MasterSwitcher MasterSwitcher
         {
-            isOpen = false;
-            _animator.SetBool("Open", isOpen);
-            Debug.Log("CLOSED");
+            get => masterSwitcher;
+            set => masterSwitcher = value;
         }
 
-        public override void OnInteract(InventoryData inventoryData)
+        private void Update()
         {
-            if (!masterSwitcher.IsSwitchedOn && !isOpen)
+            if (!masterSwitcher.IsSwitchedOn)
             {
-                _animator.SetBool("TryOpen", true);
-                return;
+                stateLight.enabled = true;
             }
+            else
+            {
+                stateLight.enabled = false;
+            }
+        }
 
-            if (isOpen)
+        public void ChangeState()
+        {
+            if (_isOpen)
             {
                 CloseDoor();
             }
@@ -51,6 +51,50 @@ namespace InteractableObjects
             {
                 OpenDoor();
             }
+        }
+        
+        private void OpenDoor()
+        {
+            _isOpen = true;
+            _animator.SetBool("Open", _isOpen);
+            // Debug.Log("OPEN");
+        }
+
+        private void CloseDoor()
+        {
+            _isOpen = false;
+            _animator.SetBool("Open", _isOpen);
+            // Debug.Log("CLOSED");
+        }
+
+        public override void OnInteract(InventoryData inventoryData)
+        {
+            if (!_isOpen)
+            {
+                if (masterSwitcher.IsSwitchedOn)
+                {
+                    if (isLocked)
+                    {
+                        foreach (var key in inventoryData.Items)
+                        {
+                            if (key.Name == keyName)
+                            {
+                                isLocked = false;
+                                OpenDoor();
+                                Debug.Log("Opened with " + key.Name);
+                                return;
+                            }
+                        }
+                        _animator.SetBool("TryOpen", true);
+                        return;
+                    }
+                    OpenDoor();
+                    return;
+                }
+                _animator.SetBool("TryOpen", true);
+                return;
+            }
+            CloseDoor();
         }
     }
 }
