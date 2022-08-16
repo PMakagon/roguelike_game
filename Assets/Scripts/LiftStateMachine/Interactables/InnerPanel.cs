@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using LiftStateMachine.states;
 using UnityEngine;
@@ -14,13 +13,9 @@ namespace LiftStateMachine
         [SerializeField] private StopButton stopButton;
         private int _command = 500;
         private int _lastCommand;
+        private string _enteredCode;
 
         public bool buttonPressed;
-
-        private string enteredCode;
-
-        public string EnteredCode => enteredCode;
-
         public List<Button> CurrentSelection { get; set; }
 
         private IEnumerator FlashIncorrect()
@@ -72,29 +67,28 @@ namespace LiftStateMachine
             {
                 button.TurnLightOff();
             }
-            // Debug.Log("DONE");
         }
 
         private void Awake()
         {
-            enteredCode = string.Empty;
+            _enteredCode = string.Empty;
             CurrentSelection = new List<Button>();
-            liftControllerData.EnteredCombination = enteredCode;
+            liftControllerData.EnteredCombination = _enteredCode;
         }
 
         private void Update()
         { 
-            liftControllerData.EnteredCombination = enteredCode;
-            if (enteredCode.Length > liftControllerData.NextLevelCode.Length)
+            liftControllerData.EnteredCombination = _enteredCode;
+            if (_enteredCode.Length > liftControllerData.NextLevelCode.Length)
             {
                 StartCoroutine(FlashIncorrect());
-                enteredCode = string.Empty;
+                _enteredCode = string.Empty;
                 Debug.Log("WRONG CODE");
             }
 
             if (startButton.StartPressed)
             {
-                if (liftControllerData.NextLevelCode.Equals(enteredCode))
+                if (liftControllerData.NextLevelCode.Equals(_enteredCode))
                 {
                     StartCoroutine(FlashCorrect());
                     // liftControllerData.IsCodeEntered = true;
@@ -103,7 +97,7 @@ namespace LiftStateMachine
                 }
                 else
                 {
-                    if (enteredCode.Equals(1.ToString()))
+                    if (_enteredCode.Equals(1.ToString()))
                     {
                         // liftControllerData.DestinationLevel = liftControllerData.StartLevel;
                         // liftControllerData.IsReadyToMove = true;
@@ -116,7 +110,7 @@ namespace LiftStateMachine
                         Debug.Log("WRONG CODE");
                     }
                 }
-                enteredCode = string.Empty;
+                _enteredCode = string.Empty;
                 CurrentSelection.Clear();
                 startButton.StartPressed = false;
             }
@@ -131,7 +125,7 @@ namespace LiftStateMachine
                 buttonPressed = false;
                 if (liftControllerData.CurrentState.GetType() == typeof(IdleState))
                 {
-                    enteredCode += _command;
+                    _enteredCode += _command;
                 }
             }
             
@@ -156,6 +150,8 @@ namespace LiftStateMachine
                 }
             }
         }
+
+        public string EnteredCode => _enteredCode;
 
         public int Command
         {

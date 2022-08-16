@@ -4,7 +4,7 @@ namespace PlayerEquipment
 {
     public interface IPowerEquipment : IPlayerEquipment
     {
-        PowerData PowerData { get; set; }
+        PlayerPowerData PlayerPowerData { get; set; }
         bool IsTurnedOn { get; set; } 
         void TurnOn();
         void TurnOff();

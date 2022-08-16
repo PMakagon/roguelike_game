@@ -8,30 +8,26 @@ namespace LiftStateMachine
     [CreateAssetMenu(fileName = "LiftControllerData", menuName = "LiftController/LiftControllerData")]
     public class LiftControllerData : ScriptableObject
     {
-        public string NextLevelCode { get; set; } // здесь хранится код уровня после генерации в LeveleChanger
-
+        public ILiftState CurrentState { get; set; } // текущее состояние лифта
+        public LiftStateFactory StateFactory { get; set; } // фабрика состояний лифта
+        public Transform CurrentLevel { get; set; } // позиция начала движения
+        public Transform DestinationLevel { get; set; } // позиция конца движения
         public Transform StartLevel { get; set; } // позиция 0 этажа для начала движения и возвращения,впервые присваивается в LeveleChanger`e
         
-        public Transform CurrentLevel { get; set; } // позиция начала движения
-        
-        public Transform DestinationLevel { get; set; } // позиция конца движения
+        public string NextLevelCode { get; set; } // здесь хранится код уровня после генерации в LeveleChanger
 
         public string EnteredCombination { get; set; } // то что ввёл игрок в панель лифта
 
         public bool IsOnLevel { get; set; } // лифт находится на уровне. Активируется при входе на уровень
-        
+
         public bool IsOnStartLevel { get; set; } // лифт находится на уровне.Активируется при входе на уровень
-        
+
         public bool IsPlayerInside { get; set; } // игрок в кабине лифта
 
         public bool IsPlayerLeft { get; set; } // игрок покинул зону лифта
 
         public bool IsCodeEntered { get; set; } // игрок правильно ввёл код. Приходит от LevelChanger
-
-        public ILiftState CurrentState { get; set; } // текущее состояние лифта
-
-        public LiftStateFactory StateFactory { get; set; } // фабрика состояний лифта
-
+        
         public bool IsDoorsOpen { get; set; } // открыты\закрыты ли двери НА момент проверки
 
         public bool IsLiftCalled { get; set; } // прожата ли кнопка вызова лифта

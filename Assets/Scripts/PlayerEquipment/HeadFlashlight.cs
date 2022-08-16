@@ -9,7 +9,7 @@ namespace PlayerEquipment
     {
         [SerializeField] private float power = 1;
         [SerializeField] private float multiplier = 2f;
-        private PowerData _powerData;
+        private PlayerPowerData _playerPowerData;
         private Light _light;
         private bool _isTurnedOn;
         private bool _switchState;
@@ -24,7 +24,7 @@ namespace PlayerEquipment
         private void Update()
         {
             _light.enabled = _isTurnedOn;
-            if (!_powerData.IsPowerOn)
+            if (!_playerPowerData.IsPowerOn)
             {
                 _isTurnedOn = false;
                 return;
@@ -51,14 +51,14 @@ namespace PlayerEquipment
         private void TurnOn()
         {
             _isTurnedOn = true;
-            _powerData.CurrentPower -= power * multiplier;
-            _powerData.PowerLoad += power;
+            _playerPowerData.CurrentPower -= power * multiplier;
+            _playerPowerData.PowerLoad += power;
         }
 
         private void TurnOff()
         {
             _isTurnedOn = false;
-            _powerData.PowerLoad -= power;
+            _playerPowerData.PowerLoad -= power;
         }
 
         public bool SwitchState
@@ -67,10 +67,10 @@ namespace PlayerEquipment
             set => _switchState = value;
         }
 
-        public PowerData PowerData
+        public PlayerPowerData PlayerPowerData
         {
-            get => _powerData;
-            set => _powerData = value;
+            get => _playerPowerData;
+            set => _playerPowerData = value;
         }
 
         public bool IsTurnedOn

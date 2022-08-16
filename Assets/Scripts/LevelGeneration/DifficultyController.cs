@@ -6,7 +6,7 @@ namespace LevelGeneration
     public class DifficultyController : MonoBehaviour
     {
         [SerializeField] private LevelDesigner levelDesigner;
-        public int LevelCount { get; set; } 
+        public int LevelCount { get; set; }
         public bool IsDifficultySettingEnabled { get; set; }
 
         private void Update()
@@ -31,42 +31,44 @@ namespace LevelGeneration
 
         private LevelGenerator.LevelType SetLevelType()
         {
-            if (LevelCount<10)
+            if (LevelCount < 10)
             {
                 return LevelGenerator.LevelType.Dorm;
             }
+
             return LevelGenerator.LevelType.Dorm;
         }
 
         private float SetDarknessLevel()
         {
             float darkness = 1;
-            if (SetLevelType()==LevelGenerator.LevelType.Dorm)
+            if (SetLevelType() == LevelGenerator.LevelType.Dorm)
             {
                 darkness /= LevelCount;
                 return darkness;
             }
+
             return darkness;
         }
 
         private int SetLevelSize()
         {
-            if (LevelCount<2)
+            if (LevelCount < 2)
             {
                 return 1;
             }
 
-            if (LevelCount>3 && LevelCount<5)
+            if (LevelCount > 3 && LevelCount < 5)
             {
                 return 2;
             }
 
-            if (LevelCount>5 && LevelCount<8)
+            if (LevelCount > 5 && LevelCount < 8)
             {
                 return 3;
             }
 
-            if (LevelCount>=8)
+            if (LevelCount >= 8)
             {
                 return 4;
             }

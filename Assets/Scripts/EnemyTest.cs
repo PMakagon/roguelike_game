@@ -6,7 +6,7 @@ using FPSController.First_Person_Controller;
 using LightingSystem;
 using UnityEngine;
 
-public class EnemyController : MonoBehaviour
+public class EnemyTest : MonoBehaviour
 {
     public enum SphereStates
     {

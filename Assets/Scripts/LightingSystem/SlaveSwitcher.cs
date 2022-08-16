@@ -1,5 +1,4 @@
 ﻿using System;
-using FPSController;
 using FPSController.Interaction_System;
 using InventorySystem;
 using UnityEngine;
@@ -9,50 +8,48 @@ namespace LightingSystem
     public class SlaveSwitcher : Interactable
     {
         [SerializeField] private bool isEnabled;
-        [SerializeField] private GameObject button;
+        [SerializeField] private Transform button;
         private Transform _buttonTransform;
-        private Material _material;
         private bool _isPowered;
+        private MaterialPropertyBlock _matBlock;
+        private Renderer _renderer;
+
 
         private void Awake()
         {
-            _buttonTransform = button.transform;
-            _material = button.GetComponent<Renderer>().material;
+            _buttonTransform = button;
+            _renderer = button.GetComponent<Renderer>();
+            _matBlock = new MaterialPropertyBlock();
+            ChangeButtonPosition();
+            FetchButtonEmission();
+        }
+
+        private void FetchButtonEmission()
+        {
+            if (!_isPowered) return;
+            _renderer.GetPropertyBlock(_matBlock);
+            _matBlock.SetColor("_EmissiveColor", isEnabled ? Color.clear : Color.red);
+            _renderer.SetPropertyBlock(_matBlock);
+        }
+
+        private void ChangeButtonPosition()
+        {
             if (isEnabled)
             {
-                ClickOn();
-                return;
+                _buttonTransform.Rotate(-9.0f, 0.0f, 0.0f, Space.Self);
             }
-            ClickOff();
-        }
-
-        private void ClickOn()
-        {
-            if (_isPowered)
+            else
             {
-                _material.SetColor("_EmissiveColor",Color.clear);
+                _buttonTransform.Rotate(9.0f, 0.0f, 0.0f, Space.Self);
             }
-            _buttonTransform.Rotate(-9.0f, 0.0f, 0.0f, Space.Self);
         }
-
-        private void ClickOff()
-        {
-            if (_isPowered)
-            {
-                _material.SetColor("_EmissiveColor",Color.red);
-            }
-            _buttonTransform.Rotate(9.0f, 0.0f, 0.0f, Space.Self);
-        }
+        
 
         public override void OnInteract(InventoryData inventoryData)
         {
             isEnabled = !isEnabled;
-            if (isEnabled)
-            {
-                ClickOn();
-                return;
-            }
-            ClickOff();
+            ChangeButtonPosition();
+            FetchButtonEmission();
         }
 
         public bool IsEnabled

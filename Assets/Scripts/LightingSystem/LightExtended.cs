@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using FPSController;
+﻿using System.Collections;
 using FPSController.First_Person_Controller;
 using NaughtyAttributes;
 using UnityEngine;
@@ -9,19 +7,19 @@ using Random = UnityEngine.Random;
 
 namespace LightingSystem
 {
-    public class LightExtended : MonoBehaviour
+    public class LightExtended : MonoBehaviour //разбить на несколько классов компонентов
     {
-        public enum LightMode // StateMode
+        public enum LightMode 
         {
             Static,
             Blinking,
             Flickering
         }
 
-        [SerializeField] private LightMode _currentLightMode = LightMode.Static;
+        [SerializeField] private LightMode currentLightMode = LightMode.Static;
         [SerializeField] private Light _light;
-        [SerializeField] private Light _hotSpotLight;
-        [SerializeField] private GameObject objectWithEmission;
+        [SerializeField] private Light hotSpotLight;
+        [SerializeField] private Renderer objectWithEmission;
         [SerializeField] private LensFlareComponentSRP lensFlare;
 
         [Header("Flickering Settings")] 
@@ -30,8 +28,8 @@ namespace LightingSystem
         [SerializeField] private float noiseSpeed = 0.15f;
 
         [Header("Blinking Settings")] 
-        [SerializeField] private float randomTimerValueMIN = 5f;
-        [SerializeField] private float randomTimerValueMAX = 20f;
+        [SerializeField] private float randomTimerValueMin = 5f;
+        [SerializeField] private float randomTimerValueMax = 20f;
 
         [Space] [Header("Light Control")] 
         [SerializeField] private bool directControl = false;
@@ -46,17 +44,17 @@ namespace LightingSystem
         private float _startIntensity;
         private float _randomTimerValue;
         private float _startTimerValue = 0.01f;
-        private Material _materialWithEmission;
         private Color _color;
+        
+        private MaterialPropertyBlock _matBlock;
 
         private void Awake()
         {
-            // _light = GetComponentInChildren<Light>();
             _startIntensity = _light.intensity;
             if (objectWithEmission)
             {
-                _materialWithEmission = objectWithEmission.GetComponent<Renderer>().material;
-                _color = _materialWithEmission.color;
+                _matBlock = new MaterialPropertyBlock();
+                _color = objectWithEmission.material.color;
             }
             if (slaveSwitcher)
             {
@@ -70,11 +68,11 @@ namespace LightingSystem
             yield return new WaitForSeconds(_startTimerValue);
             while (isOn)
             {
-                _randomTimerValue = Random.Range(randomTimerValueMIN, randomTimerValueMAX);
+                _randomTimerValue = Random.Range(randomTimerValueMin, randomTimerValueMax);
                 yield return new WaitForSeconds(_randomTimerValue);
                 ChangeState(GetState());
                 ////ЗАТЫЧКА
-                if (!isOn || _currentLightMode != LightMode.Blinking)
+                if (!isOn || currentLightMode != LightMode.Blinking)
                 {
                     StopAllCoroutines();
                     FetchEmission();
@@ -90,9 +88,9 @@ namespace LightingSystem
         private void ChangeState(bool state)
         {
             _light.enabled = state;
-            if (_hotSpotLight)
+            if (hotSpotLight)
             {
-                _hotSpotLight.enabled = state;
+                hotSpotLight.enabled = state;
             }
             
             if (lensFlare)
@@ -111,18 +109,20 @@ namespace LightingSystem
         {
             if (objectWithEmission)
             {
+                objectWithEmission.GetPropertyBlock(_matBlock);
                 if (_light.enabled)
                 {
-                    _materialWithEmission.SetColor("_EmissiveColor", _color * _light.intensity);
+                    _matBlock.SetColor("_EmissiveColor", _color * _light.intensity);
                 }
                 else
                 {
-                    _materialWithEmission.SetColor("_EmissiveColor", _color * 0f);
+                    _matBlock.SetColor("_EmissiveColor", _color * 0f);
                 }
+                objectWithEmission.SetPropertyBlock(_matBlock);
             }
         }
 
-        public void LookForPlayer()
+        private void LookForPlayerTest()
         {
             bool playerSpotted = false;
             Vector3 lightPosition = transform.position;
@@ -140,17 +140,12 @@ namespace LightingSystem
             }
         }
 
-        //Причесать
+        //Сделать нормально
         private void Update()
         {
             if (isBroken)
             {
                 return;
-            }
-            
-            if (isOn)
-            {
-                LookForPlayer();
             }
 
             if (masterSwitcher)
@@ -182,18 +177,18 @@ namespace LightingSystem
             
             ChangeState(isOn);
             
-            if (_currentLightMode == LightMode.Static)
+            if (currentLightMode == LightMode.Static)
             {
                 FetchEmission();
             }
 
-            if (_currentLightMode == LightMode.Blinking)
+            if (currentLightMode == LightMode.Blinking)
             {
                 if (!isOn) return;
                 StartCoroutine(Blinking());
             }
 
-            if (_currentLightMode == LightMode.Flickering)
+            if (currentLightMode == LightMode.Flickering)
             {
                 if (isOn)
                 {
@@ -203,6 +198,8 @@ namespace LightingSystem
                 FetchEmission();
             }
         }
+
+        #region Properties
 
         public bool IsBroken
         {
@@ -242,8 +239,10 @@ namespace LightingSystem
 
         public LightMode LightModeP
         {
-            get => _currentLightMode;
-            set => _currentLightMode = value;
+            get => currentLightMode;
+            set => currentLightMode = value;
         }
+
+        #endregion
     }
 }

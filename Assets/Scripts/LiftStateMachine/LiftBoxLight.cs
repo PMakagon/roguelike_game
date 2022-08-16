@@ -6,7 +6,7 @@ namespace LiftStateMachine
 {
     public class LiftBoxLight : MonoBehaviour
     {
-        [SerializeField]private LiftControllerData _liftControllerData;
+        [SerializeField] private LiftControllerData _liftControllerData;
         [SerializeField] private float minIntensity = 0.2f;
         [SerializeField] private float maxIntensity = 10f;
         [SerializeField] private float noiseSpeed = 0.15f;

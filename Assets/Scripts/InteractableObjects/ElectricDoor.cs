@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using FPSController;
 using FPSController.Interaction_System;
 using InventorySystem;
@@ -8,20 +9,26 @@ using UnityEngine;
 
 namespace InteractableObjects
 {
-    public class ElectricDoor : Interactable
+    public class ElectricDoor : InteractableDoor
     {
-        [SerializeField] private bool isLocked;
-        [ShowIf("isLocked")] [SerializeField] private string keyName;
         [SerializeField] private MasterSwitcher masterSwitcher;
         [SerializeField] private Light stateLight;
-        private Animator _animator;
-        private bool _isOpen;
 
+        #region BuiltIn Methods
         private void Awake()
         {
-            _animator = GetComponentInParent<Animator>();
-            stateLight.enabled = !masterSwitcher.IsSwitchedOn;
+            animator = GetComponentInParent<Animator>();
+            if (!masterSwitcher) return;
+            masterSwitcher.OnSwitched += ChangeLightState;
+            ChangeLightState();
         }
+        private void OnDestroy()
+        {
+            masterSwitcher.OnSwitched -= ChangeLightState;
+        }
+        #endregion
+
+        #region Properties
 
         public MasterSwitcher MasterSwitcher
         {
@@ -29,69 +36,41 @@ namespace InteractableObjects
             set => masterSwitcher = value;
         }
 
-        private void Update()
+        public void AddSwitcher(MasterSwitcher switcher)
         {
-            if (!masterSwitcher.IsSwitchedOn)
-            {
-                stateLight.enabled = true;
-            }
-            else
-            {
-                stateLight.enabled = false;
-            }
+            masterSwitcher = switcher;
+            switcher.OnSwitched += ChangeLightState;
         }
 
-        public void ChangeState()
-        {
-            if (_isOpen)
-            {
-                CloseDoor();
-            }
-            else
-            {
-                OpenDoor();
-            }
-        }
-        
-        private void OpenDoor()
-        {
-            _isOpen = true;
-            _animator.SetBool("Open", _isOpen);
-            // Debug.Log("OPEN");
-        }
+        #endregion
 
-        private void CloseDoor()
+        private void ChangeLightState()
         {
-            _isOpen = false;
-            _animator.SetBool("Open", _isOpen);
-            // Debug.Log("CLOSED");
+            stateLight.enabled = !masterSwitcher.IsSwitchedOn;
         }
 
         public override void OnInteract(InventoryData inventoryData)
         {
-            if (!_isOpen)
+            if (!isOpen)
             {
                 if (masterSwitcher.IsSwitchedOn)
                 {
                     if (isLocked)
                     {
-                        foreach (var key in inventoryData.Items)
+                        if (inventoryData.Items.Any(key => key.Name == keyName))
                         {
-                            if (key.Name == keyName)
-                            {
-                                isLocked = false;
-                                OpenDoor();
-                                Debug.Log("Opened with " + key.Name);
-                                return;
-                            }
+                            isLocked = false;
+                            OpenDoor();
+                            // Debug.Log("Opened with " + key.Name);
+                            return;
                         }
-                        _animator.SetBool("TryOpen", true);
+                        animator.SetBool(TryOpen, true);
                         return;
                     }
                     OpenDoor();
                     return;
                 }
-                _animator.SetBool("TryOpen", true);
+                animator.SetBool(TryOpen, true);
                 return;
             }
             CloseDoor();

@@ -9,5 +9,6 @@ namespace InventorySystem.Items
         Sprite UIIcon {  get; set; }
         string Description {  get; set; }
         bool Stackable { get; set; }
+        void Use(InventoryData inventoryData);
     }
 }

@@ -1,8 +1,9 @@
-﻿using InventorySystem;
+﻿using FPSController.Interaction_System;
+using InventorySystem;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace FPSController.Interaction_System
+namespace InteractableObjects
 {
     public class EventBasedInteractable : Interactable
     {

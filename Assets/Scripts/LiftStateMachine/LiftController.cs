@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace LiftStateMachine
 {
-    public class LiftControllerBase : MonoBehaviour
+    public class LiftController : MonoBehaviour
     {
         [SerializeField] private Transform liftBox; // заменить на transform
         [SerializeField] private LiftControllerData liftControllerData;

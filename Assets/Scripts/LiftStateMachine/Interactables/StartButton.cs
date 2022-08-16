@@ -18,16 +18,12 @@ namespace LiftStateMachine
             _buttonLight.enabled = false;
             _panel = gameObject.GetComponentInParent<InnerPanel>();
         }
-
-        private void Update()
-        {
-            _buttonLight.enabled  = _startPressed;
-        }
+        
 
         public override void OnInteract(InventoryData inventoryData)
         {
-            _buttonLight.enabled = true;
             _startPressed = true;
+            _buttonLight.enabled = _startPressed;
         }
 
         public bool StartPressed

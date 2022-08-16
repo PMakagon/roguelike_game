@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace InteractableObjects
 {
-    public class QuestCompleter : Interactable
+    public class QuestCompleterTest : Interactable
     {
         [SerializeField] private TextMeshPro textBox;
 
@@ -35,7 +35,7 @@ namespace InteractableObjects
                     return;
                 }
             }
-            textBox.text = "sosi";
+            textBox.text = "kek";
             Debug.Log("Item not found");
         }
     }

@@ -7,22 +7,22 @@ namespace PlayerPowerSystem
 {
         public class PowerUpdater : MonoBehaviour
         {
-                [SerializeField] private PowerData powerData;
+                [SerializeField] private PlayerPowerData playerPowerData;
                 [SerializeField] private float reduceRate = 1f;
 
                 private IEnumerator ReducePowerOverTime()
                 {
-                        while (powerData.IsPowerOn)
+                        while (playerPowerData.IsPowerOn)
                         { 
                                 yield return new WaitForSecondsRealtime(reduceRate);
-                                powerData.ChangePower();
+                                playerPowerData.ChangePower();
                         }
                 }
                 
                 private void Start()
                 {
-                        powerData.ResetData();
-                        if (powerData.IsPowerOn)
+                        playerPowerData.ResetData();
+                        if (playerPowerData.IsPowerOn)
                         {
                                 StartCoroutine(nameof(ReducePowerOverTime));
                         }
@@ -31,11 +31,11 @@ namespace PlayerPowerSystem
 
                 public void TESTCHARGEBATTERY(float charge)
                 {
-                        powerData.CurrentPower += charge;
+                        playerPowerData.CurrentPower += charge;
                 }
                 public void TESTCHARGEBATTERYFULL()
                 {
-                        powerData.ResetData();
+                        playerPowerData.ResetData();
                 }
                 
         }

@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: InventoryData
   m_EditorClassIdentifier: 
   savePath: 
-  capacity: 9
+  playerPowerData: {fileID: 11400000, guid: 2a5249bc0b8080146988b6712dad5de3, type: 2}
+  capacity: 10

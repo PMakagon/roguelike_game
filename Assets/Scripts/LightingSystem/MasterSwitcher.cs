@@ -1,4 +1,4 @@
-using FPSController;
+using System;
 using FPSController.Interaction_System;
 using InventorySystem;
 using UnityEngine;
@@ -9,8 +9,16 @@ namespace LightingSystem
     {
         [SerializeField] private bool isSwitchedOn;
         [SerializeField] private Transform button;
-        
-        
+       
+        private Action onSwitched;
+
+        public Action OnSwitched
+        {
+            get => onSwitched;
+            set => onSwitched = value;
+        }
+
+
         public bool IsSwitchedOn
         {
             get => isSwitchedOn;
@@ -21,6 +29,7 @@ namespace LightingSystem
         public override void OnInteract(InventoryData inventoryData)
         {
             isSwitchedOn = !isSwitchedOn;
+            onSwitched?.Invoke();
             if (isSwitchedOn)
             {
                 button.Rotate(0.0f, 0.0f, +100.0f, Space.Self);

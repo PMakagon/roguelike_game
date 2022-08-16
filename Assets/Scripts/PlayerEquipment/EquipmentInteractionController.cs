@@ -8,13 +8,13 @@ namespace PlayerEquipment
     {
         [SerializeField] private EquipmentInputData inputData;
         [SerializeField] private InventoryData inventoryData;
-        [SerializeField] private PowerData powerData;
+        [SerializeField] private PlayerPowerData playerPowerData;
         private HeadFlashlight _headFlashlight;
         
         private void Awake()
         {
             _headFlashlight = GetComponentInChildren<HeadFlashlight>();
-            _headFlashlight.PowerData = powerData;
+            _headFlashlight.PlayerPowerData = playerPowerData;
         }
 
         private void Update()
@@ -35,9 +35,9 @@ namespace PlayerEquipment
                
                 if ( inventoryData.CurrentEquipment is IPowerEquipment powerEquipment)
                 {
-                    if (powerEquipment.PowerData==null)
+                    if (powerEquipment.PlayerPowerData==null)
                     {
-                        powerEquipment.PowerData = powerData;
+                        powerEquipment.PlayerPowerData = playerPowerData;
                     }
                     
                     if (inputData.TurnOnClicked)

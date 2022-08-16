@@ -11,10 +11,6 @@ namespace LightingSystem
             get => masterSwitchers;
             set => masterSwitchers = value;
         }
-
-
-        private void OnInteract()
-        {
-        }
+        
     }
 }

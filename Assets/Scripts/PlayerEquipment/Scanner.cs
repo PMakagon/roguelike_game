@@ -41,7 +41,7 @@ namespace PlayerEquipment
 
         public bool IsEquipped { get; set; }
         
-        public PowerData PowerData { get; set; }
+        public PlayerPowerData PlayerPowerData { get; set; }
         public bool IsTurnedOn { get; set; }
 
         private void Awake()
@@ -106,7 +106,7 @@ namespace PlayerEquipment
         {
             IsTurnedOn = true;
             _animator.SetBool("TurnOn",true);
-            PowerData.PowerLoad += power;
+            PlayerPowerData.PowerLoad += power;
             Debug.Log("ON");
         }
 
@@ -114,7 +114,7 @@ namespace PlayerEquipment
         {
             IsTurnedOn = false;
             _animator.SetBool("TurnOff",true);
-            PowerData.PowerLoad -= power;
+            PlayerPowerData.PowerLoad -= power;
             Debug.Log("OFF");
         }
     }

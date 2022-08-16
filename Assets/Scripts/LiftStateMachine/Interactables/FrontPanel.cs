@@ -22,10 +22,6 @@ namespace LiftStateMachine.Interactables
 
         public override void OnInteract(InventoryData inventoryData)
         {
-            // if (inventoryData.Items.Contains())
-            // {
-            //     
-            // }
             liftControllerData.IsLiftCalled = true;
             LiftControllerData.OnLiftCalled.Invoke();
         }

@@ -26,9 +26,6 @@ namespace InventorySystem
         
         private void Start()
         {
-            // _name = GetComponentInChildren<TextMeshProUGUI>();
-            // _amountText = GetComponentInChildren<TextMeshProUGUI>();
-            // _mainIcon = GetComponentInChildren<Image>();
             _selectionIcon.enabled = false;
             if (_itemInSlot==null)
             {

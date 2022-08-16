@@ -1,23 +1,20 @@
 ﻿using System;
+using PlayerPowerSystem;
 using UnityEngine;
 
 namespace InventorySystem.Items
 {
     [CreateAssetMenu(fileName = "Battery", menuName = "Items/Battery")]
-    public class BatteryItem : Item
+    public class BatteryItem : ConsumableItem
     {
         [SerializeField] private float capacity;
         
         public float Capacity => capacity;
 
-        public override ItemType ItemType
+        public override void Use(InventoryData inventoryData)
         {
-            get => ItemType.Consumable;
-        }
-
-        private void Awake()
-        {
-            ItemType = ItemType.Consumable;
+            inventoryData.PlayerPowerData.CurrentPower = capacity;
+            base.Use(inventoryData);
         }
     }
 }

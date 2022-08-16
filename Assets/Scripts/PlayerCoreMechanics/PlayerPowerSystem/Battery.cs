@@ -14,7 +14,7 @@ namespace PlayerPowerSystem
 
         public bool IsEquipped { get; set; }
 
-        public PowerData PowerData { get; set; }
+        public PlayerPowerData PlayerPowerData { get; set; }
 
         public bool IsTurnedOn { get; set; }
 
@@ -35,8 +35,8 @@ namespace PlayerPowerSystem
             EquipmentAnimator.SetBool("Use",true);
             if (!IsEmpty())
             {
-                var charge = currentCapacity - PowerData.CurrentPower;
-                PowerData.CurrentPower += charge;
+                var charge = currentCapacity - PlayerPowerData.CurrentPower;
+                PlayerPowerData.CurrentPower += charge;
                 currentCapacity -= charge;
                 Debug.Log("BATTERY CHARGE LEFT " + charge);
                 return;

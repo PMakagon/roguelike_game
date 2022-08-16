@@ -3,22 +3,24 @@ using UnityEngine;
 
 namespace PlayerPowerSystem
 {
-    [CreateAssetMenu(fileName = "PowerData", menuName = "PlayerPowerSystem/PowerData")]
-    public class PowerData : ScriptableObject
+    [CreateAssetMenu(fileName = "PlayerPowerData", menuName = "PlayerPowerSystem/PowerData")]
+    public class PlayerPowerData : ScriptableObject
     {
         [SerializeField] private float constLoad = 1f;
-
+        
+        [SerializeField]  private float _maxPower = 100f;
+        
         private float _currentPower;
 
         private float _powerLoad;
-
-        private float _maxPower = 100f;
-
+        
         private float _minPower = 0;
 
         private bool _isPowerOn;
 
         public Action onPowerChange;
+
+        // public Action onPowerOff;
 
 
         public bool IsNoPower() => CurrentPower <= _minPower;

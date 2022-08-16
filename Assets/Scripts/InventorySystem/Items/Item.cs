@@ -21,12 +21,18 @@ namespace InventorySystem.Items
         [SerializeField] private string _description;
         [SerializeField] private bool stackable;
 
+        public virtual void Use(InventoryData inventoryData)
+        {
+           inventoryData.RemoveItem(this); 
+           Debug.Log("USED");
+        }
+
         public bool Stackable
         {
             get => stackable;
             set => stackable = value;
         }
-        
+
         public string Name
         {
             get => _name;

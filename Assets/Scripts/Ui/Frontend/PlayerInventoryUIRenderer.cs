@@ -72,10 +72,10 @@ namespace InventorySystem
 
         void Start()
         {
-            inventorySlotsDisplayed = new List<InventorySlot>();
             containerSlotsDisplayed = new List<InventorySlot>();
             inventoryData.ResetData();
-            inventoryData.onItemAdd += UpdateInventory;
+            inventorySlotsDisplayed = new List<InventorySlot>(inventoryData.Items.Capacity);
+            // inventoryData.onItemAdd += UpdateInventory;
             inventoryData.onContainerOpen += OpenContainerPanel;
             RenderInventory();
         }
@@ -126,6 +126,7 @@ namespace InventorySystem
         {
             var cell = Instantiate(inventorySlotUITemplate, parentPanel);
             cell.ParentPanel = parentPanel;
+            AddEvent(cell, EventTriggerType.PointerClick, delegate { OnClick(cell); });
             AddEvent(cell, EventTriggerType.PointerEnter, delegate { OnEnter(cell); });
             AddEvent(cell, EventTriggerType.PointerExit, delegate { OnExit(cell); });
             AddEvent(cell, EventTriggerType.BeginDrag, delegate { OnDragStart(cell); });
@@ -136,18 +137,11 @@ namespace InventorySystem
 
         private void UpdateInventory()
         {
-            if (inventoryData.HasNothing())
-            {
-                return;
-            }
-
-            // for (int i = inventoryData.GetCapacity(); i >= 0; i--)
+            // if (inventoryData.HasNothing())
             // {
-            //     var slot = inventorySlotsDisplayed[i];
-            //     slot.ItemInSlot = inventoryData.Items[i];
-            //     slot.RenderSlot();
+            //     return;
             // }
-
+            
             foreach (var item in inventoryData.Items)
             {
                 int index = inventoryData.Items.IndexOf(item);
@@ -161,11 +155,12 @@ namespace InventorySystem
 
         private void RenderInventory()
         {
-            for (int i = inventoryData.GetCapacity(); i >= 0; i--)
+            for (int i = 0; i < inventoryData.Items.Capacity; i++)
             {
                 var newSlot = CreateNewSlot(playerInventoryPanel);
                 inventorySlotsDisplayed.Add(newSlot);
             }
+            
         }
 
         private void RenderContainer()
@@ -220,19 +215,6 @@ namespace InventorySystem
             _mouseContainer.SetHoverSlot(mouseSlot);
             slot.ItemInSlot = null;
             slot.RenderSlot();
-
-            // var mouseObject = new GameObject();
-            // var rt = mouseObject.AddComponent<RectTransform>();
-            // rt.sizeDelta = new Vector2(50, 50);
-            // mouseObject.transform.SetParent(transform.parent);
-            // if (itemsDisplayed[slot].ID >= 0)
-            // {
-            //   var img = mouseObject.AddComponent<Image>();
-            //   img.sprite = inventory.database.GetItem[itemsDisplayed[obj].ID].uiDisplay;
-            //   img.raycastTarget = false;
-            // }
-            // mouseItem.obj = mouseObject;
-            // mouseItem.item = itemsDisplayed[obj];
         }
 
         public void OnDrag(InventorySlot slot)
@@ -260,6 +242,7 @@ namespace InventorySystem
                 {
                     _mouseContainer.pointSlot.ItemInSlot = _mouseContainer.hoverItem;
                     _mouseContainer.pointSlot.RenderSlot();
+                    
                 }
                 else // слот не пустой - СВАП предметов
                 {
@@ -276,6 +259,16 @@ namespace InventorySystem
             }
 
             Debug.Log("ONDRAG END");
+        }
+
+        private void OnClick(InventorySlot slot)
+        {
+            if (slot.ItemInSlot!=null)
+            {
+                var item = slot.ItemInSlot;
+                item.Use(inventoryData);
+                // inventoryData.RemoveItem(item);
+            }
         }
 
         #endregion

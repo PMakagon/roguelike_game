@@ -12,16 +12,16 @@ namespace Ui
         [SerializeField] private Text currentLoad;
         [SerializeField] private Sprite[] sprites;
         [SerializeField] private Image status;
-        [SerializeField] private PowerData powerData;
+        [SerializeField] private PlayerPowerData playerPowerData;
 
         private void Start()
         {
-            powerData.onPowerChange += UpdatePowerBar;
+            playerPowerData.onPowerChange += UpdatePowerBar;
         }
 
         private void UpdatePowerBar()
         {
-            float currentPower = powerData.CurrentPower;
+            float currentPower = playerPowerData.CurrentPower;
             power.text = currentPower.ToString(CultureInfo.CurrentCulture);
             if (currentPower <=0)
             {
@@ -62,8 +62,8 @@ namespace Ui
     
         private void Update()
         {
-            power.text = powerData.CurrentPower.ToString(CultureInfo.CurrentCulture);
-            currentLoad.text ="load " + powerData.PowerLoad.ToString(CultureInfo.CurrentCulture);
+            power.text = playerPowerData.CurrentPower.ToString(CultureInfo.CurrentCulture);
+            currentLoad.text ="load " + playerPowerData.PowerLoad.ToString(CultureInfo.CurrentCulture);
         }
     }
 }

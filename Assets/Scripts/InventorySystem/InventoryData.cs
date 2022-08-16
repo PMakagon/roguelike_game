@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using InventorySystem.Items;
 using PlayerEquipment;
+using PlayerPowerSystem;
 using UnityEngine;
 
 namespace InventorySystem
@@ -13,8 +10,8 @@ namespace InventorySystem
     [CreateAssetMenu(fileName = "InventoryData", menuName = "InventorySystem/InventoryData")]
     public class InventoryData : ScriptableObject
     {
-        public string savePath;
-        [SerializeField] private int capacity = 10;
+        [SerializeField] private PlayerPowerData playerPowerData;
+        [SerializeField] private int capacity=10;
         private List<IItem> _items;
         private string _containerName;
         private List<IItem> _containerItems;
@@ -26,9 +23,7 @@ namespace InventorySystem
         public Action onEquipmentAdd;
         public Action onInventoryChange;
 
-
-        #region Methods
-
+        
         public int GetCapacity() => capacity;
         public bool HasNothing() => _items.Count == 0;
 
@@ -40,9 +35,9 @@ namespace InventorySystem
             _containerName = null;
         }
 
-        private void Awake()
+        private void OnEnable()
         {
-            _items = new List<IItem>(capacity);
+            ResetData();
         }
 
         public void ResetData()
@@ -66,21 +61,17 @@ namespace InventorySystem
                     return false;
                 }
             }
-            
             _items.Add(item);
             onItemAdd?.Invoke();
             onInventoryChange?.Invoke();
             return true;
         }
         
-
         public void RemoveItem(IItem item)
         {
             _items.Remove(item);
             onInventoryChange?.Invoke();
         }
-
-        #endregion
         
         
         #region Properties
@@ -114,6 +105,8 @@ namespace InventorySystem
             get => _currentEquipment;
             set => _currentEquipment = value;
         }
+
+        public PlayerPowerData PlayerPowerData => playerPowerData;
 
         #endregion
     }
