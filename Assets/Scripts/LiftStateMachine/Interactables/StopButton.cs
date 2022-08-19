@@ -1,9 +1,8 @@
-﻿using FPSController;
-using FPSController.Interaction_System;
-using InventorySystem;
+﻿using LiftGame.FPSController.InteractionSystem;
+using LiftGame.InventorySystem;
 using UnityEngine;
 
-namespace LiftStateMachine
+namespace LiftGame.LiftStateMachine.Interactables
 {
     public class StopButton : Interactable
     {
@@ -18,19 +17,10 @@ namespace LiftStateMachine
             _panel = gameObject.GetComponentInParent<InnerPanel>();
         }
 
-        private void Update()
-        {
-            if (!_stopPressed)
-            {
-                _buttonLight.enabled = false;
-            }
-        }
-        
-
         public override void OnInteract(InventoryData inventoryData)
         {
-            _buttonLight.enabled = true;
             _stopPressed = !_stopPressed;
+            _buttonLight.enabled = _stopPressed;
         }
 
         public bool StopPressed

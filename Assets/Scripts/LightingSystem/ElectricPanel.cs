@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace LightingSystem
+namespace LiftGame.LightingSystem
 {
     public class ElectricPanel : MonoBehaviour
     {
@@ -11,11 +11,6 @@ namespace LightingSystem
             get => masterSwitchers;
             set => masterSwitchers = value;
         }
-
-
-        private void OnInteract()
-        {
         
-        }
     }
 }

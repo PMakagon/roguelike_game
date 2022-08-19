@@ -1,13 +1,13 @@
 using System;
 using UnityEngine;
 
-namespace LiftStateMachine.states
+namespace LiftGame.LiftStateMachine.states
 {
     public class IdleState : ILiftState
     {
         public void EnterState()
         {
-            Debug.Log("Enter IdleState");
+            // Debug.Log("Enter IdleState");
         }
 
         public void EnterState(Action enterAction)
@@ -18,12 +18,12 @@ namespace LiftStateMachine.states
 
         public void ExitState()
         {
-            Debug.Log("Exit IdleState");
+            // Debug.Log("Exit IdleState");
         }
 
         public void ExitState(Action exitAction)
         {
-            Debug.Log("Exit IdleState");
+            // Debug.Log("Exit IdleState");
         }
 
         public void SwitchState(ILiftState newState)

@@ -1,10 +1,8 @@
-﻿using System;
-using FPSController;
-using FPSController.Interaction_System;
-using InventorySystem;
+﻿using LiftGame.FPSController.InteractionSystem;
+using LiftGame.InventorySystem;
 using UnityEngine;
 
-namespace LiftStateMachine
+namespace LiftGame.LiftStateMachine.Interactables
 {
     public class StartButton : Interactable
     {
@@ -18,16 +16,12 @@ namespace LiftStateMachine
             _buttonLight.enabled = false;
             _panel = gameObject.GetComponentInParent<InnerPanel>();
         }
-
-        private void Update()
-        {
-            _buttonLight.enabled  = _startPressed;
-        }
+        
 
         public override void OnInteract(InventoryData inventoryData)
         {
-            _buttonLight.enabled = true;
             _startPressed = true;
+            _buttonLight.enabled = _startPressed;
         }
 
         public bool StartPressed

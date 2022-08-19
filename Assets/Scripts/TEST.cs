@@ -1,7 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace LiftStateMachine
+namespace LiftGame
 {
     public class TEST : MonoBehaviour
     {

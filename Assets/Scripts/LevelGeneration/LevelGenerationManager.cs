@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
+using LiftGame.LiftStateMachine;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
-namespace LevelGeneration
+namespace LiftGame.LevelGeneration
 {
     public class LevelGenerationManager : MonoBehaviour
     {
@@ -15,6 +15,8 @@ namespace LevelGeneration
         [SerializeField] private ElectricitySpawner electricitySpawner;
         [SerializeField] private LevelDesigner levelDesigner;
         [SerializeField] private DifficultyController difficultyController;
+        [SerializeField] private LootSpawner lootSpawner;
+        
 
         private LevelBlueprint _levelBlueprint;
         private RootRoom _currentRoot;
@@ -24,14 +26,15 @@ namespace LevelGeneration
         public bool destroyPrevLevel=true;
 
 
-        // private void Awake()
-        // {
-        //     levelChanger = GetComponentInChildren<LevelChanger>();
-        //     levelGenerator = GetComponentInChildren<LevelGenerator>();
-        //     doorSpawner = GetComponentInChildren<DoorSpawner>();
-        //     electricitySpawner=GetComponentInChildren<ElectricitySpawner>();
-        //     levelDesigner = GetComponentInChildren<LevelDesigner>();
-        // }
+        private void Awake()
+        {
+            // levelChanger = GetComponentInChildren<LevelChanger>();
+            // levelGenerator = GetComponentInChildren<LevelGenerator>();
+            // doorSpawner = GetComponentInChildren<DoorSpawner>();
+            // electricitySpawner=GetComponentInChildren<ElectricitySpawner>();
+            // levelDesigner = GetComponentInChildren<LevelDesigner>();
+            LiftControllerData.OnLevelGameLoopFinished += DestroyCurrentLevel;
+        }
 
         private void Update()
         {
@@ -46,7 +49,7 @@ namespace LevelGeneration
         {
             if (destroyPrevLevel)
             {
-                Invoke(nameof(DestroyLevel),10);
+                Invoke(nameof(DestroyPreviousLevel),10);
             }
             difficultyController.IsDifficultySettingEnabled = true;
             levelDesigner.CreateBlueprint = true;
@@ -66,6 +69,8 @@ namespace LevelGeneration
             doorSpawner.EnableDoorSpawner = true;
             electricitySpawner.LevelBlueprint = _levelBlueprint;
             electricitySpawner.isElectricityGenerationEnabled = true;
+            //test
+            lootSpawner.SpawnQuestItem(_levelBlueprint.SpawnedRooms);
         }
 
         private void GetLevel()
@@ -80,11 +85,18 @@ namespace LevelGeneration
             levelGenerator.showReport = true;
         }
         
-        private void DestroyLevel()
+        private void DestroyPreviousLevel()
         {
             if (_previousLevel && _currentRoot!=_previousLevel)
             {
                 Destroy(_previousLevel.gameObject);
+            }
+        } 
+        private void DestroyCurrentLevel()
+        {
+            if (_currentRoot)
+            {
+                Destroy(_currentRoot.gameObject);
             }
         }
 
@@ -100,7 +112,7 @@ namespace LevelGeneration
             stopWatch.Start();
             if (destroyPrevLevel)
             {
-                Invoke(nameof(DestroyLevel),5);
+                Invoke(nameof(DestroyPreviousLevel),5);
             }
             levelChanger.UpdateCode = true;
             levelChanger.TestSwitchLevel = true;
@@ -122,6 +134,8 @@ namespace LevelGeneration
             doorSpawner.EnableDoorSpawner = true;
             electricitySpawner.LevelBlueprint = _levelBlueprint;
             electricitySpawner.isElectricityGenerationEnabled = true;
+            //test
+            lootSpawner.SpawnQuestItem(_levelBlueprint.SpawnedRooms);
             stopWatch.Stop();
             // Get the elapsed time as a TimeSpan value.
             TimeSpan ts = stopWatch.Elapsed;

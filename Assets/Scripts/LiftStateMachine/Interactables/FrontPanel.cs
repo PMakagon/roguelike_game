@@ -1,40 +1,28 @@
-﻿using System;
-using FPSController;
-using FPSController.Interaction_System;
-using InventorySystem;
+﻿using LiftGame.FPSController.InteractionSystem;
+using LiftGame.InventorySystem;
 using UnityEngine;
-using UnityEngine.Events;
 
-namespace LiftStateMachine
+namespace LiftGame.LiftStateMachine.Interactables
 {
     public class FrontPanel : Interactable
     {
         [SerializeField] private Light buttonLight;
         [SerializeField] private LiftControllerData liftControllerData;
-        [SerializeField] private int thisFloorNumber;
         
-
-
         private void Update()
         {
-            if ( liftControllerData.CurrentFloor == thisFloorNumber)
-            {
-                buttonLight.enabled = false;
-                liftControllerData.IsLiftCalled = false;
-            }
+            buttonLight.enabled = liftControllerData.IsLiftCalled;
+        }
+
+        private void Awake()
+        {
+            buttonLight.enabled = false;
         }
 
         public override void OnInteract(InventoryData inventoryData)
         {
-            // buttonAnimation.Play();
-            if (liftControllerData.CurrentFloor != thisFloorNumber)
-            { 
-                buttonLight.enabled = true;
-                liftControllerData.DestinationFloor = thisFloorNumber;
-                liftControllerData.IsLiftCalled = true;
-            }
+            liftControllerData.IsLiftCalled = true;
+            LiftControllerData.OnLiftCalled.Invoke();
         }
-
-        
     }
 }

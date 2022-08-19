@@ -1,10 +1,9 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace LevelGeneration
+namespace LiftGame.LevelGeneration
 {
     public class LevelGenerator : MonoBehaviour
     {
@@ -43,10 +42,7 @@ namespace LevelGeneration
 
         [Header("GENERATION PARAM")] [SerializeField]
         private int _levelSize;
-
         private int _hallsAllowed;
-        private int _stairsAllowed;
-        private int _bossRoomsAllowed;
 
         private int _hallsCounter;
         private int _stairsCounter;
@@ -157,28 +153,18 @@ namespace LevelGeneration
             {
                 case 1:
                     _hallsAllowed = 2;
-                    _bossRoomsAllowed = 1;
-                    _stairsAllowed = 1;
                     return;
                 case 2:
                     _hallsAllowed = 4;
-                    _bossRoomsAllowed = 1;
-                    _stairsAllowed = 2;
                     return;
                 case 3:
                     _hallsAllowed = 8;
-                    _bossRoomsAllowed = 2;
-                    _stairsAllowed = 4;
                     return;
                 case 4:
                     _hallsAllowed = 10;
-                    _bossRoomsAllowed = 3;
-                    _stairsAllowed = 5;
                     return;
                 default:
                     _hallsAllowed = 2;
-                    _bossRoomsAllowed = 1;
-                    _stairsAllowed = 1;
                     return;
             }
         }

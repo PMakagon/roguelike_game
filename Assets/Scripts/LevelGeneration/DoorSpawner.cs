@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using InteractableObjects;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.ProBuilder.Shapes;
 using Random = UnityEngine.Random;
 
-namespace LevelGeneration
+namespace LiftGame.LevelGeneration
 {
     public class DoorSpawner : MonoBehaviour
     {

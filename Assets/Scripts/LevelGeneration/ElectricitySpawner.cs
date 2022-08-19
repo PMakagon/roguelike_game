@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using LightingSystem;
+﻿using System.Collections.Generic;
+using LiftGame.LightingSystem;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace LevelGeneration
+namespace LiftGame.LevelGeneration
 {
     public class ElectricitySpawner : MonoBehaviour
     {

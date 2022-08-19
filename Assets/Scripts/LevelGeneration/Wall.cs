@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace LevelGeneration
+namespace LiftGame.LevelGeneration
 {
     public class Wall :MonoBehaviour
 

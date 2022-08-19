@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LevelGeneration
+namespace LiftGame.LevelGeneration
 {
     public class LevelBlueprint 
     {

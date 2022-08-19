@@ -1,56 +1,75 @@
-﻿using System;
-using FPSController;
-using FPSController.Interaction_System;
-using InventorySystem;
-using LightingSystem;
-using NaughtyAttributes;
+﻿using System.Linq;
+using LiftGame.InventorySystem;
+using LiftGame.LightingSystem;
 using UnityEngine;
 
-namespace InteractableObjects
+namespace LiftGame.InteractableObjects
 {
-    public class ElectricDoor : Interactable
+    public class ElectricDoor : InteractableDoor
     {
-        // [SerializeField] private InventoryData _inventoryData;
         [SerializeField] private MasterSwitcher masterSwitcher;
-        private Animator _animator;
-        private bool _isPoweredOn;
-        public bool isOpen;
+        [SerializeField] private Light stateLight;
 
+        #region BuiltIn Methods
         private void Awake()
         {
-            _animator = GetComponentInParent<Animator>();
+            animator = GetComponentInParent<Animator>();
+            if (!masterSwitcher) return;
+            masterSwitcher.OnSwitched += ChangeLightState;
+            ChangeLightState();
         }
-        
-        private void OpenDoor()
+        private void OnDestroy()
         {
-            isOpen = true;
-            _animator.SetBool("Open", isOpen);
-            Debug.Log("OPEN");
+            masterSwitcher.OnSwitched -= ChangeLightState;
+        }
+        #endregion
+
+        #region Properties
+
+        public MasterSwitcher MasterSwitcher
+        {
+            get => masterSwitcher;
+            set => masterSwitcher = value;
         }
 
-        private void CloseDoor()
+        public void AddSwitcher(MasterSwitcher switcher)
         {
-            isOpen = false;
-            _animator.SetBool("Open", isOpen);
-            Debug.Log("CLOSED");
+            masterSwitcher = switcher;
+            switcher.OnSwitched += ChangeLightState;
+        }
+
+        #endregion
+
+        private void ChangeLightState()
+        {
+            stateLight.enabled = !masterSwitcher.IsSwitchedOn;
         }
 
         public override void OnInteract(InventoryData inventoryData)
         {
-            if (!masterSwitcher.IsSwitchedOn && !isOpen)
+            if (!isOpen)
             {
-                _animator.SetBool("TryOpen", true);
+                if (masterSwitcher.IsSwitchedOn)
+                {
+                    if (isLocked)
+                    {
+                        if (inventoryData.Items.Any(key => key.Name == keyName))
+                        {
+                            isLocked = false;
+                            OpenDoor();
+                            // Debug.Log("Opened with " + key.Name);
+                            return;
+                        }
+                        animator.SetBool(TryOpen, true);
+                        return;
+                    }
+                    OpenDoor();
+                    return;
+                }
+                animator.SetBool(TryOpen, true);
                 return;
             }
-
-            if (isOpen)
-            {
-                CloseDoor();
-            }
-            else
-            {
-                OpenDoor();
-            }
+            CloseDoor();
         }
     }
 }

@@ -1,16 +1,23 @@
-using FPSController;
-using FPSController.Interaction_System;
-using InventorySystem;
+using System;
+using LiftGame.FPSController.InteractionSystem;
+using LiftGame.InventorySystem;
 using UnityEngine;
 
-namespace LightingSystem
+namespace LiftGame.LightingSystem
 {
     public class MasterSwitcher : Interactable
     {
         [SerializeField] private bool isSwitchedOn;
-        [SerializeField] private Animation switchAnimation;
-    
-    
+        [SerializeField] private Transform button;
+       
+        private Action onSwitched;
+
+        public Action OnSwitched
+        {
+            get => onSwitched;
+            set => onSwitched = value;
+        }
+
 
         public bool IsSwitchedOn
         {
@@ -18,10 +25,19 @@ namespace LightingSystem
             set => isSwitchedOn = value;
         }
 
+
         public override void OnInteract(InventoryData inventoryData)
         {
-            // switchAnimation.Play();
             isSwitchedOn = !isSwitchedOn;
+            onSwitched?.Invoke();
+            if (isSwitchedOn)
+            {
+                button.Rotate(0.0f, 0.0f, +100.0f, Space.Self);
+            }
+            else
+            {
+                button.Rotate(0.0f, 0.0f, -100.0f, Space.Self);
+            }
         }
     }
 }

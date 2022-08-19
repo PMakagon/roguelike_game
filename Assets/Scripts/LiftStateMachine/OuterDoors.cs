@@ -1,45 +1,34 @@
-﻿using System;
-using LiftStateMachine.states;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace LiftStateMachine
+namespace LiftGame.LiftStateMachine
 {
     public class OuterDoors : MonoBehaviour
     {
-        [SerializeField] private GameObject _door1;
-        [SerializeField] private GameObject _door2;
         [SerializeField] private LiftControllerData liftControllerData;
-        [SerializeField] private int ThisFloorNumber;
         private Animator _animator;
 
 
         private void Awake()
         {
             _animator = GetComponent<Animator>();
+            liftControllerData.OnDoorsAction += ActivateDoors;
         }
 
-        private void Update()
+        private void OnDisable()
         {
-            
+            liftControllerData.OnDoorsAction -= ActivateDoors;
+        }
+
+
+        public void ActivateDoors()
+        {
             if (liftControllerData.IsDoorsOpen)
             {
                 OpenDoors();
             }
             else
             {
-                CloseDoors(); 
-            }
-        }
-        
-        private void ActivateDoors()
-        {
-            if (liftControllerData.CurrentState.GetType() == typeof(MovingState))
-            {
                 CloseDoors();
-            }
-            if (liftControllerData.CurrentState.GetType() == typeof(IdleState))
-            {
-                OpenDoors();
             }
         }
 

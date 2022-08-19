@@ -1,44 +1,50 @@
-﻿using FPSController;
-using FPSController.Interaction_System;
-using InventorySystem;
+﻿using LiftGame.FPSController.InteractionSystem;
+using LiftGame.InventorySystem.Items;
 using NaughtyAttributes;
 using UnityEngine;
 
-public class Equipable : Interactable
+namespace LiftGame.InventorySystem
 {
-    [Space, Header("Equipable Settings")] 
-    [SerializeField] private bool isEquipable = true;
-    [ShowIf("isEquipable")] [SerializeField] public Item itemToEquip;
-    [ShowIf("isEquipable")] [SerializeField] private int amount;
-    [ShowIf("isEquipable")] [SerializeField] private bool destroyOnEquip = true;
-    
-
-    public bool IsEquipable => isEquipable;
-    public int Amount => amount;
-    public bool DestroyOnEquip => destroyOnEquip;
-
-    public override void OnInteract(InventoryData inventoryData)
+    public class Equipable : Interactable
     {
-        if (inventoryData.AddItem(itemToEquip))
+        [Space, Header("Equipable Settings")] 
+        [SerializeField] private bool isEquipable = true;
+        [ShowIf("isEquipable")] [SerializeField] public Item itemToEquip;
+        [ShowIf("isEquipable")] [SerializeField] private int amount;
+        [ShowIf("isEquipable")] [SerializeField] private bool destroyOnEquip = true;
+        
+        public bool IsEquipable => isEquipable;
+        public int Amount => amount;
+        public bool DestroyOnEquip => destroyOnEquip;
+
+        private void Awake()
         {
-            if (destroyOnEquip)
-            {
-                Destroy(gameObject);
-            }
-            Debug.Log("Equipped: " + gameObject.name);
+            TooltipMessage = itemToEquip.Name;
         }
-        base.OnInteract(inventoryData);
-    }
 
-    public virtual void OnEquip(InventoryData inventoryData)
-    {
-        if (inventoryData.AddItem(itemToEquip))
+        public override void OnInteract(InventoryData inventoryData)
         {
-            if (destroyOnEquip)
+            if (inventoryData.AddItem(itemToEquip,amount))
             {
-                Destroy(gameObject);
+                if (destroyOnEquip)
+                {
+                    Destroy(gameObject);
+                }
+                Debug.Log("Equipped: " + gameObject.name);
             }
-            Debug.Log("Equipped: " + gameObject.name);
+            base.OnInteract(inventoryData);
+        }
+
+        public virtual void OnEquip(InventoryData inventoryData)
+        {
+            if (inventoryData.AddItem(itemToEquip,amount))
+            {
+                if (destroyOnEquip)
+                {
+                    Destroy(gameObject);
+                }
+                Debug.Log("Equipped: " + gameObject.name);
+            }
         }
     }
 }
