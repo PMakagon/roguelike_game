@@ -1,8 +1,7 @@
-﻿using System;
-using FPSController.Scriptable_Objects;
+﻿using LiftGame.FPSController.ScriptableObjects;
 using UnityEngine;
 
-namespace FPSController
+namespace LiftGame.FPSController
 {
     public class FirstPersonAnimationController : MonoBehaviour
 

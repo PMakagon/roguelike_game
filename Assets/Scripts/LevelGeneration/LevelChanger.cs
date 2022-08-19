@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using LiftStateMachine;
+using LiftGame.LiftStateMachine;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace LevelGeneration
+namespace LiftGame.LevelGeneration
 {
     public class LevelChanger : MonoBehaviour
     {

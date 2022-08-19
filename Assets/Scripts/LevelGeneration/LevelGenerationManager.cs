@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
-using LiftStateMachine;
+using LiftGame.LiftStateMachine;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
-namespace LevelGeneration
+namespace LiftGame.LevelGeneration
 {
     public class LevelGenerationManager : MonoBehaviour
     {

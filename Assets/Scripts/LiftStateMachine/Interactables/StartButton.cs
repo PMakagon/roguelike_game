@@ -1,10 +1,8 @@
-﻿using System;
-using FPSController;
-using FPSController.Interaction_System;
-using InventorySystem;
+﻿using LiftGame.FPSController.InteractionSystem;
+using LiftGame.InventorySystem;
 using UnityEngine;
 
-namespace LiftStateMachine
+namespace LiftGame.LiftStateMachine.Interactables
 {
     public class StartButton : Interactable
     {

@@ -1,7 +1,7 @@
-﻿using InteractableObjects;
+﻿using LiftGame.InteractableObjects;
 using UnityEngine;
 
-namespace LevelGeneration
+namespace LiftGame.LevelGeneration
 {
     public class Entry : MonoBehaviour
     { 

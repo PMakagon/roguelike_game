@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Unity.Mathematics;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace LevelGeneration
+namespace LiftGame.LevelGeneration
 {
     public class LootSpawner : MonoBehaviour
     {

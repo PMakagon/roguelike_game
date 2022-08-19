@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using LiftStateMachine.states;
+using LiftGame.LiftStateMachine.states;
 using UnityEngine;
 
-namespace LiftStateMachine
+namespace LiftGame.LiftStateMachine.Interactables
 {
     public class InnerPanel : MonoBehaviour
     {

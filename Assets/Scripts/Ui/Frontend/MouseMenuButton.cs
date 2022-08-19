@@ -2,7 +2,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace InventorySystem
+namespace LiftGame.Ui.Frontend
 {
     public class MouseMenuButton : MonoBehaviour
     {

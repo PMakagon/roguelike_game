@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace InventorySystem.Items
+namespace LiftGame.InventorySystem.Items
 {
     [CreateAssetMenu(fileName = "QuestItemTest", menuName = "Quest/Test")]
     public class QuestItemTEST : Item

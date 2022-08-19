@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections;
-using PlayerEquipment;
+﻿using System.Collections;
 using UnityEngine;
 
-namespace PlayerPowerSystem
+namespace LiftGame.PlayerCoreMechanics.PlayerPowerSystem
 {
         public class PowerUpdater : MonoBehaviour
         {

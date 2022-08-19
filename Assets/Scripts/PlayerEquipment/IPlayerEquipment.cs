@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace PlayerEquipment
+namespace LiftGame.PlayerEquipment
 {
     public interface IPlayerEquipment
 

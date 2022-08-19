@@ -1,9 +1,8 @@
-using System;
 using System.Collections;
-using LiftStateMachine.states;
+using LiftGame.LiftStateMachine.states;
 using UnityEngine;
 
-namespace LiftStateMachine
+namespace LiftGame.LiftStateMachine
 {
     public class LiftController : MonoBehaviour
     {

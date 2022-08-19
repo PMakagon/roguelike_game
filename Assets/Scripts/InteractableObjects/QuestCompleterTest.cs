@@ -1,12 +1,11 @@
-﻿using System;
-using FPSController.Interaction_System;
-using InventorySystem;
-using InventorySystem.Items;
-using LiftStateMachine;
+﻿using LiftGame.FPSController.InteractionSystem;
+using LiftGame.InventorySystem;
+using LiftGame.InventorySystem.Items;
+using LiftGame.LiftStateMachine;
 using TMPro;
 using UnityEngine;
 
-namespace InteractableObjects
+namespace LiftGame.InteractableObjects
 {
     public class QuestCompleterTest : Interactable
     {

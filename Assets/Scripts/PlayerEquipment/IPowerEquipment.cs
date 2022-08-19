@@ -1,6 +1,6 @@
-﻿using PlayerPowerSystem;
+﻿using LiftGame.PlayerCoreMechanics.PlayerPowerSystem;
 
-namespace PlayerEquipment
+namespace LiftGame.PlayerEquipment
 {
     public interface IPowerEquipment : IPlayerEquipment
     {

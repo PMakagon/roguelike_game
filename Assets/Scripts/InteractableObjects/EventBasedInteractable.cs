@@ -1,9 +1,9 @@
-﻿using FPSController.Interaction_System;
-using InventorySystem;
+﻿using LiftGame.FPSController.InteractionSystem;
+using LiftGame.InventorySystem;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace InteractableObjects
+namespace LiftGame.InteractableObjects
 {
     public class EventBasedInteractable : Interactable
     {

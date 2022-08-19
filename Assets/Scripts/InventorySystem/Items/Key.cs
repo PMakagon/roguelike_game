@@ -1,7 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace InventorySystem.Items
+namespace LiftGame.InventorySystem.Items
 {
     [CreateAssetMenu(fileName = "Key", menuName = "Items/Key")]
     public class Key : Item

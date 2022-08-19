@@ -1,13 +1,9 @@
-﻿using System;
-using System.Linq;
-using FPSController;
-using FPSController.Interaction_System;
-using InventorySystem;
-using LightingSystem;
-using NaughtyAttributes;
+﻿using System.Linq;
+using LiftGame.InventorySystem;
+using LiftGame.LightingSystem;
 using UnityEngine;
 
-namespace InteractableObjects
+namespace LiftGame.InteractableObjects
 {
     public class ElectricDoor : InteractableDoor
     {

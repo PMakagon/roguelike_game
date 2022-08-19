@@ -1,7 +1,6 @@
-using System;
 using UnityEngine;
 
-namespace LiftStateMachine
+namespace LiftGame.LiftStateMachine
 {
     public class LiftPlayerObserver : MonoBehaviour
     {

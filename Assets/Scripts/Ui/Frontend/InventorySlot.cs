@@ -1,9 +1,9 @@
-using InventorySystem.Items;
+using LiftGame.InventorySystem.Items;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace InventorySystem
+namespace LiftGame.Ui.Frontend
 {
     public class InventorySlot : MonoBehaviour
     {

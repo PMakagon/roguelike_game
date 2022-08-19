@@ -1,9 +1,10 @@
-﻿using System;
-using LevelGeneration;
+﻿using LiftGame.LevelGeneration;
+using LiftGame.LiftStateMachine;
+using LiftGame.LiftStateMachine.Interactables;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace LiftStateMachine
+namespace LiftGame.Ui
 {
     public class DebugWindow : MonoBehaviour
     {

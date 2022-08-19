@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace PlayerPowerSystem
+namespace LiftGame.PlayerCoreMechanics.PlayerPowerSystem
 {
     [CreateAssetMenu(fileName = "PlayerPowerData", menuName = "PlayerPowerSystem/PowerData")]
     public class PlayerPowerData : ScriptableObject

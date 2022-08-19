@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections;
-using LiftStateMachine;
-using UnityEngine;
 using NaughtyAttributes;
+using UnityEngine;
 
-namespace PlayerCoreMechanics.MentalSystem
+namespace LiftGame.PlayerCoreMechanics.MentalSystem
 {
     public enum StressState
     {

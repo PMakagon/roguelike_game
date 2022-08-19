@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
+using LiftGame.PlayerCoreMechanics.MentalSystem;
 using NaughtyAttributes;
-using PlayerCoreMechanics.MentalSystem;
 using UnityEngine;
 
-namespace PlayerCoreMechanics.HealthSystem
+namespace LiftGame.PlayerCoreMechanics.HealthSystem
 {
     public enum HealthStatus
     {

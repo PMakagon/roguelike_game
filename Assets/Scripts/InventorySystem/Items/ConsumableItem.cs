@@ -1,4 +1,4 @@
-﻿namespace InventorySystem.Items
+﻿namespace LiftGame.InventorySystem.Items
 {
     public class ConsumableItem : Item
     {

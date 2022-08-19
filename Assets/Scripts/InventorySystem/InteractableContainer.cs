@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using FPSController.Interaction_System;
-using InventorySystem.Items;
+using LiftGame.FPSController.InteractionSystem;
+using LiftGame.InventorySystem.Items;
 using UnityEngine;
 
-namespace InventorySystem
+namespace LiftGame.InventorySystem
 {
     public class InteractableContainer : Interactable
     {

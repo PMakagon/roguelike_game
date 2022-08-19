@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace InventorySystem.Items
+namespace LiftGame.InventorySystem.Items
 {
     [CreateAssetMenu(fileName = "HandFlashlight", menuName = "Items/Equipment/HandFlashlight")]
     public class HandFlashlightItem : EquipmentItem

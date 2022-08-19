@@ -1,9 +1,9 @@
 using System;
-using FPSController.Interaction_System;
-using InventorySystem;
+using LiftGame.FPSController.InteractionSystem;
+using LiftGame.InventorySystem;
 using UnityEngine;
 
-namespace LightingSystem
+namespace LiftGame.LightingSystem
 {
     public class MasterSwitcher : Interactable
     {
