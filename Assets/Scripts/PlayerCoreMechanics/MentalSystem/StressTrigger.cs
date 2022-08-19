@@ -1,9 +1,8 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
-namespace PlayerCoreMechanics.MentalSystem
+namespace LiftGame.PlayerCoreMechanics.MentalSystem
 {
     public class StressTrigger : MonoBehaviour
     {

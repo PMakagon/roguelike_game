@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace LiftStateMachine.states
+namespace LiftGame.LiftStateMachine.states
 {
     public class StopState : ILiftState
     

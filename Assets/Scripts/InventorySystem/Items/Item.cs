@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace InventorySystem.Items
+namespace LiftGame.InventorySystem.Items
 {
     public enum ItemType
     {

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace PlayerEquipment
+namespace LiftGame.PlayerEquipment
 {
     [CreateAssetMenu(fileName = "EquipmentInputData", menuName = "FirstPersonController/Data/EquipmentInputData")]
     public class EquipmentInputData : ScriptableObject

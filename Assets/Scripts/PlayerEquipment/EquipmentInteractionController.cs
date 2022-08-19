@@ -1,8 +1,8 @@
-﻿using InventorySystem;
-using PlayerPowerSystem;
+﻿using LiftGame.InventorySystem;
+using LiftGame.PlayerCoreMechanics.PlayerPowerSystem;
 using UnityEngine;
 
-namespace PlayerEquipment
+namespace LiftGame.PlayerEquipment
 {
     public class EquipmentInteractionController : MonoBehaviour
     {

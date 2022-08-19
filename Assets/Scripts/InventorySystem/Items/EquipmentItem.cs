@@ -1,6 +1,6 @@
-﻿using PlayerEquipment;
+﻿using LiftGame.PlayerEquipment;
 
-namespace InventorySystem.Items
+namespace LiftGame.InventorySystem.Items
 {
     public class EquipmentItem : Item
     { 

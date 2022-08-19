@@ -1,8 +1,6 @@
-﻿using System;
-using PlayerPowerSystem;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace InventorySystem.Items
+namespace LiftGame.InventorySystem.Items
 {
     [CreateAssetMenu(fileName = "Battery", menuName = "Items/Battery")]
     public class BatteryItem : ConsumableItem

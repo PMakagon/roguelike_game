@@ -1,7 +1,7 @@
-﻿using LightingSystem;
+﻿using LiftGame.LightingSystem;
 using UnityEngine;
 
-namespace LevelGeneration
+namespace LiftGame.LevelGeneration
 {
     public class Room : MonoBehaviour
     {

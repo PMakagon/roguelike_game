@@ -1,11 +1,11 @@
 ﻿using System.Collections;
-using FPSController.First_Person_Controller;
+using LiftGame.FPSController.FirstPersonController;
 using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Random = UnityEngine.Random;
 
-namespace LightingSystem
+namespace LiftGame.LightingSystem
 {
     public class LightExtended : MonoBehaviour //разбить на несколько классов компонентов
     {

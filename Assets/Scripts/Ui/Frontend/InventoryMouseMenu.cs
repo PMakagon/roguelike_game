@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using FPSController.Interaction_System;
-using InventorySystem.Items;
+using LiftGame.InventorySystem.Items;
 using UnityEngine;
 
-namespace InventorySystem
+namespace LiftGame.Ui.Frontend
 {
     public class InventoryMouseMenu : MonoBehaviour
     {

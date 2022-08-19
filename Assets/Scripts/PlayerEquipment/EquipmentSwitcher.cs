@@ -1,11 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using InventorySystem;
-using InventorySystem.Items;
-using PlayerPowerSystem;
+using LiftGame.InventorySystem;
+using LiftGame.PlayerCoreMechanics.PlayerPowerSystem;
 using UnityEngine;
 
-namespace PlayerEquipment
+namespace LiftGame.PlayerEquipment
 {
     public class EquipmentSwitcher : MonoBehaviour
 

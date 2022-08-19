@@ -1,6 +1,6 @@
-﻿using LiftStateMachine.states;
+﻿using LiftGame.LiftStateMachine.states;
 
-namespace LiftStateMachine
+namespace LiftGame.LiftStateMachine
 {
     public class LiftStateFactory
     {

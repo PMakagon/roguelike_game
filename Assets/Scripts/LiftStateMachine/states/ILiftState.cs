@@ -1,6 +1,6 @@
 using System;
 
-namespace LiftStateMachine.states
+namespace LiftGame.LiftStateMachine.states
 {
     public interface ILiftState
     {

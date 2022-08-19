@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using InventorySystem.Items;
-using PlayerEquipment;
-using PlayerPowerSystem;
+using LiftGame.InventorySystem.Items;
+using LiftGame.PlayerCoreMechanics.PlayerPowerSystem;
+using LiftGame.PlayerEquipment;
 using UnityEngine;
 
-namespace InventorySystem
+namespace LiftGame.InventorySystem
 {
     [CreateAssetMenu(fileName = "InventoryData", menuName = "InventorySystem/InventoryData")]
     public class InventoryData : ScriptableObject
@@ -42,7 +42,8 @@ namespace InventorySystem
 
         public void ResetData()
         {
-            _items = new List<IItem>(capacity);
+            _items = new List<IItem>();
+            _items.Capacity = capacity;
         }
 
         public bool AddItem(IItem item, int amount)

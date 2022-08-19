@@ -1,9 +1,7 @@
-﻿using System;
-using FPSController.Scriptable_Objects;
-using PlayerPowerSystem;
+﻿using LiftGame.PlayerCoreMechanics.PlayerPowerSystem;
 using UnityEngine;
 
-namespace PlayerEquipment
+namespace LiftGame.PlayerEquipment
 {
     public class HeadFlashlight : MonoBehaviour
     {

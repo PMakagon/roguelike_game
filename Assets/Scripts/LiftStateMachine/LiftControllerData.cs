@@ -1,9 +1,8 @@
 using System;
-using LiftStateMachine.states;
+using LiftGame.LiftStateMachine.states;
 using UnityEngine;
-using UnityEngine.Events;
 
-namespace LiftStateMachine
+namespace LiftGame.LiftStateMachine
 {
     [CreateAssetMenu(fileName = "LiftControllerData", menuName = "LiftController/LiftControllerData")]
     public class LiftControllerData : ScriptableObject

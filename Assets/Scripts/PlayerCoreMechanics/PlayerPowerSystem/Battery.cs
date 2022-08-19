@@ -1,8 +1,7 @@
-﻿using InventorySystem.Items;
-using PlayerEquipment;
+﻿using LiftGame.PlayerEquipment;
 using UnityEngine;
 
-namespace PlayerPowerSystem
+namespace LiftGame.PlayerCoreMechanics.PlayerPowerSystem
 {
     public class Battery : MonoBehaviour,IPowerEquipment
     {

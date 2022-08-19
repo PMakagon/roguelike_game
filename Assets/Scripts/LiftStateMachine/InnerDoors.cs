@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections;
-using LiftStateMachine.states;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace LiftStateMachine
+namespace LiftGame.LiftStateMachine
 {
     public class InnerDoors : MonoBehaviour
     {

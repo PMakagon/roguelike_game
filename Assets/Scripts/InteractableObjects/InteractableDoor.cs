@@ -1,10 +1,10 @@
 ﻿using System.Linq;
-using FPSController.Interaction_System;
-using InventorySystem;
+using LiftGame.FPSController.InteractionSystem;
+using LiftGame.InventorySystem;
 using NaughtyAttributes;
 using UnityEngine;
 
-namespace InteractableObjects
+namespace LiftGame.InteractableObjects
 {
     public class InteractableDoor : Interactable
     {

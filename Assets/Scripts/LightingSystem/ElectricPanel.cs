@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace LightingSystem
+namespace LiftGame.LightingSystem
 {
     public class ElectricPanel : MonoBehaviour
     {

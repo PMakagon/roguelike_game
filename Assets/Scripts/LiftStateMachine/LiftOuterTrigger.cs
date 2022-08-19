@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace LiftStateMachine
+namespace LiftGame.LiftStateMachine
 {
     public class LiftOuterTrigger : MonoBehaviour
     {

@@ -1,8 +1,6 @@
-﻿using System;
-using LiftStateMachine.states;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace LiftStateMachine
+namespace LiftGame.LiftStateMachine
 {
     public class OuterDoors : MonoBehaviour
     {

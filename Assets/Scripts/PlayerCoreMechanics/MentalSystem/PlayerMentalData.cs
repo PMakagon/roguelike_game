@@ -1,7 +1,6 @@
-﻿using NaughtyAttributes;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace PlayerCoreMechanics.MentalSystem
+namespace LiftGame.PlayerCoreMechanics.MentalSystem
 {
     
     [CreateAssetMenu(fileName = "PlayerMentalData", menuName = "PlayerCoreMechanics/PlayerMentalData")]

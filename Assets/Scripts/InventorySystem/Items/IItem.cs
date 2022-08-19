@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace InventorySystem.Items
+namespace LiftGame.InventorySystem.Items
 {
     public interface IItem
     {

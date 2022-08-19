@@ -1,15 +1,13 @@
-using System;
 using System.Collections.Generic;
-using FPSController.Camera_Controller;
-using InventorySystem.Items;
+using LiftGame.FPSController.CameraController;
+using LiftGame.InventorySystem;
+using LiftGame.InventorySystem.Items;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using UnityEngine.Rendering;
-using UnityEngine.UI;
 
-namespace InventorySystem
+namespace LiftGame.Ui.Frontend
 {
     public class MouseContainer
     {

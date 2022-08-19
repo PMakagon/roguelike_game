@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using PlayerPowerSystem;
+﻿using LiftGame.PlayerCoreMechanics.PlayerPowerSystem;
 using UnityEngine;
 
-namespace PlayerEquipment
+namespace LiftGame.PlayerEquipment
 {
     public class Scanner : MonoBehaviour,IPowerEquipment
     {

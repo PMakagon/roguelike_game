@@ -1,7 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace LevelGeneration
+namespace LiftGame.LevelGeneration
 {
     public class DifficultyController : MonoBehaviour
     {

@@ -1,9 +1,9 @@
 ﻿using System.Globalization;
-using PlayerPowerSystem;
+using LiftGame.PlayerCoreMechanics.PlayerPowerSystem;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Ui
+namespace LiftGame.Ui.HUD
 {
     public class PowerUIBar: MonoBehaviour
 
