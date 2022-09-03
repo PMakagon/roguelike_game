@@ -1,4 +1,4 @@
-﻿using LiftGame.PlayerCoreMechanics.PlayerPowerSystem;
+﻿using LiftGame.PlayerCore.PlayerPowerSystem;
 
 namespace LiftGame.PlayerEquipment
 {

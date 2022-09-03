@@ -2,10 +2,12 @@ using System.Collections.Generic;
 using LiftGame.FPSController.CameraController;
 using LiftGame.InventorySystem;
 using LiftGame.InventorySystem.Items;
+using LiftGame.PlayerCore;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using Zenject;
 
 namespace LiftGame.Ui.Frontend
 {
@@ -67,12 +69,21 @@ namespace LiftGame.Ui.Frontend
 
         private bool _isWindowActive;
         private MouseContainer _mouseContainer = new MouseContainer();
+        private IPlayerData _playerData;
+        
+        [Inject]
+        private void Construct(PlayerServiceProvider playerServiceProvider,IPlayerData playerData)
+        {
+            cameraController = playerServiceProvider.CameraController;
+            inventoryData = playerData.GetInventoryData();
+            _playerData = playerData;
+        }
 
         void Start()
         {
             containerSlotsDisplayed = new List<InventorySlot>();
-            inventoryData.ResetData();
-            inventorySlotsDisplayed = new List<InventorySlot>(inventoryData.Items.Capacity);
+            // inventoryData.InventoryContainer.ClearContainer();/////////////////
+            inventorySlotsDisplayed = new List<InventorySlot>(inventoryData.InventoryContainer.Items.Capacity);
             // inventoryData.onItemAdd += UpdateInventory;
             inventoryData.onContainerOpen += OpenContainerPanel;
             RenderInventory();
@@ -110,14 +121,14 @@ namespace LiftGame.Ui.Frontend
             containerWindow.SetActive(true);
             cameraController.LockCursor(!_isWindowActive);
             // cameraController.IsCameraFreezed = _isWindowActive;
-            containerName.text = inventoryData.ContainerName;
+            containerName.text = inventoryData.CurrentContainer.ContainerName;
             RenderContainer();
         }
 
         private void CloseContainerPanel()
         {
             containerWindow.SetActive(false);
-            inventoryData.ClearContainer();
+            inventoryData.CurrentContainer = null;
         }
 
         private InventorySlot CreateNewSlot(Transform parentPanel)
@@ -135,16 +146,17 @@ namespace LiftGame.Ui.Frontend
 
         private void UpdateInventory()
         {
+            var inventory = inventoryData.InventoryContainer.Items;
             // if (inventoryData.HasNothing())
             // {
             //     return;
             // }
             
-            foreach (var item in inventoryData.Items)
+            foreach (var item in inventory)
             {
-                int index = inventoryData.Items.IndexOf(item);
+                int index = inventory.IndexOf(item);
                 var slot = inventorySlotsDisplayed[index];
-                slot.ItemInSlot = inventoryData.Items[index];
+                slot.ItemInSlot = inventory[index];
                 slot.RenderSlot();
             }
 
@@ -153,7 +165,7 @@ namespace LiftGame.Ui.Frontend
 
         private void RenderInventory()
         {
-            for (int i = 0; i < inventoryData.Items.Capacity; i++)
+            for (int i = 0; i < inventoryData.InventoryContainer.Items.Capacity; i++)
             {
                 var newSlot = CreateNewSlot(playerInventoryPanel);
                 inventorySlotsDisplayed.Add(newSlot);
@@ -163,7 +175,7 @@ namespace LiftGame.Ui.Frontend
 
         private void RenderContainer()
         {
-            for (int i = inventoryData.ContainerItems.Capacity; i >= 0; i--)
+            for (int i = inventoryData.InventoryContainer.Items.Capacity; i >= 0; i--)
             {
                 var newSlot = CreateNewSlot(containerPanel);
                 containerSlotsDisplayed.Add(newSlot);
@@ -264,7 +276,7 @@ namespace LiftGame.Ui.Frontend
             if (slot.ItemInSlot!=null)
             {
                 var item = slot.ItemInSlot;
-                item.Use(inventoryData);
+                item.Use(_playerData);
                 // inventoryData.RemoveItem(item);
             }
         }

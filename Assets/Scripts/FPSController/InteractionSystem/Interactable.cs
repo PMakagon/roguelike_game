@@ -1,4 +1,5 @@
 ﻿using LiftGame.InventorySystem;
+using LiftGame.PlayerCore;
 using NaughtyAttributes;
 using UnityEngine;
 
@@ -12,8 +13,7 @@ namespace LiftGame.FPSController.InteractionSystem
     [ShowIf("holdInteract")] [SerializeField] private float holdDuration = 1f;
     [SerializeField] private string tooltipMessage = "Interact";
     
-
-    #region Properties
+    
     public bool IsInteractable => isInteractable;
     public bool HoldInteract => holdInteract;
     public float HoldDuration => holdDuration;
@@ -22,15 +22,11 @@ namespace LiftGame.FPSController.InteractionSystem
         get => tooltipMessage;
         set => tooltipMessage = value;
     }
-    #endregion
-
-    #region Methods
     
-    public virtual void OnInteract(InventoryData inventoryData)
+    public virtual void OnInteract(IPlayerData playerData)
     {
         Debug.Log("INTERACTED: " + gameObject.name);
     }
-    #endregion
 
     }
 }  

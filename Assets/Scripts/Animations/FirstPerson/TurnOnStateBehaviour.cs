@@ -1,11 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class TurnOnStateBehaviour : StateMachineBehaviour
+namespace LiftGame.Animations.FirstPerson
 {
-    public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    public class TurnOnStateBehaviour : StateMachineBehaviour
     {
-        animator.SetBool("TurnOn",false);
+        public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+        {
+            animator.SetBool("TurnOn",false);
+        }
     }
 }

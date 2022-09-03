@@ -1,5 +1,6 @@
 ﻿using LiftGame.FPSController.InteractionSystem;
 using LiftGame.InventorySystem;
+using LiftGame.PlayerCore;
 using UnityEngine;
 
 namespace LiftGame.LiftStateMachine.Interactables
@@ -19,7 +20,7 @@ namespace LiftGame.LiftStateMachine.Interactables
             buttonLight.enabled = false;
         }
 
-        public override void OnInteract(InventoryData inventoryData)
+        public override void OnInteract(IPlayerData playerData)
         {
             liftControllerData.IsLiftCalled = true;
             LiftControllerData.OnLiftCalled.Invoke();

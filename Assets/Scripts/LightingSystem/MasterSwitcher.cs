@@ -1,6 +1,7 @@
 using System;
 using LiftGame.FPSController.InteractionSystem;
 using LiftGame.InventorySystem;
+using LiftGame.PlayerCore;
 using UnityEngine;
 
 namespace LiftGame.LightingSystem
@@ -26,7 +27,7 @@ namespace LiftGame.LightingSystem
         }
 
 
-        public override void OnInteract(InventoryData inventoryData)
+        public override void OnInteract(IPlayerData playerData)
         {
             isSwitchedOn = !isSwitchedOn;
             onSwitched?.Invoke();

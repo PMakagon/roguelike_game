@@ -1,24 +1,19 @@
 using LiftGame.FPSController.ScriptableObjects;
+using LiftGame.GameCore.Pause;
 using LiftGame.PlayerEquipment;
 using UnityEngine;
 
 namespace LiftGame.FPSController.InputHandler
 {
-    public class InputHandler : MonoBehaviour
+    public class InputHandler : MonoBehaviour ,IPauseable
     {
-        #region Data
-
-        [Space, Header("Input Data")] [SerializeField]
-        private CameraInputData cameraInputData = null;
-
+        [Space, Header("Input Data")] 
+        [SerializeField] private CameraInputData cameraInputData = null;
         [SerializeField] private MovementInputData movementInputData = null;
         [SerializeField] private InteractionInputData interactionInputData = null;
         [SerializeField] private EquipmentInputData equipmentInputData = null;
-
-        #endregion
-
-        #region BuiltIn Methods
-
+        public bool isInputActive;
+        
         void Start()
         {
             cameraInputData.ResetInput();
@@ -29,15 +24,17 @@ namespace LiftGame.FPSController.InputHandler
 
         void Update()
         {
+            if (!isInputActive) return;
             GetCameraInput();
             GetMovementInputData();
             GetInteractionInputData();
             GetEquipmentInputData();
         }
-
-        #endregion
-
-        #region Custom Methods
+        
+        public void SetInputActive(bool state)
+        {
+            isInputActive = state;
+        }
 
         private void GetInteractionInputData()
         {
@@ -93,10 +90,11 @@ namespace LiftGame.FPSController.InputHandler
             equipmentInputData.ThirdEquipmentReleased = Input.GetKeyUp(KeyCode.Alpha3);
             equipmentInputData.FourthEquipmentClicked = Input.GetKeyDown(KeyCode.Alpha4);
             equipmentInputData.FourthEquipmentReleased = Input.GetKeyUp(KeyCode.Alpha4);
-            
         }
-        
 
-        #endregion
+        public void SetPaused(bool isPaused)
+        {
+            isInputActive = !isPaused;
+        }
     }
 }

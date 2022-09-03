@@ -1,40 +1,38 @@
 ﻿using LiftGame.FPSController.ScriptableObjects;
 using LiftGame.InventorySystem;
+using LiftGame.PlayerCore;
 using LiftGame.Ui;
 using UnityEngine;
+using Zenject;
 
 namespace LiftGame.FPSController.InteractionSystem
 {
     public class InteractionController : MonoBehaviour
     {
-        #region Variables
-
-        [Space, Header("Data")] [SerializeField]
-        private InteractionInputData interactionInputData = null;
-
+        [Space, Header("Data")] 
+        [SerializeField] private InteractionInputData interactionInputData = null;
         [SerializeField] private InteractionData interactionData = null;
-        [SerializeField] private InventoryData _inventoryData = null;
-
-
         [Space, Header("UI")] [SerializeField] private InteractionUIPanel uiPanel;
 
-        [Space, Header("Ray Settings")] [SerializeField]
-        private float rayDistance = 0f;
+        [Space, Header("Ray Settings")]
+        [SerializeField] private float rayDistance = 0f;
 
         [SerializeField] private float raySphereRadius = 0f;
         [SerializeField] private LayerMask interactableLayer = ~0;
-
-
-        #region Private
 
         private Camera _cam;
 
         private bool _interacting;
         private float _holdTimer = 0f;
 
-        #endregion
+        private IPlayerData _playerData;
 
-        #endregion
+        [Inject]
+        private void Construct(InteractionUIPanel interactionUIPanel,IPlayerData playerData)
+        {
+            _playerData = playerData;
+            uiPanel = interactionUIPanel;
+        }
 
         #region Built In Methods
 
@@ -129,14 +127,14 @@ namespace LiftGame.FPSController.InteractionSystem
 
                     if (heldPercent > uiPanel.ProgressBar.maxValue)
                     {
-                        interactionData.Interact(_inventoryData);
+                        interactionData.Interact(_playerData);
                         uiPanel.SetProgressBarActive(false);
                         _interacting = false;
                     }
                 }
                 else
                 {
-                    interactionData.Interact(_inventoryData);
+                    interactionData.Interact(_playerData);
                     uiPanel.SetProgressBarActive(false);
                     _interacting = false;
                 }

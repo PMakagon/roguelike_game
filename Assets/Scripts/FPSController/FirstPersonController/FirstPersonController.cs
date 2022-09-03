@@ -1,15 +1,14 @@
 ﻿using System.Collections;
 using LiftGame.FPSController.ScriptableObjects;
+using LiftGame.GameCore.Pause;
 using NaughtyAttributes;
 using UnityEngine;
 
 namespace LiftGame.FPSController.FirstPersonController
 {
     [RequireComponent(typeof(CharacterController))]
-    public class FirstPersonController : MonoBehaviour
+    public class FirstPersonController : MonoBehaviour,IPauseable
     {
-        public static FirstPersonController Instance;
-        
         #region Variables
             #region Private Serialized     
                 #region Data
@@ -96,6 +95,7 @@ namespace LiftGame.FPSController.FirstPersonController
                     private RaycastHit m_hitInfo;
                     private IEnumerator m_CrouchRoutine;
                     private IEnumerator m_LandRoutine;
+                    private bool _isEnabled = true;
                 #endregion
 
                 #region Debug
@@ -146,10 +146,6 @@ namespace LiftGame.FPSController.FirstPersonController
         #region BuiltIn Methods     
             protected virtual void Start()
             {
-                if (!Instance)
-                { 
-                    Instance = this;
-                }
                 GetComponents();
                 InitVariables();
             }
@@ -159,7 +155,7 @@ namespace LiftGame.FPSController.FirstPersonController
                 if(m_yawTransform != null)
                     RotateTowardsCamera();
 
-                if(m_characterController)
+                if(m_characterController && _isEnabled)
                 {
                     // Check if Grounded,Wall etc
                     CheckIfGrounded();
@@ -575,6 +571,18 @@ namespace LiftGame.FPSController.FirstPersonController
                     transform.rotation = Quaternion.Slerp(_currentRot,_desiredRot,Time.deltaTime * smoothRotateSpeed);
                 }
             #endregion
+        
         #endregion
+
+        public bool IsEnabled
+        {
+            get => _isEnabled;
+            set => _isEnabled = value;
+        }
+
+        public void SetPaused(bool isPaused)
+        {
+            _isEnabled = !isPaused;
+        }
     }
 }

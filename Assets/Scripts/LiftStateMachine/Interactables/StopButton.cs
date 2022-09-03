@@ -1,5 +1,6 @@
 ﻿using LiftGame.FPSController.InteractionSystem;
 using LiftGame.InventorySystem;
+using LiftGame.PlayerCore;
 using UnityEngine;
 
 namespace LiftGame.LiftStateMachine.Interactables
@@ -17,7 +18,7 @@ namespace LiftGame.LiftStateMachine.Interactables
             _panel = gameObject.GetComponentInParent<InnerPanel>();
         }
 
-        public override void OnInteract(InventoryData inventoryData)
+        public override void OnInteract(IPlayerData playerData)
         {
             _stopPressed = !_stopPressed;
             _buttonLight.enabled = _stopPressed;

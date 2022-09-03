@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using LiftGame.PlayerCore;
+using UnityEngine;
 
 namespace LiftGame.InventorySystem.Items
 {
@@ -9,10 +10,11 @@ namespace LiftGame.InventorySystem.Items
         
         public float Capacity => capacity;
 
-        public override void Use(InventoryData inventoryData)
+        public override void Use(IPlayerData playerData)
         {
-            inventoryData.PlayerPowerData.CurrentPower = capacity;
-            base.Use(inventoryData);
+            var powerData = playerData.GetPowerData();
+            powerData.CurrentPower = capacity;
+            base.Use(playerData);
         }
     }
 }

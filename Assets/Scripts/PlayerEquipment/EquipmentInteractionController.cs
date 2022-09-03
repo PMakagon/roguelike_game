@@ -1,5 +1,5 @@
 ﻿using LiftGame.InventorySystem;
-using LiftGame.PlayerCoreMechanics.PlayerPowerSystem;
+using LiftGame.PlayerCore.PlayerPowerSystem;
 using UnityEngine;
 
 namespace LiftGame.PlayerEquipment

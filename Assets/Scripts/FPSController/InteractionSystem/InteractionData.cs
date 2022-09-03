@@ -1,4 +1,5 @@
 ﻿using LiftGame.InventorySystem;
+using LiftGame.PlayerCore;
 using UnityEngine;
 
 namespace LiftGame.FPSController.InteractionSystem
@@ -14,9 +15,9 @@ namespace LiftGame.FPSController.InteractionSystem
             set => _interactable = value;
         }
 
-        public void Interact(InventoryData inventoryData)
+        public void Interact(IPlayerData playerData)
         {
-            _interactable.OnInteract(inventoryData);
+            _interactable.OnInteract(playerData);
             ResetData();
         }
 

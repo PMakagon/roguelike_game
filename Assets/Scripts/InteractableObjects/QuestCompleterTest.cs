@@ -2,6 +2,7 @@
 using LiftGame.InventorySystem;
 using LiftGame.InventorySystem.Items;
 using LiftGame.LiftStateMachine;
+using LiftGame.PlayerCore;
 using TMPro;
 using UnityEngine;
 
@@ -21,13 +22,14 @@ namespace LiftGame.InteractableObjects
             textBox.text = "bring more";
         }
         
-        public override void OnInteract(InventoryData inventoryData)
+        public override void OnInteract(IPlayerData playerData)
         {
-            foreach (var item in inventoryData.Items)
+            var inventory=  playerData.GetInventoryData().InventoryContainer;
+            foreach (var item in inventory.Items)
             {
                 if (item.ItemType == ItemType.Quest)
                 {
-                    inventoryData.RemoveItem(item);
+                    inventory.RemoveItem(item);
                     textBox.text = "DONE";
                     Debug.Log("Quest completed");
                     LiftControllerData.OnLevelGameLoopFinished.Invoke();

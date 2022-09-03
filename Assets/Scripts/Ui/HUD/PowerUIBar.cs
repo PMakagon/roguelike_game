@@ -1,7 +1,10 @@
-﻿using System.Globalization;
-using LiftGame.PlayerCoreMechanics.PlayerPowerSystem;
+﻿using System;
+using System.Globalization;
+using LiftGame.PlayerCore;
+using LiftGame.PlayerCore.PlayerPowerSystem;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 namespace LiftGame.Ui.HUD
 {
@@ -12,16 +15,30 @@ namespace LiftGame.Ui.HUD
         [SerializeField] private Text currentLoad;
         [SerializeField] private Sprite[] sprites;
         [SerializeField] private Image status;
-        [SerializeField] private PlayerPowerData playerPowerData;
+        private IPlayerPowerService _powerService;
+        private PlayerPowerData _playerPowerData;
 
+        
+        [Inject]
+        private void Construct(IPlayerPowerService powerService,IPlayerData playerData)
+        {
+            _powerService = powerService;
+            _playerPowerData = playerData.GetPowerData();
+        }
+        
         private void Start()
         {
-            playerPowerData.onPowerChange += UpdatePowerBar;
+            _powerService.OnPowerChange += UpdatePowerBar;
+        }
+
+        private void OnDestroy()
+        {
+            _powerService.OnPowerChange -= UpdatePowerBar;
         }
 
         private void UpdatePowerBar()
         {
-            float currentPower = playerPowerData.CurrentPower;
+            float currentPower = _playerPowerData.CurrentPower;
             power.text = currentPower.ToString(CultureInfo.CurrentCulture);
             if (currentPower <=0)
             {
@@ -58,12 +75,8 @@ namespace LiftGame.Ui.HUD
                 status.sprite = sprites[5];
                 return;
             }
-        }
-    
-        private void Update()
-        {
-            power.text = playerPowerData.CurrentPower.ToString(CultureInfo.CurrentCulture);
-            currentLoad.text ="load " + playerPowerData.PowerLoad.ToString(CultureInfo.CurrentCulture);
+            power.text = _playerPowerData.CurrentPower.ToString(CultureInfo.CurrentCulture);
+            currentLoad.text ="load " + _playerPowerData.PowerLoad.ToString(CultureInfo.CurrentCulture);
         }
     }
 }

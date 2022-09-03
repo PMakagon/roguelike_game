@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f304a60881241c08a9c2b75935abbeb, type: 3}
+  m_Name: PlayerData
+  m_EditorClassIdentifier: 
+  playerHealthData: {fileID: 11400000, guid: d2a870fa4b85de74ca737a629d470a23, type: 2}
+  playerMentalData: {fileID: 11400000, guid: ec4bdb5bf44bcb5428760729e8cdd062, type: 2}
+  playerPowerData: {fileID: 11400000, guid: 2a5249bc0b8080146988b6712dad5de3, type: 2}
+  inventoryData: {fileID: 11400000, guid: 681ca2a5ffdec604489fc54969cff1a4, type: 2}
