@@ -1,5 +1,4 @@
 ﻿using LiftGame.FPSController.ScriptableObjects;
-using LiftGame.InventorySystem;
 using LiftGame.PlayerCore;
 using LiftGame.Ui;
 using UnityEngine;
@@ -12,20 +11,21 @@ namespace LiftGame.FPSController.InteractionSystem
         [Space, Header("Data")] 
         [SerializeField] private InteractionInputData interactionInputData = null;
         [SerializeField] private InteractionData interactionData = null;
-        [Space, Header("UI")] [SerializeField] private InteractionUIPanel uiPanel;
+        
+        [Space, Header("UI")] 
+        [SerializeField] private InteractionUIPanel uiPanel;
 
         [Space, Header("Ray Settings")]
         [SerializeField] private float rayDistance = 0f;
-
         [SerializeField] private float raySphereRadius = 0f;
         [SerializeField] private LayerMask interactableLayer = ~0;
 
+        private IPlayerData _playerData;
         private Camera _cam;
 
         private bool _interacting;
         private float _holdTimer = 0f;
 
-        private IPlayerData _playerData;
 
         [Inject]
         private void Construct(InteractionUIPanel interactionUIPanel,IPlayerData playerData)
@@ -38,7 +38,6 @@ namespace LiftGame.FPSController.InteractionSystem
 
         void Awake()
         {
-            // _cam = FindObjectOfType<Camera>();
             _cam = GetComponentInChildren<Camera>();
         }
 
@@ -62,7 +61,7 @@ namespace LiftGame.FPSController.InteractionSystem
 
             if (hitSomething)
             {
-                Interactable interactable = hitInfo.transform.GetComponent<Interactable>();
+                IInteractable interactable = hitInfo.transform.GetComponent<Interactable>();
 
                 if (interactable != null)
                 {
@@ -70,7 +69,7 @@ namespace LiftGame.FPSController.InteractionSystem
                     if (interactionData.IsEmpty())
                     {
                         interactionData.Interactable = interactable;
-                        uiPanel.SetTooltipActive(true); // включил текст
+                        uiPanel.SetTooltipActive(true);
                         uiPanel.SetTooltip(interactable.TooltipMessage); 
                     }
                     else
@@ -78,7 +77,7 @@ namespace LiftGame.FPSController.InteractionSystem
                         if (!interactionData.IsSameInteractable(interactable))
                         {
                             interactionData.Interactable = interactable;
-                            uiPanel.SetTooltipActive(true);// включил текст
+                            uiPanel.SetTooltipActive(true);
                             uiPanel.SetTooltip(interactable.TooltipMessage);
                         }
                     }

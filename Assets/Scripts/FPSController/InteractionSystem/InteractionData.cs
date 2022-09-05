@@ -7,9 +7,9 @@ namespace LiftGame.FPSController.InteractionSystem
     [CreateAssetMenu(fileName = "Interaction Data", menuName = "InteractionSystem/InteractionData")]
     public class InteractionData : ScriptableObject
     {
-        private Interactable _interactable;
+        private IInteractable _interactable;
 
-        public Interactable Interactable
+        public IInteractable Interactable
         {
             get => _interactable;
             set => _interactable = value;
@@ -21,7 +21,7 @@ namespace LiftGame.FPSController.InteractionSystem
             ResetData();
         }
 
-        public bool IsSameInteractable(Interactable newInteractable) => _interactable == newInteractable;
+        public bool IsSameInteractable(IInteractable newInteractable) => _interactable == newInteractable;
         public bool IsEmpty() => _interactable == null;
         public void ResetData() => _interactable = null;
 
