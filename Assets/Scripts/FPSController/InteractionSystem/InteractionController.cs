@@ -1,4 +1,5 @@
 ﻿using LiftGame.FPSController.ScriptableObjects;
+using LiftGame.GameCore.Input.Data;
 using LiftGame.PlayerCore;
 using LiftGame.Ui;
 using UnityEngine;

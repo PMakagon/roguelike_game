@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace LiftGame.InventorySystem
 {
-    [CreateAssetMenu(fileName = "InventoryData", menuName = "InventorySystem/InventoryData")]
+    [CreateAssetMenu(fileName = "InventoryData", menuName = "Player/InventorySystem/InventoryData")]
     public class InventoryData : ScriptableObject
     {
         // [SerializeField] private int capacity=10;

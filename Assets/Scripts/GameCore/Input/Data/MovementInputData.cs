@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace LiftGame.FPSController.ScriptableObjects
+namespace LiftGame.GameCore.Input.Data
 {    
-    [CreateAssetMenu(fileName = "MovementInputData", menuName = "FirstPersonController/Data/MovementInputData", order = 1)]
+    [CreateAssetMenu(fileName = "MovementInputData", menuName = "PlayerInputData/MovementInputData", order = 1)]
     public class MovementInputData : ScriptableObject
     {
         #region Data

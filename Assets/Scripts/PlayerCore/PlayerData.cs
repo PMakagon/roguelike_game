@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace LiftGame.PlayerCore
 {
-    [CreateAssetMenu(fileName = "PlayerData", menuName = "PlayerData")]
+    [CreateAssetMenu(fileName = "PlayerData", menuName = "Player/PlayerData")]
     public class PlayerData : ScriptableObject,IPlayerData
     {
         [SerializeField] private PlayerHealthData playerHealthData;

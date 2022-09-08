@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace LiftGame.InventorySystem
 {
-    [CreateAssetMenu(fileName = "ItemContainer", menuName = "InventorySystem/ItemContainer")]
+    [CreateAssetMenu(fileName = "ItemContainer", menuName = "Player/InventorySystem/ItemContainer")]
     public class ItemContainer : ScriptableObject,IItemContainer
     {
         [SerializeField] private string containerName;

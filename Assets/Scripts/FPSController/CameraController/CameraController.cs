@@ -1,4 +1,5 @@
 ﻿using LiftGame.FPSController.ScriptableObjects;
+using LiftGame.GameCore.Input.Data;
 using LiftGame.GameCore.Pause;
 using NaughtyAttributes;
 using UnityEngine;

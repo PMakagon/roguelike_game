@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace LiftGame.PlayerEquipment
+namespace LiftGame.GameCore.Input.Data
 {
-    [CreateAssetMenu(fileName = "EquipmentInputData", menuName = "FirstPersonController/Data/EquipmentInputData")]
+    [CreateAssetMenu(fileName = "EquipmentInputData", menuName = "PlayerInputData/EquipmentInputData")]
     public class EquipmentInputData : ScriptableObject
     {
         private bool _usingClicked;
