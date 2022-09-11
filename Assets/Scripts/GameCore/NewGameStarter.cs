@@ -1,4 +1,5 @@
-﻿using LiftGame.PlayerCore;
+﻿using LiftGame.GameCore.Input;
+using LiftGame.PlayerCore;
 using LiftGame.PlayerCore.MentalSystem;
 using LiftGame.PlayerCore.PlayerCostume;
 using LiftGame.PlayerCore.PlayerPowerSystem;
@@ -13,21 +14,23 @@ namespace LiftGame.GameCore
         private PlayerLitStateProvider _playerLitStateProvider;
         private PlayerServiceProvider _playerServiceProvider;
         private IPlayerPowerService _playerPowerService;
-
+        private IPlayerInputService _playerInputService;
         [Inject]
-        private void Construct(IPlayerCostumeService playerCostumeService,PlayerServiceProvider playerServiceProvider,IPlayerPowerService playerPowerService)
+        private void Construct(IPlayerCostumeService costumeService, PlayerServiceProvider playerServiceProvider,
+            IPlayerPowerService powerService, IPlayerInputService inputService)
         {
-            _playerCostumeService = playerCostumeService;
+            _playerCostumeService = costumeService;
             _playerLitStateProvider = playerServiceProvider.PlayerLitStateProvider;
             _playerServiceProvider = playerServiceProvider;
-            _playerPowerService = playerPowerService;
+            _playerPowerService = powerService;
+            _playerInputService = inputService;
         }
 
         private void Start()
         {
-            _playerServiceProvider.InputHandler.SetInputActive(true);
+            _playerInputService.SetInputActive(true);
         }
-        
+
 
         public void GetPlayerStarted()
         {

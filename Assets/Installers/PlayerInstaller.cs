@@ -1,4 +1,5 @@
-﻿using LiftGame.PlayerCore;
+﻿using LiftGame.GameCore.Input;
+using LiftGame.PlayerCore;
 using LiftGame.PlayerCore.HealthSystem;
 using LiftGame.PlayerCore.MentalSystem;
 using LiftGame.PlayerCore.PlayerCostume;
@@ -12,7 +13,6 @@ namespace LiftGame.Installers
     {
         [SerializeField] private Transform spawnPoint;
         [SerializeField] private PlayerServiceProvider playerPrefab;
-
         [SerializeField] private PlayerData playerData;
 
         public override void InstallBindings()
@@ -27,7 +27,7 @@ namespace LiftGame.Installers
             Container.Bind<IPlayerHealthService>().To<PlayerHealthService>().FromNew().AsSingle();
             Container.Bind<IPlayerMentalService>().To<PlayerMentalService>().FromNew().AsSingle();
             Container.Bind<IPlayerPowerService>().To<PlayerPowerService>().FromNew().AsSingle();
-            
+            Container.Bind<IPlayerInputService>().To<PlayerInputService>().FromNew().AsSingle();
         }
 
         private void BindPlayer()

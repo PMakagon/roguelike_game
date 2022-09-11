@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace LiftGame.FPSController.ScriptableObjects
+namespace LiftGame.GameCore.Input.Data
 {    
-    [CreateAssetMenu(fileName = "InteractionInputData", menuName = "InteractionSystem/InputData")]
+    [CreateAssetMenu(fileName = "InteractionInputData", menuName = "PlayerInputData/InputData")]
     public class InteractionInputData : ScriptableObject
     {
         private bool _interactedClicked;

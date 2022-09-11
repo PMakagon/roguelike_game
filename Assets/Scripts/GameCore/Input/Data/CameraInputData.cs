@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 
-namespace LiftGame.FPSController.ScriptableObjects
+namespace LiftGame.GameCore.Input.Data
 {
     
-    [CreateAssetMenu(fileName = "CameraInputData", menuName = "FirstPersonController/Data/CameraInputData", order = 0)]
+    [CreateAssetMenu(fileName = "CameraInputData", menuName = "PlayerInputData/CameraInputData", order = 0)]
     public class CameraInputData : ScriptableObject
     {
         #region Data

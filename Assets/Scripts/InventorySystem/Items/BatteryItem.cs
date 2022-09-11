@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace LiftGame.InventorySystem.Items
 {
-    [CreateAssetMenu(fileName = "Battery", menuName = "Items/Battery")]
+    [CreateAssetMenu(fileName = "Battery", menuName = "Player/InventorySystem/Items/Battery")]
     public class BatteryItem : ConsumableItem
     {
         [SerializeField] private float capacity;

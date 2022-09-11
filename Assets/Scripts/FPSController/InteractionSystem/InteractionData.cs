@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace LiftGame.FPSController.InteractionSystem
 {    
-    [CreateAssetMenu(fileName = "Interaction Data", menuName = "InteractionSystem/InteractionData")]
+    [CreateAssetMenu(fileName = "Interaction Data", menuName = "Player/InteractionSystem/InteractionData")]
     public class InteractionData : ScriptableObject
     {
         private IInteractable _interactable;

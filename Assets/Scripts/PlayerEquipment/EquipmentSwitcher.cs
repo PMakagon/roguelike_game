@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using LiftGame.GameCore.Input.Data;
 using LiftGame.InventorySystem;
 using LiftGame.PlayerCore;
 using LiftGame.PlayerCore.PlayerPowerSystem;

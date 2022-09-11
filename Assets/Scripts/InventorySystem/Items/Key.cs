@@ -2,7 +2,7 @@
 
 namespace LiftGame.InventorySystem.Items
 {
-    [CreateAssetMenu(fileName = "Key", menuName = "Items/Key")]
+    [CreateAssetMenu(fileName = "Key", menuName = "Player/InventorySystem/Items/Key")]
     public class Key : Item
     {
         [SerializeField] private string keyCode;

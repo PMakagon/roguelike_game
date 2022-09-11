@@ -14,7 +14,7 @@ namespace LiftGame.InventorySystem.Items
     }
 
     [Serializable]
-    [CreateAssetMenu(fileName = "Item", menuName = "Items/Item")]
+    [CreateAssetMenu(fileName = "Item", menuName = "Player/InventorySystem/Items/Item")]
     public class Item : ScriptableObject, IItem
     {
         [SerializeField] private string _name;

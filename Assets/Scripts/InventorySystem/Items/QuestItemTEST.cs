@@ -2,7 +2,7 @@
 
 namespace LiftGame.InventorySystem.Items
 {
-    [CreateAssetMenu(fileName = "QuestItemTest", menuName = "Quest/Test")]
+    [CreateAssetMenu(fileName = "QuestItemTest", menuName = "Player/InventorySystem/Items/QuestTest")]
     public class QuestItemTEST : Item
     {
         public override ItemType ItemType
