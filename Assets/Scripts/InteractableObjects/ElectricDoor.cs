@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using LiftGame.InventorySystem;
 using LiftGame.LightingSystem;
+using LiftGame.PlayerCore;
 using UnityEngine;
 
 namespace LiftGame.InteractableObjects
@@ -45,15 +46,16 @@ namespace LiftGame.InteractableObjects
             stateLight.enabled = !masterSwitcher.IsSwitchedOn;
         }
 
-        public override void OnInteract(InventoryData inventoryData)
+        public override void OnInteract(IPlayerData playerData)
         {
+            var inventory=  playerData.GetInventoryData().InventoryContainer;
             if (!isOpen)
             {
                 if (masterSwitcher.IsSwitchedOn)
                 {
                     if (isLocked)
                     {
-                        if (inventoryData.Items.Any(key => key.Name == keyName))
+                        if (inventory.Items.Any(key => key.Name == keyName))
                         {
                             isLocked = false;
                             OpenDoor();

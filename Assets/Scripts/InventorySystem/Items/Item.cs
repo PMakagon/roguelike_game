@@ -1,4 +1,5 @@
 ﻿using System;
+using LiftGame.PlayerCore;
 using UnityEngine;
 
 namespace LiftGame.InventorySystem.Items
@@ -11,20 +12,22 @@ namespace LiftGame.InventorySystem.Items
         Key,
         Quest
     }
+
     [Serializable]
-    [CreateAssetMenu(fileName = "Item", menuName = "Items/Item")]
+    [CreateAssetMenu(fileName = "Item", menuName = "Player/InventorySystem/Items/Item")]
     public class Item : ScriptableObject, IItem
-    { 
+    {
         [SerializeField] private string _name;
         [SerializeField] private ItemType _itemType;
         [SerializeField] private Sprite _uiicon;
         [SerializeField] private string _description;
         [SerializeField] private bool stackable;
 
-        public virtual void Use(InventoryData inventoryData)
+        public virtual void Use(IPlayerData playerData)
         {
-           inventoryData.RemoveItem(this); 
-           Debug.Log("USED");
+            var inventory = playerData.GetInventoryData().InventoryContainer;
+            inventory.RemoveItem(this);
+            Debug.Log("USED");
         }
 
         public bool Stackable

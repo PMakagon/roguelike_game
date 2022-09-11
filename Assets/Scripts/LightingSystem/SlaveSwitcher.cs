@@ -1,5 +1,6 @@
 ﻿using LiftGame.FPSController.InteractionSystem;
 using LiftGame.InventorySystem;
+using LiftGame.PlayerCore;
 using UnityEngine;
 
 namespace LiftGame.LightingSystem
@@ -25,9 +26,8 @@ namespace LiftGame.LightingSystem
 
         private void FetchButtonEmission()
         {
-            if (!_isPowered) return;
             _renderer.GetPropertyBlock(_matBlock);
-            _matBlock.SetColor("_EmissiveColor", isEnabled ? Color.clear : Color.red);
+            _matBlock.SetColor("_EmissiveColor", isEnabled ? Color.clear : (_isPowered ? Color.red : Color.clear ));
             _renderer.SetPropertyBlock(_matBlock);
         }
 
@@ -44,7 +44,7 @@ namespace LiftGame.LightingSystem
         }
         
 
-        public override void OnInteract(InventoryData inventoryData)
+        public override void OnInteract(IPlayerData playerData)
         {
             isEnabled = !isEnabled;
             ChangeButtonPosition();

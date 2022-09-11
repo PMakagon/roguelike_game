@@ -1,18 +1,20 @@
-﻿using UnityEngine;
+﻿using LiftGame.PlayerCore;
+using UnityEngine;
 
 namespace LiftGame.InventorySystem.Items
 {
-    [CreateAssetMenu(fileName = "Battery", menuName = "Items/Battery")]
+    [CreateAssetMenu(fileName = "Battery", menuName = "Player/InventorySystem/Items/Battery")]
     public class BatteryItem : ConsumableItem
     {
         [SerializeField] private float capacity;
         
         public float Capacity => capacity;
 
-        public override void Use(InventoryData inventoryData)
+        public override void Use(IPlayerData playerData)
         {
-            inventoryData.PlayerPowerData.CurrentPower = capacity;
-            base.Use(inventoryData);
+            var powerData = playerData.GetPowerData();
+            powerData.CurrentPower = capacity;
+            base.Use(playerData);
         }
     }
 }

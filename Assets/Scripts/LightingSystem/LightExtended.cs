@@ -32,8 +32,9 @@ namespace LiftGame.LightingSystem
         [SerializeField] private float randomTimerValueMax = 20f;
 
         [Space] [Header("Light Control")] 
-        [SerializeField] private bool directControl = false;
-        [ShowIf("directControl")] [SerializeField] private bool isPowered;
+        [SerializeField] private bool manualControl = false;
+        [HideIf("manualControl")] 
+        [SerializeField] private bool isPowered;
         [SerializeField] private bool isOn;
         [SerializeField] private MasterSwitcher masterSwitcher;
         [SerializeField] private SlaveSwitcher slaveSwitcher;
@@ -60,24 +61,39 @@ namespace LiftGame.LightingSystem
             {
                 slaveSwitcher.IsPowered = true;
             }
+            ChangeState(IsStateChanged());
         }
-        
-        private IEnumerator Blinking()
+
+        private bool IsStateChanged()
         {
-            ChangeState(isOn);
-            yield return new WaitForSeconds(_startTimerValue);
-            while (isOn)
+            bool isActuallyOn;
+            if (masterSwitcher)
             {
-                _randomTimerValue = Random.Range(randomTimerValueMin, randomTimerValueMax);
-                yield return new WaitForSeconds(_randomTimerValue);
-                ChangeState(GetState());
-                ////ЗАТЫЧКА
-                if (!isOn || currentLightMode != LightMode.Blinking)
+                isPowered = masterSwitcher.IsSwitchedOn; //если есть автомат то запитываемся от него
+            }
+            else
+            {
+                if (!manualControl)
                 {
-                    StopAllCoroutines();
-                    FetchEmission();
+                    isPowered = true;  // если нет всегда запитано
                 }
             }
+            
+            if (slaveSwitcher)
+            {
+                slaveSwitcher.IsPowered = isPowered; //если есть выключатель 
+                isActuallyOn = slaveSwitcher.IsEnabled;
+            }
+            else
+            {
+                isActuallyOn = isPowered; // если нет то автомат управляет светом
+            }
+            
+            if (!isPowered)
+            {
+                isActuallyOn = false;
+            }
+            return isActuallyOn;
         }
 
         public void SwitchState()
@@ -98,9 +114,9 @@ namespace LiftGame.LightingSystem
                 lensFlare.enabled = state;
             }
             FetchEmission();
-        } 
-        
-        public bool GetState()
+        }
+
+        private bool GetLightComponentState()
         {
             return _light.enabled;
         }
@@ -122,64 +138,14 @@ namespace LiftGame.LightingSystem
             }
         }
 
-        private void LookForPlayerTest()
-        {
-            bool playerSpotted = false;
-            Vector3 lightPosition = transform.position;
-            Vector3 toPlayer = FirstPersonController.Instance.transform.position - lightPosition;
-            toPlayer.y = 0;
-            if (toPlayer.magnitude <= _light.range*0.9)
-            {
-                playerSpotted = true;
-                Debug.DrawRay(lightPosition,toPlayer,playerSpotted ? Color.green : Color.red);
-                // if (Vector3.Dot(toPlayer.normalized, transform.forward) >
-                //     Mathf.Cos(detectionAngle * 0.5f * Mathf.Deg2Rad))
-                // {
-                //     Debug.Log("Player has been detected!");
-                // }
-            }
-        }
-
-        //Сделать нормально
         private void Update()
         {
-            if (isBroken)
+            if (isBroken) return;
+            bool state =  IsStateChanged();
+            if (isOn != state)
             {
-                return;
-            }
-
-            if (masterSwitcher)
-            {
-                isPowered = masterSwitcher.IsSwitchedOn; //если есть автомат то запитываемся от него
-            }
-            else
-            {
-                if (!directControl)
-                {
-                    isPowered = true;  // если нет всегда запитано
-                }
-            }
-
-            if (slaveSwitcher)
-            {
-                isOn = slaveSwitcher.IsEnabled;
-                slaveSwitcher.IsPowered = isPowered; //если есть выключатель 
-            }
-            else
-            {
-                isOn = isPowered; // если нет то автомат управляет светом
-            }
-
-            if (!isPowered)
-            {
-                isOn = false;
-            }
-            
-            ChangeState(isOn);
-            
-            if (currentLightMode == LightMode.Static)
-            {
-                FetchEmission();
+                isOn = state;
+                ChangeState(isOn);
             }
 
             if (currentLightMode == LightMode.Blinking)
@@ -196,6 +162,24 @@ namespace LiftGame.LightingSystem
                         Mathf.PerlinNoise(10, Time.time / noiseSpeed));
                 }
                 FetchEmission();
+            }
+        }
+
+        private IEnumerator Blinking()
+        {
+            ChangeState(isOn);
+            yield return new WaitForSeconds(_startTimerValue);
+            while (isOn)
+            {
+                _randomTimerValue = Random.Range(randomTimerValueMin, randomTimerValueMax);
+                yield return new WaitForSeconds(_randomTimerValue);
+                ChangeState(GetLightComponentState());
+                ////ЗАТЫЧКА
+                if (!isOn || currentLightMode != LightMode.Blinking)
+                {
+                    StopAllCoroutines();
+                    FetchEmission();
+                }
             }
         }
 

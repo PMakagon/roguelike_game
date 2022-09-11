@@ -1,4 +1,4 @@
-﻿using LiftGame.PlayerCoreMechanics.PlayerPowerSystem;
+﻿using LiftGame.PlayerCore.PlayerPowerSystem;
 using UnityEngine;
 
 namespace LiftGame.PlayerEquipment
@@ -7,24 +7,24 @@ namespace LiftGame.PlayerEquipment
     {
         [SerializeField] private float power = 1;
         [SerializeField] private float multiplier = 2f;
+        [SerializeField] private bool isTurnedOn;
         private PlayerPowerData _playerPowerData;
         private Light _light;
-        private bool _isTurnedOn;
         private bool _switchState;
 
 
         private void Awake()
         {
             _light = GetComponent<Light>();
-            _light.enabled = _isTurnedOn;
+            _light.enabled = isTurnedOn;
         }
 
         private void Update()
         {
-            _light.enabled = _isTurnedOn;
+            _light.enabled = isTurnedOn;
             if (!_playerPowerData.IsPowerOn)
             {
-                _isTurnedOn = false;
+                isTurnedOn = false;
                 return;
             }
             
@@ -37,7 +37,7 @@ namespace LiftGame.PlayerEquipment
         private void SwitchFlashlight()
         {
             _switchState = false;
-            if (_isTurnedOn)
+            if (isTurnedOn)
             {
                 TurnOff();
             }
@@ -48,14 +48,14 @@ namespace LiftGame.PlayerEquipment
         }
         private void TurnOn()
         {
-            _isTurnedOn = true;
+            isTurnedOn = true;
             _playerPowerData.CurrentPower -= power * multiplier;
             _playerPowerData.PowerLoad += power;
         }
 
         private void TurnOff()
         {
-            _isTurnedOn = false;
+            isTurnedOn = false;
             _playerPowerData.PowerLoad -= power;
         }
 
@@ -73,8 +73,8 @@ namespace LiftGame.PlayerEquipment
 
         public bool IsTurnedOn
         {
-            get => _isTurnedOn;
-            set => _isTurnedOn = value;
+            get => isTurnedOn;
+            set => isTurnedOn = value;
         }
     }
 }

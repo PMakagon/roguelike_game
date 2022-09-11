@@ -1,3 +1,4 @@
+using LiftGame.PlayerCore;
 using UnityEngine;
 
 namespace LiftGame.InventorySystem.Items
@@ -9,6 +10,6 @@ namespace LiftGame.InventorySystem.Items
         Sprite UIIcon {  get; set; }
         string Description {  get; set; }
         bool Stackable { get; set; }
-        void Use(InventoryData inventoryData);
+        void Use(IPlayerData playerData);
     }
 }

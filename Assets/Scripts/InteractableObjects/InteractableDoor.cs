@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using LiftGame.FPSController.InteractionSystem;
 using LiftGame.InventorySystem;
+using LiftGame.PlayerCore;
 using NaughtyAttributes;
 using UnityEngine;
 
@@ -16,6 +17,7 @@ namespace LiftGame.InteractableObjects
         protected static readonly int Open = Animator.StringToHash("Open");
         protected static readonly int TryOpen = Animator.StringToHash("TryOpen");
         protected static readonly int ForceOpen = Animator.StringToHash("ForceOpen");
+        protected static readonly int ForceClose = Animator.StringToHash("ForceClose");
         
         #region BuiltIn Methods
         private void Awake()
@@ -46,6 +48,13 @@ namespace LiftGame.InteractableObjects
             if (isLocked) return;
             isOpen = true;
             animator.SetBool(ForceOpen, isOpen);
+            SetToolTip();
+        }
+        public void ForceCloseDoor()
+        {
+            if (!isOpen) return;
+            isOpen = false;
+            animator.SetBool(ForceClose, isOpen);
             SetToolTip();
         }
 
@@ -80,13 +89,14 @@ namespace LiftGame.InteractableObjects
             SetToolTip();
         }
 
-        public override void OnInteract(InventoryData inventoryData)
+        public override void OnInteract(IPlayerData playerData)
         {
+            var inventory=  playerData.GetInventoryData().InventoryContainer;
             if (!isOpen)
             {
                 if (isLocked)
                 {
-                    if (inventoryData.Items.Any(key => key.Name == keyName))
+                    if (inventory.Items.Any(key => key.Name == keyName))
                     {
                         isLocked = false;
                         OpenDoor();

@@ -97,7 +97,7 @@ namespace LiftGame.LevelGeneration
         private void CreateLevelStartPoint()
         {
             var dist = (liftControllerData.CurrentLevel.transform.position + Vector3.up*distanceBetweenLevels);
-            newLevelStartPoint = Instantiate(currentLevelStartPoint.gameObject, dist, Quaternion.identity).transform;
+            newLevelStartPoint = Instantiate(currentLevelStartPoint.gameObject, dist, Quaternion.identity,currentLevelStartPoint).transform;
             liftControllerData.DestinationLevel = newLevelStartPoint;
             levelGenerator.StartPoint = newLevelStartPoint;
             currentLevelStartPoint = newLevelStartPoint;

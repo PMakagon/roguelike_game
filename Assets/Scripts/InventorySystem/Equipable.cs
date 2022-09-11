@@ -1,5 +1,6 @@
 ﻿using LiftGame.FPSController.InteractionSystem;
 using LiftGame.InventorySystem.Items;
+using LiftGame.PlayerCore;
 using NaughtyAttributes;
 using UnityEngine;
 
@@ -22,9 +23,10 @@ namespace LiftGame.InventorySystem
             TooltipMessage = itemToEquip.Name;
         }
 
-        public override void OnInteract(InventoryData inventoryData)
+        public override void OnInteract(IPlayerData playerData)
         {
-            if (inventoryData.AddItem(itemToEquip,amount))
+            var inventory=  playerData.GetInventoryData().InventoryContainer;
+            if (inventory.AddItem(itemToEquip,amount))
             {
                 if (destroyOnEquip)
                 {
@@ -32,12 +34,13 @@ namespace LiftGame.InventorySystem
                 }
                 Debug.Log("Equipped: " + gameObject.name);
             }
-            base.OnInteract(inventoryData);
+            base.OnInteract(playerData);
         }
 
-        public virtual void OnEquip(InventoryData inventoryData)
+        public virtual void OnEquip(IPlayerData playerData)
         {
-            if (inventoryData.AddItem(itemToEquip,amount))
+            var inventory=  playerData.GetInventoryData().InventoryContainer;
+            if (inventory.AddItem(itemToEquip,amount))
             {
                 if (destroyOnEquip)
                 {

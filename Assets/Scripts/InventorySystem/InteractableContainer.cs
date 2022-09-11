@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using LiftGame.FPSController.InteractionSystem;
 using LiftGame.InventorySystem.Items;
+using LiftGame.PlayerCore;
 using UnityEngine;
 
 namespace LiftGame.InventorySystem
@@ -8,14 +9,14 @@ namespace LiftGame.InventorySystem
     public class InteractableContainer : Interactable
     {
         [SerializeField] private string containerName;
+        [SerializeField] private ItemContainer container;
         private List<IItem> _containerItems;
 
 
-        public override void OnInteract(InventoryData inventoryData)
+        public override void OnInteract(IPlayerData playerData)
         {
-            inventoryData.ContainerName = containerName;
-            // inventoryData.ContainerItems = _containerItems;
-            inventoryData.ContainerItems = new List<IItem>(5);
+            var inventoryData = playerData.GetInventoryData();
+            inventoryData.CurrentContainer = container;
             inventoryData.onContainerOpen.Invoke();
         }
     }

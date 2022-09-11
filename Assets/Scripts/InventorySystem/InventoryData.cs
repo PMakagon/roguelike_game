@@ -1,20 +1,23 @@
 using System;
 using System.Collections.Generic;
 using LiftGame.InventorySystem.Items;
-using LiftGame.PlayerCoreMechanics.PlayerPowerSystem;
+using LiftGame.PlayerCore.PlayerPowerSystem;
 using LiftGame.PlayerEquipment;
 using UnityEngine;
 
 namespace LiftGame.InventorySystem
 {
-    [CreateAssetMenu(fileName = "InventoryData", menuName = "InventorySystem/InventoryData")]
+    [CreateAssetMenu(fileName = "InventoryData", menuName = "Player/InventorySystem/InventoryData")]
     public class InventoryData : ScriptableObject
     {
-        [SerializeField] private PlayerPowerData playerPowerData;
-        [SerializeField] private int capacity=10;
-        private List<IItem> _items;
-        private string _containerName;
-        private List<IItem> _containerItems;
+        // [SerializeField] private int capacity=10;
+        // private List<IItem> _items;
+        // private string _containerName;
+        // private List<IItem> _containerItems;
+        [SerializeField] private ItemContainer testPlayerInventoryToUse;
+        private IItemContainer _currentContainer;
+        private IItemContainer _inventoryContainer;
+        private IItem[] _fastSlots;
         private EquipmentItem[] _equipmentSlots;
         private IPlayerEquipment _currentEquipment;
 
@@ -23,76 +26,28 @@ namespace LiftGame.InventorySystem
         public Action onEquipmentAdd;
         public Action onInventoryChange;
 
-        
-        public int GetCapacity() => capacity;
-        public bool HasNothing() => _items.Count == 0;
-
-        public bool IsFull() => _items.Count >= capacity;
-
-        public void ClearContainer()
+        [ContextMenu("SwitchToTestInventory")]
+        public void SwitchToTestInventory()
         {
-            _containerItems = null;
-            _containerName = null;
-        }
-
-        private void OnEnable()
-        {
-            ResetData();
-        }
-
-        public void ResetData()
-        {
-            _items = new List<IItem>();
-            _items.Capacity = capacity;
-        }
-
-        public bool AddItem(IItem item, int amount)
-        {
-            if (IsFull())
-            {
-                Debug.Log("inventory is full");
-                return false;
-            }
-
-            if (_items.Contains(item))
-            {
-                if (item.ItemType != ItemType.Consumable)
-                {
-                    Debug.Log("Already Equipped " + item.Name);
-                    return false;
-                }
-            }
-            _items.Add(item);
-            onItemAdd?.Invoke();
-            onInventoryChange?.Invoke();
-            return true;
+            _inventoryContainer = testPlayerInventoryToUse;
         }
         
-        public void RemoveItem(IItem item)
+        public IItemContainer CurrentContainer
         {
-            _items.Remove(item);
-            onInventoryChange?.Invoke();
-        }
-        
-        
-        #region Properties
-
-        public List<IItem> Items
-        {
-            get => _items;
-            set => _items = value;
+            get => _currentContainer;
+            set => _currentContainer = value;
         }
 
-        public string ContainerName
+        public IItemContainer InventoryContainer
         {
-            get => _containerName;
-            set => _containerName = value;
+            get => _inventoryContainer ??= CreateInstance<ItemContainer>();
+            set => _inventoryContainer = value;
         }
 
-        public List<IItem> ContainerItems
+        public IItem[] FastSlots
         {
-            get => _containerItems;
-            set => _containerItems = value;
+            get => _fastSlots;
+            set => _fastSlots = value;
         }
 
         public EquipmentItem[] EquipmentSlots
@@ -100,15 +55,35 @@ namespace LiftGame.InventorySystem
             get => _equipmentSlots;
             set => _equipmentSlots = value;
         }
-        
+
         public IPlayerEquipment CurrentEquipment
         {
             get => _currentEquipment;
             set => _currentEquipment = value;
         }
 
-        public PlayerPowerData PlayerPowerData => playerPowerData;
+        public Action OnItemAdd
+        {
+            get => onItemAdd;
+            set => onItemAdd = value;
+        }
 
-        #endregion
+        public Action OnContainerOpen
+        {
+            get => onContainerOpen;
+            set => onContainerOpen = value;
+        }
+
+        public Action OnEquipmentAdd
+        {
+            get => onEquipmentAdd;
+            set => onEquipmentAdd = value;
+        }
+
+        public Action OnInventoryChange
+        {
+            get => onInventoryChange;
+            set => onInventoryChange = value;
+        }
     }
 }

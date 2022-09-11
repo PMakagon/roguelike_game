@@ -1,4 +1,5 @@
 ﻿using LiftGame.InventorySystem;
+using LiftGame.PlayerCore;
 
 namespace LiftGame.FPSController.InteractionSystem
 {    
@@ -8,6 +9,6 @@ namespace LiftGame.FPSController.InteractionSystem
         bool HoldInteract { get; }
         bool IsInteractable { get; }
         string TooltipMessage { get; set; }
-        void OnInteract(InventoryData inventoryData);
+        void OnInteract(IPlayerData playerData);
     }
 }  

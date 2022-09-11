@@ -1,10 +1,12 @@
 ﻿using LiftGame.FPSController.ScriptableObjects;
+using LiftGame.GameCore.Input.Data;
+using LiftGame.GameCore.Pause;
 using NaughtyAttributes;
 using UnityEngine;
 
 namespace LiftGame.FPSController.CameraController
 {    
-    public class CameraController : MonoBehaviour
+    public class CameraController : MonoBehaviour,IPauseable
     {
         #region Variables
             #region Data
@@ -121,9 +123,9 @@ namespace LiftGame.FPSController.CameraController
                 Cursor.visible = false;
             }
             
-            public void LockCursor(bool state)
+            public void LockCursor(bool isLocked)
             {
-                if (state)
+                if (isLocked)
                 {
                    
                     Cursor.lockState = CursorLockMode.Locked;
@@ -143,5 +145,10 @@ namespace LiftGame.FPSController.CameraController
             }
 
             #endregion
+
+            public void SetPaused(bool isPaused)
+            {
+                LockCursor(!isPaused);
+            }
     }
 }

@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using LiftGame.GameCore.Input.Data;
 using LiftGame.InventorySystem;
-using LiftGame.PlayerCoreMechanics.PlayerPowerSystem;
+using LiftGame.PlayerCore;
+using LiftGame.PlayerCore.PlayerPowerSystem;
 using UnityEngine;
+using Zenject;
 
 namespace LiftGame.PlayerEquipment
 {
@@ -10,7 +13,7 @@ namespace LiftGame.PlayerEquipment
 
     {
         [SerializeField] private EquipmentInputData inputData;
-        [SerializeField] private InventoryData inventoryData;
+        [SerializeField] private InventoryData _inventoryData;
         [SerializeField] private Battery battery;
         [SerializeField] private Scanner scanner;
         [SerializeField] private float switchDelay;
@@ -24,11 +27,16 @@ namespace LiftGame.PlayerEquipment
         private Animator _currentEquipmentAnimator;
         private float _timeSinceLastSwitch;
         
+        [Inject]
+        private void Construct(IPlayerData playerData)
+        {
+            _inventoryData = playerData.GetInventoryData();
+        }
         private void Start()
         {
             _spawnPoint = transform;
-            inventoryData.ResetData(); ///test
-            inventoryData.onEquipmentAdd += CheckInventory;
+            // _inventoryData.InventoryContainer.ClearContainer(); ///test
+            _inventoryData.onEquipmentAdd += CheckInventory;
             // inventoryData.CurrentEquipment = GetComponentInChildren<Scanner>();
             // inventoryData.Equipments.Insert(0,inventoryData.CurrentEquipment);
             // inventoryData.CurrentEquipment.Equip();
@@ -42,7 +50,7 @@ namespace LiftGame.PlayerEquipment
         }
         private void CheckInventory()
         {
-            if (inventoryData.HasNothing()) return;
+            if (_inventoryData.InventoryContainer.HasNothing()) return;
             
         }
 
@@ -73,24 +81,24 @@ namespace LiftGame.PlayerEquipment
         {
             if (chosenEquipment==null) yield break;
             if (_timeSinceLastSwitch<=switchDelay) yield break;
-            if (chosenEquipment==inventoryData.CurrentEquipment)
+            if (chosenEquipment==_inventoryData.CurrentEquipment)
             {
-                if (inventoryData.CurrentEquipment.IsEquipped)
+                if (_inventoryData.CurrentEquipment.IsEquipped)
                 {
-                    inventoryData.CurrentEquipment?.UnEquip();
+                    _inventoryData.CurrentEquipment?.UnEquip();
                 }
                 else
                 {
-                    inventoryData.CurrentEquipment?.Equip();
+                    _inventoryData.CurrentEquipment?.Equip();
                 }
                 _timeSinceLastSwitch = 0f;
                 yield break;
             }
-            inventoryData.CurrentEquipment?.UnEquip();
-            inventoryData.CurrentEquipment = chosenEquipment;
+            _inventoryData.CurrentEquipment?.UnEquip();
+            _inventoryData.CurrentEquipment = chosenEquipment;
             yield return new WaitForSecondsRealtime(2);
-            inventoryData.CurrentEquipment.Equip();
-            _currentEquipmentAnimator = inventoryData.CurrentEquipment.EquipmentAnimator;
+            _inventoryData.CurrentEquipment.Equip();
+            _currentEquipmentAnimator = _inventoryData.CurrentEquipment.EquipmentAnimator;
             _timeSinceLastSwitch = 0f;
         }
     }

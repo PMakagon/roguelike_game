@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +10,11 @@ namespace LiftGame.Ui
         [SerializeField] private Slider progressBar;
         [SerializeField] private TextMeshProUGUI tooltipText;
         [SerializeField] private RectTransform canvasTransform;
+
+        private void Start()
+        {
+            gameObject.SetActive(true);
+        }
 
         public Slider ProgressBar
         {

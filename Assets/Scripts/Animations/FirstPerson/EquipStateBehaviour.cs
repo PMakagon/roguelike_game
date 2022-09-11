@@ -1,11 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class EquipStateBehaviour : StateMachineBehaviour
+namespace LiftGame.Animations.FirstPerson
 {
-    public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    public class EquipStateBehaviour : StateMachineBehaviour
     {
-        animator.SetBool("Equip",false);
+        public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+        {
+            animator.SetBool("Equip",false);
+        }
     }
 }

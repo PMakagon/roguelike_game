@@ -1,12 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class UseStateBehaviour : StateMachineBehaviour
+namespace LiftGame.Animations.FirstPerson
 {
-    public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    public class UseStateBehaviour : StateMachineBehaviour
     {
-        animator.SetBool("Use",false);
-    }
+        public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+        {
+            animator.SetBool("Use",false);
+        }
     
+    }
 }

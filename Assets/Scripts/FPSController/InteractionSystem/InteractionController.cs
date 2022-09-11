@@ -1,46 +1,44 @@
 ﻿using LiftGame.FPSController.ScriptableObjects;
-using LiftGame.InventorySystem;
+using LiftGame.GameCore.Input.Data;
+using LiftGame.PlayerCore;
 using LiftGame.Ui;
 using UnityEngine;
+using Zenject;
 
 namespace LiftGame.FPSController.InteractionSystem
 {
     public class InteractionController : MonoBehaviour
     {
-        #region Variables
-
-        [Space, Header("Data")] [SerializeField]
-        private InteractionInputData interactionInputData = null;
-
+        [Space, Header("Data")] 
+        [SerializeField] private InteractionInputData interactionInputData = null;
         [SerializeField] private InteractionData interactionData = null;
-        [SerializeField] private InventoryData _inventoryData = null;
+        
+        [Space, Header("UI")] 
+        [SerializeField] private InteractionUIPanel uiPanel;
 
-
-        [Space, Header("UI")] [SerializeField] private InteractionUIPanel uiPanel;
-
-        [Space, Header("Ray Settings")] [SerializeField]
-        private float rayDistance = 0f;
-
+        [Space, Header("Ray Settings")]
+        [SerializeField] private float rayDistance = 0f;
         [SerializeField] private float raySphereRadius = 0f;
         [SerializeField] private LayerMask interactableLayer = ~0;
 
-
-        #region Private
-
+        private IPlayerData _playerData;
         private Camera _cam;
 
         private bool _interacting;
         private float _holdTimer = 0f;
 
-        #endregion
 
-        #endregion
+        [Inject]
+        private void Construct(InteractionUIPanel interactionUIPanel,IPlayerData playerData)
+        {
+            _playerData = playerData;
+            uiPanel = interactionUIPanel;
+        }
 
         #region Built In Methods
 
         void Awake()
         {
-            // _cam = FindObjectOfType<Camera>();
             _cam = GetComponentInChildren<Camera>();
         }
 
@@ -64,7 +62,7 @@ namespace LiftGame.FPSController.InteractionSystem
 
             if (hitSomething)
             {
-                Interactable interactable = hitInfo.transform.GetComponent<Interactable>();
+                IInteractable interactable = hitInfo.transform.GetComponent<Interactable>();
 
                 if (interactable != null)
                 {
@@ -72,7 +70,7 @@ namespace LiftGame.FPSController.InteractionSystem
                     if (interactionData.IsEmpty())
                     {
                         interactionData.Interactable = interactable;
-                        uiPanel.SetTooltipActive(true); // включил текст
+                        uiPanel.SetTooltipActive(true);
                         uiPanel.SetTooltip(interactable.TooltipMessage); 
                     }
                     else
@@ -80,7 +78,7 @@ namespace LiftGame.FPSController.InteractionSystem
                         if (!interactionData.IsSameInteractable(interactable))
                         {
                             interactionData.Interactable = interactable;
-                            uiPanel.SetTooltipActive(true);// включил текст
+                            uiPanel.SetTooltipActive(true);
                             uiPanel.SetTooltip(interactable.TooltipMessage);
                         }
                     }
@@ -129,14 +127,14 @@ namespace LiftGame.FPSController.InteractionSystem
 
                     if (heldPercent > uiPanel.ProgressBar.maxValue)
                     {
-                        interactionData.Interact(_inventoryData);
+                        interactionData.Interact(_playerData);
                         uiPanel.SetProgressBarActive(false);
                         _interacting = false;
                     }
                 }
                 else
                 {
-                    interactionData.Interact(_inventoryData);
+                    interactionData.Interact(_playerData);
                     uiPanel.SetProgressBarActive(false);
                     _interacting = false;
                 }
