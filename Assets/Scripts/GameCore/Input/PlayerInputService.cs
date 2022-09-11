@@ -5,12 +5,12 @@ namespace LiftGame.GameCore.Input
 {
     public class PlayerInputService : IPlayerInputService
     {
-        private InputData _inputData;
+        private InputDataProvider _inputData;
         private bool _isInputActive;
 
-        public void Initialize(InputData inputData)
+        public void Initialize(InputDataProvider inputDataProvider)
         {
-            _inputData = inputData;
+            _inputData = inputDataProvider;
             ResetInput();
         }
         
@@ -114,7 +114,6 @@ namespace LiftGame.GameCore.Input
         public void SetPaused(bool isPaused)
         {
             SetInputActive(!isPaused);
-            // _isInputActive = !isPaused;
         }
     }
 }

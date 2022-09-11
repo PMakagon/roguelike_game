@@ -2,8 +2,8 @@
 
 namespace LiftGame.GameCore.Input.Data
 {
-    [CreateAssetMenu(fileName = "InputData", menuName = "PlayerInputData/InputData", order = 1)]
-    public class InputData : ScriptableObject
+    [CreateAssetMenu(fileName = "InputDataProvider", menuName = "PlayerInputData/InputDataProvider", order = 1)]
+    public class InputDataProvider : ScriptableObject
     {
         [Space, Header("Input Data")] 
         [SerializeField] private CameraInputData cameraInputData = null;

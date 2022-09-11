@@ -7,7 +7,7 @@ namespace LiftGame.GameCore.Input
 {
     public class PlayerInputUpdater : MonoBehaviour
     {
-        [SerializeField] private InputData inputData;
+        [SerializeField] private InputDataProvider inputDataProvider;
         private IPlayerInputService _inputService;
 
         [Inject]
@@ -18,7 +18,7 @@ namespace LiftGame.GameCore.Input
 
         private void Start()
         {
-            _inputService.Initialize(inputData);
+            _inputService.Initialize(inputDataProvider);
         }
 
         private void Update()
