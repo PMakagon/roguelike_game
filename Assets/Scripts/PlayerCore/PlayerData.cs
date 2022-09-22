@@ -1,4 +1,4 @@
-﻿using LiftGame.InventorySystem;
+﻿using LiftGame.NewInventory;
 using LiftGame.PlayerCore.HealthSystem;
 using LiftGame.PlayerCore.MentalSystem;
 using LiftGame.PlayerCore.PlayerPowerSystem;

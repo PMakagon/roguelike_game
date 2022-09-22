@@ -1,4 +1,5 @@
-﻿using LiftGame.GameCore.Input.Data;
+﻿using System;
+using LiftGame.GameCore.Input.Data;
 using UnityEngine;
 
 namespace LiftGame.GameCore.Input
@@ -37,12 +38,14 @@ namespace LiftGame.GameCore.Input
             _inputData.NonGameplayInputData.PauseMenuReleased = UnityEngine.Input.GetKeyUp(KeyCode.Escape);
             _inputData.NonGameplayInputData.TildeClicked = UnityEngine.Input.GetKeyDown(KeyCode.Tilde);
             _inputData.NonGameplayInputData.TildeReleased = UnityEngine.Input.GetKeyUp(KeyCode.Tilde);
+            _inputData.NonGameplayInputData.UpdateInputEvents();
         }
 
         private void GetUiInputData()
         {
             _inputData.UIInputData.InventoryClicked = UnityEngine.Input.GetKeyDown(KeyCode.Tab);
             _inputData.UIInputData.InventoryReleased = UnityEngine.Input.GetKeyUp(KeyCode.Tab);
+            _inputData.UIInputData.UpdateInputEvents();
         }
 
         private void GetInteractionInputData()

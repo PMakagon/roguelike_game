@@ -1,5 +1,5 @@
 ﻿using LiftGame.GameCore.Input.Data;
-using LiftGame.InventorySystem;
+using LiftGame.NewInventory;
 using LiftGame.PlayerCore.PlayerPowerSystem;
 using UnityEngine;
 

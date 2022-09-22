@@ -1,7 +1,6 @@
-﻿using System;
+﻿using LiftGame.GameCore.Input.Data;
 using LiftGame.GameCore.Pause;
 using LiftGame.GameCore.ScenesLoading;
-using LiftGame.PlayerCore.HealthSystem;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -32,16 +31,14 @@ namespace LiftGame.Ui
             continueBtn.onClick.AddListener(ContinueGame);
             menuBtn.onClick.AddListener(LoadMainMenu);
             exitBtn.onClick.AddListener(OnExitBtnClicked);
-            screen.SetActive(false);    
+            screen.SetActive(false);
+            NonGameplayInputData.OnPauseMenuClicked += OnPausePressed;
         }
-
-        private void Update()
+        
+        private void OnPausePressed()
         {
-            if(Input.GetKeyDown(KeyCode.Escape))
-            {
-                var isPaused = _pauseHandler.IsPaused;
-                SetPauseScreenActive(!isPaused);
-            }
+            var isPaused = _pauseHandler.IsPaused;
+            SetPauseScreenActive(!isPaused);
         }
 
         private void SetPauseScreenActive(bool state)

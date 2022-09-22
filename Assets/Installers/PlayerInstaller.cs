@@ -1,4 +1,6 @@
 ﻿using LiftGame.GameCore.Input;
+using LiftGame.GameCore.Input.Data;
+using LiftGame.NewInventory;
 using LiftGame.PlayerCore;
 using LiftGame.PlayerCore.HealthSystem;
 using LiftGame.PlayerCore.MentalSystem;
@@ -28,6 +30,7 @@ namespace LiftGame.Installers
             Container.Bind<IPlayerMentalService>().To<PlayerMentalService>().FromNew().AsSingle();
             Container.Bind<IPlayerPowerService>().To<PlayerPowerService>().FromNew().AsSingle();
             Container.Bind<IPlayerInputService>().To<PlayerInputService>().FromNew().AsSingle();
+            Container.Bind<IPlayerInventoryService>().To<PlayerInventoryService>().FromNew().AsSingle();
         }
 
         private void BindPlayer()

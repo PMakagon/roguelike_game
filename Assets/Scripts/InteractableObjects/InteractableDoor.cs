@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FarrokhGames.Inventory;
 using LiftGame.FPSController.InteractionSystem;
-using LiftGame.InventorySystem;
+using LiftGame.NewInventory.Items;
 using LiftGame.PlayerCore;
 using NaughtyAttributes;
 using UnityEngine;
@@ -18,15 +20,17 @@ namespace LiftGame.InteractableObjects
         protected static readonly int TryOpen = Animator.StringToHash("TryOpen");
         protected static readonly int ForceOpen = Animator.StringToHash("ForceOpen");
         protected static readonly int ForceClose = Animator.StringToHash("ForceClose");
-        
+
         #region BuiltIn Methods
+
         private void Awake()
         {
             animator = GetComponentInParent<Animator>();
             SetToolTip();
         }
+
         #endregion
-        
+
         #region Properties
 
         public bool IsLocked
@@ -42,7 +46,7 @@ namespace LiftGame.InteractableObjects
         }
 
         #endregion
-        
+
         public void ForceOpenDoor()
         {
             if (isLocked) return;
@@ -50,6 +54,7 @@ namespace LiftGame.InteractableObjects
             animator.SetBool(ForceOpen, isOpen);
             SetToolTip();
         }
+
         public void ForceCloseDoor()
         {
             if (!isOpen) return;
@@ -89,30 +94,44 @@ namespace LiftGame.InteractableObjects
             SetToolTip();
         }
 
+        protected bool CheckForKey(List<IInventoryItem> allItems)
+        {
+            foreach (var item in allItems)
+            {
+                if (((Key)item).KeyCode == keyName)
+                {
+                    isLocked = false;
+                    // Debug.Log("Opened with " + key.Name);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public override void OnInteract(IPlayerData playerData)
         {
-            var inventory=  playerData.GetInventoryData().InventoryContainer;
-            if (!isOpen)
+            if (isOpen)
             {
-                if (isLocked)
-                {
-                    if (inventory.Items.Any(key => key.Name == keyName))
-                    {
-                        isLocked = false;
-                        OpenDoor();
-                        // Debug.Log("Opened with " + key.Name);
-                        return;
-                    }
-                    animator.SetBool(TryOpen, true);
-                    return;
-                }
+                CloseDoor();
+                return;
+            }
+
+            if (!isLocked)
+            {
+                OpenDoor();
+                return;
+            }
+
+            var inventory = playerData.GetInventoryData();
+            if (CheckForKey(inventory.GetAllItems()))
+            {
                 OpenDoor();
             }
             else
             {
-                CloseDoor();
+                animator.SetBool(TryOpen, true);
             }
         }
-
     }
 }

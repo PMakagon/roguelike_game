@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using LiftGame.GameCore.Input.Data;
-using LiftGame.InventorySystem;
+using LiftGame.NewInventory;
 using LiftGame.PlayerCore;
 using LiftGame.PlayerCore.PlayerPowerSystem;
 using UnityEngine;
@@ -50,7 +50,7 @@ namespace LiftGame.PlayerEquipment
         }
         private void CheckInventory()
         {
-            if (_inventoryData.InventoryContainer.HasNothing()) return;
+            // if (_inventoryData.InventoryContainer.HasNothing()) return;
             
         }
 

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace LiftGame.GameCore.Input.Data
 {
@@ -9,7 +10,13 @@ namespace LiftGame.GameCore.Input.Data
         private bool _inventoryClicked;
         private bool _inventoryReleased;
 
+        public static event Action OnInventoryClicked = delegate { };
 
+        public void UpdateInputEvents()
+        {
+            if (_inventoryClicked) OnInventoryClicked?.Invoke();
+        }
+        
         public bool InventoryClicked
         {
             get => _inventoryClicked;

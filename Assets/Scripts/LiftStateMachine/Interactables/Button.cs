@@ -1,5 +1,4 @@
 ﻿using LiftGame.FPSController.InteractionSystem;
-using LiftGame.InventorySystem;
 using LiftGame.PlayerCore;
 using UnityEngine;
 

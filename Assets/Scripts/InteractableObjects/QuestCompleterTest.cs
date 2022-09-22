@@ -1,6 +1,4 @@
 ﻿using LiftGame.FPSController.InteractionSystem;
-using LiftGame.InventorySystem;
-using LiftGame.InventorySystem.Items;
 using LiftGame.LiftStateMachine;
 using LiftGame.PlayerCore;
 using TMPro;
@@ -24,20 +22,20 @@ namespace LiftGame.InteractableObjects
         
         public override void OnInteract(IPlayerData playerData)
         {
-            var inventory=  playerData.GetInventoryData().InventoryContainer;
-            foreach (var item in inventory.Items)
-            {
-                if (item.ItemType == ItemType.Quest)
-                {
-                    inventory.RemoveItem(item);
-                    textBox.text = "DONE";
-                    Debug.Log("Quest completed");
-                    LiftControllerData.OnLevelGameLoopFinished.Invoke();
-                    return;
-                }
-            }
-            textBox.text = "kek";
-            Debug.Log("Item not found");
+            // var inventory=  playerData.GetInventoryData().InventoryContainer;
+            // foreach (var item in inventory.Items)
+            // {
+            //     if (item.ItemType == ItemType.Quest)
+            //     {
+            //         inventory.RemoveItem(item);
+            //         textBox.text = "DONE";
+            //         Debug.Log("Quest completed");
+            //         LiftControllerData.OnLevelGameLoopFinished.Invoke();
+            //         return;
+            //     }
+            // }
+            // textBox.text = "kek";
+            // Debug.Log("Item not found");
         }
     }
 }
