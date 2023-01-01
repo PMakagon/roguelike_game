@@ -26,8 +26,8 @@ namespace LiftGame.FPSController.InteractionSystem
 
         private bool _interacting;
         private float _holdTimer = 0f;
-
-
+        
+        //MonoBehaviour injection
         [Inject]
         private void Construct(InteractionUIPanel interactionUIPanel,IPlayerData playerData)
         {

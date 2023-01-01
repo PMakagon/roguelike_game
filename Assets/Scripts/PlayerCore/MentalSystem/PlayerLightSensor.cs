@@ -41,7 +41,7 @@ namespace LiftGame.PlayerCore.MentalSystem
                 litLevel += (0.2126f * colors[i].r) + (0.7152f * colors[i].g) + (0.0722f * colors[i].b);
             }
             // litLevel -= 259330;
-            litLevel = litLevel / colors.Length;
+            litLevel /= colors.Length;
             _light = Mathf.RoundToInt(litLevel);
             litLevelUI.text = _light.ToString();
             return _light;

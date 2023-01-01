@@ -1,158 +1,83 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace LiftGame.GameCore.Input.Data
 {
     [CreateAssetMenu(fileName = "EquipmentInputData", menuName = "PlayerInputData/EquipmentInputData")]
     public class EquipmentInputData : ScriptableObject
     {
-        private bool _usingClicked;
-        private bool _usingReleased;
-
-        private bool _flashlightClicked;
-        private bool _flashlightReleased;
-
-        private bool _turnOnClicked;
-        private bool _turnOnReleased;
-
-        private bool _visorUpClicked;
-        private bool _visorUpReleased;
-
-        private bool _airBypassClicked;
-        private bool _airBypassReleased;
-        
-        private bool _firstEquipmentClicked;
-        private bool _firstEquipmentReleased;
-        
-        private bool _secondEquipmentClicked;
-        private bool _secondEquipmentReleased;
-        
-        private bool _thirdEquipmentClicked;
-        private bool _thirdEquipmentReleased;
-        
-        private bool _fourthEquipmentClicked;
-        private bool _fourthEquipmentReleased;
-        
-
-        public bool UsingClicked
-        {
-            get => _usingClicked;
-            set => _usingClicked = value;
-        }
-
-        public bool UsingReleased
-        {
-            get => _usingReleased;
-            set => _usingReleased = value;
-        }
-
-        public bool FlashlightClicked
-        {
-            get => _flashlightClicked;
-            set => _flashlightClicked = value;
-        }
-
-        public bool FlashlightReleased
-        {
-            get => _flashlightReleased;
-            set => _flashlightReleased = value;
-        }
-
-        public bool TurnOnClicked
-        {
-            get => _turnOnClicked;
-            set => _turnOnClicked = value;
-        }
-
-        public bool TurnOnReleased
-        {
-            get => _turnOnReleased;
-            set => _turnOnReleased = value;
-        }
-
-        public bool VisorUpClicked
-        {
-            get => _visorUpClicked;
-            set => _visorUpClicked = value;
-        }
-
-        public bool VisorUpReleased
-        {
-            get => _visorUpReleased;
-            set => _visorUpReleased = value;
-        }
-
-        public bool AirBypassClicked
-        {
-            get => _airBypassClicked;
-            set => _airBypassClicked = value;
-        }
-
-        public bool AirBypassReleased
-        {
-            get => _airBypassReleased;
-            set => _airBypassReleased = value;
-        }
-
-        public bool FirstEquipmentClicked
-        {
-            get => _firstEquipmentClicked;
-            set => _firstEquipmentClicked = value;
-        }
-
-        public bool FirstEquipmentReleased
-        {
-            get => _firstEquipmentReleased;
-            set => _firstEquipmentReleased = value;
-        }
-
-        public bool SecondEquipmentClicked
-        {
-            get => _secondEquipmentClicked;
-            set => _secondEquipmentClicked = value;
-        }
-
-        public bool SecondEquipmentReleased
-        {
-            get => _secondEquipmentReleased;
-            set => _secondEquipmentReleased = value;
-        }
-
-        public bool ThirdEquipmentClicked
-        {
-            get => _thirdEquipmentClicked;
-            set => _thirdEquipmentClicked = value;
-        }
-
-        public bool ThirdEquipmentReleased
-        {
-            get => _thirdEquipmentReleased;
-            set => _thirdEquipmentReleased = value;
-        }
-
-        public bool FourthEquipmentClicked
-        {
-            get => _fourthEquipmentClicked;
-            set => _fourthEquipmentClicked = value;
-        }
-
-        public bool FourthEquipmentReleased
-        {
-            get => _fourthEquipmentReleased;
-            set => _fourthEquipmentReleased = value;
-        }
-
         public void ResetInput()
         {
-            _usingClicked = false;
-            _usingReleased = false;
-            _flashlightClicked = false;
-            _flashlightReleased = false;
-            _turnOnClicked = false;
-            _turnOnReleased = false;
-            _visorUpClicked = false;
-            _visorUpReleased = false;
-            _airBypassClicked = false;
-            _airBypassReleased = false;
+            UsingClicked = false;
+            UsingReleased = false;
+            FlashlightClicked = false;
+            FlashlightReleased = false;
+            TurnOnClicked = false;
+            TurnOnReleased = false;
+            VisorUpClicked = false;
+            VisorUpReleased = false;
+            AirBypassClicked = false;
+            AirBypassReleased = false;
+            SwitchWeaponPressed = false;
         }
+
+        public event Action OnFlashlightClicked = delegate { };
+        public event Action<float> OnFlashlightAdjust = delegate { };
+        public event Action OnTurnOnClicked = delegate { };
+        public event Action OnTurnOnReleased = delegate { };
+        public event Action OnUsingClicked = delegate { };
+        public event Action OnSwitchWeaponPressed = delegate { };
+
+        public void UpdateInputEvents()
+        {
+            if (FlashlightClicked && ScrollWheelDirection != 0) OnFlashlightAdjust?.Invoke(ScrollWheelDirection);
+            if (FlashlightReleased) OnFlashlightClicked?.Invoke();
+            if (TurnOnClicked) OnTurnOnClicked?.Invoke();
+            if (TurnOnReleased) OnTurnOnReleased?.Invoke();
+            if (UsingClicked) OnUsingClicked?.Invoke();
+            if (SwitchWeaponPressed) OnSwitchWeaponPressed?.Invoke();
+        }
+
+        public float ScrollWheelDirection { get; set; }
+
+        public bool UsingClicked { get; set; }
+
+        public bool UsingReleased { get; set; }
+
+        public bool FlashlightClicked { get; set; }
+
+        public bool FlashlightReleased { get; set; }
+
+        public bool TurnOnClicked { get; set; }
+
+        public bool TurnOnReleased { get; set; }
+
+        public bool SwitchWeaponPressed { get; set; }
+
+        public bool SwitchWeaponReleased { get; set; }
+
+        public bool VisorUpClicked { get; set; }
+
+        public bool VisorUpReleased { get; set; }
+
+        public bool AirBypassClicked { get; set; }
+
+        public bool AirBypassReleased { get; set; }
+
+        public bool FirstEquipmentClicked { get; set; }
+
+        public bool FirstEquipmentReleased { get; set; }
+
+        public bool SecondEquipmentClicked { get; set; }
+
+        public bool SecondEquipmentReleased { get; set; }
+
+        public bool ThirdEquipmentClicked { get; set; }
+
+        public bool ThirdEquipmentReleased { get; set; }
+
+        public bool FourthEquipmentClicked { get; set; }
+
+        public bool FourthEquipmentReleased { get; set; }
     }
 }

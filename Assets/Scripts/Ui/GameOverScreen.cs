@@ -1,6 +1,6 @@
 ﻿using System;
 using LiftGame.GameCore;
-using LiftGame.GameCore.GameLoop;
+using LiftGame.GameCore.LevelGameLoop;
 using LiftGame.GameCore.ScenesLoading;
 using LiftGame.PlayerCore.HealthSystem;
 using LiftGame.Ui.MainMenu;
@@ -21,6 +21,7 @@ namespace LiftGame.Ui
         
         private ISceneLoaderService _sceneLoader;
 
+        // MonoBehaviour injection
         [Inject]
         private void Construct(ISceneLoaderService sceneLoaderService)
         {

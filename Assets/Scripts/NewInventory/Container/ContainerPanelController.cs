@@ -1,4 +1,6 @@
-﻿using FarrokhGames.Inventory;
+﻿using System;
+using FarrokGames.Inventory.Runtime;
+using FarrokhGames.Inventory;
 using LiftGame.PlayerCore;
 using UnityEngine;
 using Zenject;
@@ -8,9 +10,8 @@ namespace LiftGame.NewInventory.Container
     [RequireComponent(typeof(InventoryRenderer))]
     public class ContainerPanelController : MonoBehaviour
     {
-        [SerializeField] private InventoryRenderer renderer;
-        private ContainerItemProvider _provider;
-        private ContainerInventoryManager _inventoryManager;
+        [SerializeField] private InventoryRenderer inventoryRenderer;
+        private ContainerItemRepository _repository;
         private IPlayerInventoryService _inventoryService;
 
         [Inject]
@@ -21,27 +22,32 @@ namespace LiftGame.NewInventory.Container
         
         private void Start()
         {
-            _inventoryService.onInventoryLoad += Init;
-            
+            _inventoryService.OnInventoryLoad += Init;
+        }
+
+        private void OnDestroy()
+        {
+            _inventoryService.OnInventoryLoad -= Init;
         }
 
         private void Init()
         {
-            _inventoryManager = new ContainerInventoryManager();
+            
         }
         
         private void OnEnable()
         {
-            if (_inventoryService.GetContainer() == null) return;
-            _provider = _inventoryService.GetContainer();
-            _inventoryManager.SetContainer(_provider);
-            if (!_provider.isLootSpawned) _inventoryManager.SpawnRandomLoot(_provider.Config);
-            renderer.SetInventory(_inventoryManager,_provider.InventoryRenderMode);
+            _repository = _inventoryService.GetContainerRepository();
+            if (_repository == null) return;
+            var repoManager = _inventoryService.GetContainerRepositoryManager();
+            repoManager.SetContainer(_inventoryService.GetContainerRepository());
+            if (!_repository.isLootSpawned) repoManager.SpawnRandomLoot(_repository.Config);
+            inventoryRenderer.SetInventory(repoManager,_repository.InventoryRenderMode);
         }
 
         private void OnDisable()
         {
-            _provider = null;
+            _repository = null;
         }
     }
 }

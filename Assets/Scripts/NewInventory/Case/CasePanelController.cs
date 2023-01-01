@@ -1,4 +1,5 @@
 ﻿using System;
+using FarrokGames.Inventory.Runtime;
 using FarrokhGames.Inventory;
 using LiftGame.PlayerCore;
 using UnityEngine;
@@ -8,12 +9,11 @@ namespace LiftGame.NewInventory.Case
 {
     public class CasePanelController : MonoBehaviour
     {
-        [SerializeField] private InventoryRenderer renderer;
+        [SerializeField] private InventoryRenderer inventoryRenderer;
         [SerializeField] private GameObject casePanel;
-        private CaseItemProvider _provider;
+        private CaseItemRepository _repository;
         private bool _isPreviouslyInRange = false;
         private IPlayerInventoryService _inventoryService;
-        private CaseInventoryManager _inventoryManager;
 
 
         [Inject]
@@ -24,33 +24,24 @@ namespace LiftGame.NewInventory.Case
 
         private void Start()
         {
-            _inventoryService.onInventoryLoad += Init;
             casePanel.SetActive(false);
-            
         }
-
-        private void Init()
-        {
-            if (_inventoryService.GetCase() == null) throw new NullReferenceException("Provider not exist");
-            _provider = _inventoryService.GetCase();
-            _inventoryManager = new CaseInventoryManager(_provider,6,5);
-            
-        }
+        
 
         private void OnEnable()
         {
-            if (_provider == null) return;
-            _isPreviouslyInRange = _provider.IsInRange;
-            renderer.SetInventory(_inventoryManager,_provider.InventoryRenderMode);
+            if (_repository == null) return;
+            _isPreviouslyInRange = _repository.IsInRange;
+            inventoryRenderer.SetInventory(_inventoryService.GetCaseRepositoryManager(),_repository.InventoryRenderMode);
         }
 
         private void Update()
         {
-            if (_provider == null) return;
-            if (_provider.IsInRange != _isPreviouslyInRange)
+            if (_repository == null) return;
+            if (_repository.IsInRange != _isPreviouslyInRange)
             {
-               casePanel.SetActive(_provider.IsInRange);
-               _isPreviouslyInRange = _provider.IsInRange;
+               casePanel.SetActive(_repository.IsInRange);
+               _isPreviouslyInRange = _repository.IsInRange;
             }
         }
 

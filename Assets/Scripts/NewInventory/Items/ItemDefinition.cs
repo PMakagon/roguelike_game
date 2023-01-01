@@ -1,13 +1,10 @@
-﻿using FarrokhGames.Inventory;
+﻿using FarrokGames.Inventory.Runtime;
+using FarrokhGames.Inventory;
 using UnityEngine;
 
 namespace LiftGame.NewInventory.Items
 {
-    /// <summary>
-    /// Scriptable Object representing an Inventory Item
-    /// </summary>
-    [CreateAssetMenu(fileName = "Item", menuName = "Player/InventorySystem/Items/Item")]
-    public class ItemDefinition : ScriptableObject, IInventoryItem
+    public abstract class ItemDefinition : ScriptableObject, IInventoryItem
     {
         [SerializeField] private string _name;
         [SerializeField] private string _description;

@@ -10,21 +10,24 @@ namespace LiftGame.NewInventory
 {
     public interface IPlayerInventoryService
     {
-        event Action onInventoryLoad;
-        
+        event Action OnInventoryLoad;
+        public event Action OnInventoryOpen;
+        public event Action OnInventoryClose;
 
         void InitializeInventory();
+        void SetInventoryOpen(bool state);
+        void SetCurrentEquipment(PlayerEquipmentWorldView equipment);
+        PlayerEquipmentWorldView GetCurrentEquipment();
 
-        IPlayerEquipment GetCurrentEquipment();
-
-        EquipmentSlotProvider[] GetEquipmentSlots();
-
-        CaseItemProvider GetCase();
-
-        ContainerItemProvider GetContainer();
-
-        FastSlotProvider GetFastSlots();
-
-        BagItemProvider GetBag();
+        public BagRepositoryManager GetBagRepositoryManager();
+        BagItemRepository GetBagRepository();
+        public CaseRepositoryManager GetCaseRepositoryManager();
+        CaseItemRepository GetCaseRepository();
+        public ContainerRepositoryManager GetContainerRepositoryManager();
+        ContainerItemRepository GetContainerRepository();
+        EquipmentRepositoryManager GetEquipmentRepositoryManager(int index);
+        EquipmentRepository[] GetEquipmentRepository();
+        PocketsItemRepository GetPocketsRepository();
+        public InventoryData InventoryData { get; }
     }
 }

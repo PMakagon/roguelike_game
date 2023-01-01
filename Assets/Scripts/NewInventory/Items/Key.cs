@@ -13,7 +13,7 @@ namespace LiftGame.NewInventory.Items
             set => keyCode = value;
         }
 
-        public override ItemType ItemType => ItemType.Quest;
+        public override ItemType ItemType => ItemType.Key;
 
         private void Awake()
         {

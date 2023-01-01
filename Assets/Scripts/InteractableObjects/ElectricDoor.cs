@@ -18,6 +18,7 @@ namespace LiftGame.InteractableObjects
             if (!masterSwitcher) return;
             masterSwitcher.OnSwitched += ChangeLightState;
             ChangeLightState();
+            SetToolTip();
         }
 
         private void OnDestroy()
@@ -47,7 +48,8 @@ namespace LiftGame.InteractableObjects
         {
             stateLight.enabled = !masterSwitcher.IsSwitchedOn;
         }
-
+        
+        
         public override void OnInteract(IPlayerData playerData)
         {
             if (isOpen)

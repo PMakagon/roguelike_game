@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FarrokGames.Inventory.Runtime;
 using FarrokhGames.Inventory;
 using LiftGame.NewInventory.Bag;
 using LiftGame.NewInventory.Case;
@@ -8,6 +9,7 @@ using LiftGame.NewInventory.Equipment;
 using LiftGame.NewInventory.FastSlots;
 using LiftGame.NewInventory.Items;
 using LiftGame.PlayerEquipment;
+using ModestTree;
 using UnityEngine;
 
 namespace LiftGame.NewInventory
@@ -15,20 +17,25 @@ namespace LiftGame.NewInventory
     [CreateAssetMenu(fileName = "InventoryData", menuName = "Player/InventorySystem/InventoryData")]
     public class InventoryData : ScriptableObject
     {
-        private ContainerItemProvider _currentContainer;
-        private CaseItemProvider _caseInventory;
-        private FastSlotProvider _fastSlots;
-        private EquipmentSlotProvider[] _equipmentSlots;
-        private BagItemProvider _bagProvider;
-        private IPlayerEquipment _currentEquipment;
+        //убрать в отдельный сервис
+        [SerializeField] private EquipableContainerConfig bagSlotConfig;
+        [SerializeField] private EquipableContainerConfig pocketsConfig; 
+        private EquipableContainerConfig _caseConfig;
 
-        public Action onItemAdd;
-
-        public Action onContainerOpen;
-
-        public Action onEquipmentAdd;
-
-        public Action onInventoryChange;
+        private ContainerItemRepository _currentContainer;
+        private CaseItemRepository _caseRepository;
+        private PocketsItemRepository _pockets;
+        private EquipmentRepository[] _equipmentSlots;
+        private BagItemRepository _bagRepository;
+        private PlayerEquipmentWorldView _currentEquipment;
+        public event Action OnWorldItemAddedToBag;
+        public event Action OnWorldItemAddedToCase;
+        public event Action OnWorldItemAddedToEquipmentSlot;
+        public event Action OnWorldItemAddedToPocket;
+        
+        public Action OnWorldContainerOpen; //убрать как нибудь
+        public Action OnEquipmentAdd;
+        public Action OnInventoryChange;
 
         private void Awake()
         {
@@ -37,10 +44,11 @@ namespace LiftGame.NewInventory
 
         public void ResetData()
         {
-            _caseInventory = new CaseItemProvider(6, 5);
-            _fastSlots = new FastSlotProvider();
-            _equipmentSlots = new EquipmentSlotProvider[2];
-            _bagProvider = new BagItemProvider(3, 3);
+            // _caseRepository = new CaseItemRepository(caseConfig.Widht, caseConfig.Height);
+            _caseRepository = null;
+            _pockets = new PocketsItemRepository();
+            _equipmentSlots = new EquipmentRepository[2] {new(0),new(1)};
+            _bagRepository = new BagItemRepository(bagSlotConfig.Widht, bagSlotConfig.Height);
             _currentContainer = null;
             _currentEquipment = null;
             Debug.Log("RESET DATA");
@@ -48,15 +56,32 @@ namespace LiftGame.NewInventory
 
         public bool TryToAddItem(IInventoryItem itemToAdd)
         {
-            if (_bagProvider == null && !_caseInventory.IsInRange) return false;
-            if (_bagProvider!=null)
+            if (((ItemDefinition)itemToAdd).ItemType == ItemType.Equipment)
             {
-                if (_bagProvider.AddInventoryItem(itemToAdd)) return true;
+                foreach (var slot in _equipmentSlots)
+                {
+                    if (!slot.IsEmpty) continue;
+                    slot.AddEquipmentItem(itemToAdd);
+                    OnWorldItemAddedToEquipmentSlot?.Invoke();
+                    return true;
+                }
+            }
+            if (_bagRepository!=null)
+            {
+                if (_bagRepository.AddInventoryItem(itemToAdd))
+                {
+                    OnWorldItemAddedToBag?.Invoke();
+                    return true;
+                }
             }
 
-            if (_caseInventory.IsInRange)
+            if (_caseRepository != null  && _caseRepository.IsInRange)
             {
-                if (_caseInventory.AddInventoryItem(itemToAdd)) return true;
+                if (_caseRepository.AddInventoryItem(itemToAdd))
+                {
+                    OnWorldItemAddedToCase?.Invoke();
+                    return true;
+                }
             }
             return false;
         }
@@ -83,70 +108,65 @@ namespace LiftGame.NewInventory
         public List<IInventoryItem> GetAllItems()
         {
             List<IInventoryItem> allItems = new List<IInventoryItem>();
-            if (_caseInventory.IsInRange) allItems.AddRange(_caseInventory.GetAllItems());
-            allItems.AddRange(_bagProvider.GetAllItems());
-            allItems.AddRange(_fastSlots.GetAllItems());
+            if (_caseRepository != null) allItems.AddRange(_caseRepository.GetAllItems());
+            allItems.AddRange(_bagRepository.GetAllItems());
+            allItems.AddRange(_pockets.GetAllItems());
+            if (allItems.IsEmpty()) Debug.Log("INVENTORY IS EMPTY");
             return allItems;
         }
 
-        public BagItemProvider BagProvider
+        public BagItemRepository BagRepository
         {
-            get => _bagProvider;
-            set => _bagProvider = value;
+            get => _bagRepository;
+            set => _bagRepository = value;
         }
 
-        public CaseItemProvider CaseInventory
+        public CaseItemRepository CaseRepository
         {
-            get => _caseInventory;
-            set => _caseInventory = value;
+            get => _caseRepository;
+            set => _caseRepository = value;
         }
 
-        public ContainerItemProvider CurrentContainer
+        public ContainerItemRepository CurrentContainer
         {
             get => _currentContainer;
             set => _currentContainer = value;
         }
 
-        public FastSlotProvider FastSlots
+        public PocketsItemRepository PocketsRepository
         {
-            get => _fastSlots;
-            set => _fastSlots = value;
+            get => _pockets;
+            set => _pockets = value;
         }
 
-        public EquipmentSlotProvider[] EquipmentSlots
+        public EquipmentRepository[] EquipmentSlots
         {
             get => _equipmentSlots;
             set => _equipmentSlots = value;
         }
 
-        public IPlayerEquipment CurrentEquipment
+        public PlayerEquipmentWorldView CurrentEquipment
         {
             get => _currentEquipment;
             set => _currentEquipment = value;
         }
 
-        public Action OnItemAdd
+        public EquipableContainerConfig BagSlotConfig
         {
-            get => onItemAdd;
-            set => onItemAdd = value;
+            get => bagSlotConfig;
+            set => bagSlotConfig = value;
         }
 
-        public Action OnContainerOpen
+        public EquipableContainerConfig PocketsConfig
         {
-            get => onContainerOpen;
-            set => onContainerOpen = value;
+            get => pocketsConfig;
+            set => pocketsConfig = value;
         }
 
-        public Action OnEquipmentAdd
+        public EquipableContainerConfig CaseConfig
         {
-            get => onEquipmentAdd;
-            set => onEquipmentAdd = value;
-        }
-
-        public Action OnInventoryChange
-        {
-            get => onInventoryChange;
-            set => onInventoryChange = value;
+            get => _caseConfig;
+            set => _caseConfig = value;
         }
     }
 }

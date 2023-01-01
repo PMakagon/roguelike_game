@@ -1,4 +1,5 @@
-﻿using LiftGame.GameCore.Input.Data;
+﻿using System;
+using LiftGame.GameCore.Input.Data;
 using LiftGame.GameCore.Pause;
 using LiftGame.GameCore.ScenesLoading;
 using UnityEngine;
@@ -34,14 +35,19 @@ namespace LiftGame.Ui
             screen.SetActive(false);
             NonGameplayInputData.OnPauseMenuClicked += OnPausePressed;
         }
-        
+
+        private void OnDestroy()
+        {
+            NonGameplayInputData.OnPauseMenuClicked -= OnPausePressed;
+        }
+
         private void OnPausePressed()
         {
             var isPaused = _pauseHandler.IsPaused;
-            SetPauseScreenActive(!isPaused);
+            SetPauseAndScreenState(!isPaused);
         }
 
-        private void SetPauseScreenActive(bool state)
+        private void SetPauseAndScreenState(bool state)
         {
             screen.SetActive(state);
             _pauseHandler.SetPaused(state);
@@ -49,7 +55,7 @@ namespace LiftGame.Ui
         
         private void ContinueGame()
         {
-            SetPauseScreenActive(false);
+            SetPauseAndScreenState(false);
         }
 
         private void HideMenuButtons()

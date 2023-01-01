@@ -16,6 +16,7 @@ namespace LiftGame.Installers
         [SerializeField] private Transform spawnPoint;
         [SerializeField] private PlayerServiceProvider playerPrefab;
         [SerializeField] private PlayerData playerData;
+        [SerializeField] private InputDataProvider inputDataProvider;
 
         public override void InstallBindings()
         {
@@ -45,6 +46,7 @@ namespace LiftGame.Installers
         {
             playerData.ResetData();//костыль пока нет сохранений
             Container.Bind<IPlayerData>().FromInstance(playerData).AsSingle();
+            Container.Bind<InputDataProvider>().FromInstance(inputDataProvider).AsSingle().Lazy();
         }
     }
 }

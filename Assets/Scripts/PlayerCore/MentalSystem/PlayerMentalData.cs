@@ -30,7 +30,6 @@ namespace LiftGame.PlayerCore.MentalSystem
 
         private float _stress;
         private int _playerLitLevel;
-        private bool _isEnabled;
 
         public void ResetData()
         {
@@ -87,11 +86,6 @@ namespace LiftGame.PlayerCore.MentalSystem
             get => _playerLitLevel;
             set => _playerLitLevel = value;
         }
-
-        public bool IsEnabled
-        {
-            get => _isEnabled;
-            set => _isEnabled = value;
-        }
+        
     }
 }

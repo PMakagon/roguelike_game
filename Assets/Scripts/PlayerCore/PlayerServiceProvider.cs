@@ -17,7 +17,6 @@ namespace LiftGame.PlayerCore
         [SerializeField] private PlayerCostumeService playerCostumeService;//убрать
         [SerializeField] private PlayerLitStateProvider playerLitStateProvider;
         
-        
         public FirstPersonController FPSController => fpsController;
         public CameraController CameraController => cameraController;
         public PlayerAnimationController PlayerAnimationController => playerAnimationController;

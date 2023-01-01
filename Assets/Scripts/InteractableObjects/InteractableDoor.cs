@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using FarrokGames.Inventory.Runtime;
 using FarrokhGames.Inventory;
 using LiftGame.FPSController.InteractionSystem;
 using LiftGame.NewInventory.Items;
 using LiftGame.PlayerCore;
+using ModestTree;
 using NaughtyAttributes;
 using UnityEngine;
 
@@ -63,7 +65,7 @@ namespace LiftGame.InteractableObjects
             SetToolTip();
         }
 
-        private void SetToolTip()
+        protected void SetToolTip()
         {
             TooltipMessage = isOpen ? "Close" : "Open";
         }
@@ -96,16 +98,18 @@ namespace LiftGame.InteractableObjects
 
         protected bool CheckForKey(List<IInventoryItem> allItems)
         {
+            if (allItems.IsEmpty()) return false;
             foreach (var item in allItems)
             {
-                if (((Key)item).KeyCode == keyName)
+                if (item==null) continue;
+                if ((item.GetType() != typeof(Key))) continue;
+                if ((item as Key)?.KeyCode == keyName)
                 {
                     isLocked = false;
                     // Debug.Log("Opened with " + key.Name);
                     return true;
                 }
             }
-
             return false;
         }
 

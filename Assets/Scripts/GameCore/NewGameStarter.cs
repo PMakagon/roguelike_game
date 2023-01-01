@@ -18,6 +18,7 @@ namespace LiftGame.GameCore
         private IPlayerInputService _playerInputService;
         private IPlayerInventoryService _inventoryService;
 
+        // MonoBehaviour injection
         [Inject]
         private void Construct(IPlayerCostumeService costumeService, PlayerServiceProvider playerServiceProvider,
             IPlayerPowerService powerService, IPlayerInputService inputService,IPlayerInventoryService inventoryService)

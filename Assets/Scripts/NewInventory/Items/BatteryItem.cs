@@ -3,10 +3,10 @@
 namespace LiftGame.NewInventory.Items
 {
     [CreateAssetMenu(fileName = "Battery", menuName = "Player/InventorySystem/Items/Battery")]
-    public class BatteryItem : ItemDefinition
+    public class BatteryItem : EquipmentItem
     {
         [SerializeField] private float capacity;
-
+        public override ItemType ItemType => ItemType.Consumable;
         public float Capacity
         {
             get => capacity;

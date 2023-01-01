@@ -1,105 +1,139 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using LiftGame.GameCore.Input.Data;
-using LiftGame.NewInventory;
-using LiftGame.PlayerCore;
+﻿using LiftGame.NewInventory;
+using LiftGame.NewInventory.Items;
 using LiftGame.PlayerCore.PlayerPowerSystem;
 using UnityEngine;
-using Zenject;
 
 namespace LiftGame.PlayerEquipment
 {
+    // to refactor
     public class EquipmentSwitcher : MonoBehaviour
-
     {
-        [SerializeField] private EquipmentInputData inputData;
-        [SerializeField] private InventoryData _inventoryData;
-        [SerializeField] private Battery battery;
-        [SerializeField] private Scanner scanner;
-        [SerializeField] private float switchDelay;
-        [SerializeField] private List<Transform> equipmentTransforms;
-
-        
-        private int _activeSlotNumber = 0;
-        private int _selectedSlotNumber;
-        private int _prevActiveSlotNumber;
-        private Transform _spawnPoint;
+        [SerializeField] private Transform spawnPoint;
+        private IPlayerInventoryService _inventoryService;
         private Animator _currentEquipmentAnimator;
-        private float _timeSinceLastSwitch;
-        
-        [Inject]
-        private void Construct(IPlayerData playerData)
+        private int _activeSlotID;
+        private float _switchDelay;
+        private readonly PlayerEquipmentWorldView[] _spawnedEquipments = new PlayerEquipmentWorldView[2] { null, null };
+
+        public void Initialize(IPlayerInventoryService playerInventoryService, IPlayerPowerService playerPowerService)
         {
-            _inventoryData = playerData.GetInventoryData();
-        }
-        private void Start()
-        {
-            _spawnPoint = transform;
-            // _inventoryData.InventoryContainer.ClearContainer(); ///test
-            _inventoryData.onEquipmentAdd += CheckInventory;
-            // inventoryData.CurrentEquipment = GetComponentInChildren<Scanner>();
-            // inventoryData.Equipments.Insert(0,inventoryData.CurrentEquipment);
-            // inventoryData.CurrentEquipment.Equip();
-        }
-        
-        private void Update()
-        {
-            HandleInput();
-            ChooseEquipment();
-            _timeSinceLastSwitch += Time.deltaTime;
-        }
-        private void CheckInventory()
-        {
-            // if (_inventoryData.InventoryContainer.HasNothing()) return;
-            
+            _inventoryService = playerInventoryService;
         }
 
+        private void OnDestroy()
+        {
+            RemoveAllListeners();
+        }
 
-        private void HandleInput()
-        { 
-            if (inputData.FirstEquipmentClicked)
-            {
-                _selectedSlotNumber = 1;
-            }
-
-            if (inputData.SecondEquipmentClicked)
-            {
-                _selectedSlotNumber = 2;
-            }
+        private void AddListener(int slotId)
+        {
+            _inventoryService.GetEquipmentRepositoryManager(slotId).OnItemRemovedFromSlot += RemoveEquipmentFromEmptySlot;
         }
         
-        private void ChooseEquipment()
+        private void RemoveAllListeners()
         {
-            if (_selectedSlotNumber == _activeSlotNumber) return;
-            // if ( inventoryData.Equipments.Count == 0 || inventoryData.Equipments.Count < _selectedSlotNumber) return;
-            // StartCoroutine(SwapEquipment(inventoryData.Equipments[_selectedSlotNumber]));
-            _selectedSlotNumber = _activeSlotNumber;
+            _inventoryService.GetEquipmentRepositoryManager(0).OnItemRemovedFromSlot -= RemoveEquipmentFromEmptySlot;
+            _inventoryService.GetEquipmentRepositoryManager(1).OnItemRemovedFromSlot -= RemoveEquipmentFromEmptySlot;
         }
-        
-        
-        private IEnumerator SwapEquipment(IPlayerEquipment chosenEquipment)
+
+        // убирает модель рук из пула и уничтожает на сцене при освобобождении слота  
+        private void RemoveEquipmentFromEmptySlot(int slotId)
         {
-            if (chosenEquipment==null) yield break;
-            if (_timeSinceLastSwitch<=switchDelay) yield break;
-            if (chosenEquipment==_inventoryData.CurrentEquipment)
+            //убрать из рук если освобождается активный слот
+            if (slotId == _activeSlotID)
             {
-                if (_inventoryData.CurrentEquipment.IsEquipped)
+                //если переключится некуда
+                if (_inventoryService.GetEquipmentRepository()[_activeSlotID].IsEmpty) 
                 {
-                    _inventoryData.CurrentEquipment?.UnEquip();
+                    _spawnedEquipments[_activeSlotID]?.OnUnEquip();
                 }
                 else
                 {
-                    _inventoryData.CurrentEquipment?.Equip();
+                    SwapCurrentEquipment();
                 }
-                _timeSinceLastSwitch = 0f;
-                yield break;
             }
-            _inventoryData.CurrentEquipment?.UnEquip();
-            _inventoryData.CurrentEquipment = chosenEquipment;
-            yield return new WaitForSecondsRealtime(2);
-            _inventoryData.CurrentEquipment.Equip();
-            _currentEquipmentAnimator = _inventoryData.CurrentEquipment.EquipmentAnimator;
-            _timeSinceLastSwitch = 0f;
+            Destroy(_spawnedEquipments[slotId]?.gameObject,3);
+            _spawnedEquipments[slotId] = null;
         }
+        
+        public void WithdrawEquipment()
+        {
+            foreach (var repo in _inventoryService.GetEquipmentRepository())
+            {
+                if (repo.IsEmpty) continue;
+                _activeSlotID = repo.SlotId;
+                SetSelectionOnSlot(_activeSlotID);
+                SwitchCurrentTo(repo.GetEquipmentItem());
+                _spawnedEquipments[_activeSlotID].OnEquip();
+                return;
+            }
+        }
+
+        private void SwitchCurrentTo(EquipmentItem equipmentItem)
+        {
+            if (equipmentItem == null) return;
+            var equipmentToSwitch = _inventoryService.GetCurrentEquipment();
+            if (equipmentToSwitch != null)
+            {
+                equipmentToSwitch.OnUnEquip();
+                HideEquipment(_activeSlotID);
+                _activeSlotID = _activeSlotID == 0 ? 1 : 0;
+                SetSelectionOnSlot(_activeSlotID);
+            }
+            _inventoryService.SetCurrentEquipment(SpawnEquipment(equipmentItem.EquipmentPrefab));
+        }
+
+        private PlayerEquipmentWorldView SpawnEquipment(PlayerEquipmentWorldView equipmentWorldView)
+        {
+            var spawnedEquipment = Instantiate(equipmentWorldView, spawnPoint);
+            _spawnedEquipments[_activeSlotID] = spawnedEquipment;
+            AddListener(_activeSlotID);
+            return spawnedEquipment;
+        }
+
+        private void HideEquipment(int slotID)
+        {
+            _spawnedEquipments[slotID]?.gameObject.SetActive(false);
+        }
+
+        public void SwapCurrentEquipment()
+        {
+            if (_inventoryService.GetCurrentEquipment() == null)
+            {
+                WithdrawEquipment();
+                return;
+            }
+
+            var index = _activeSlotID == 0 ? 1 : 0;
+            if (_spawnedEquipments[index] == null)
+            {
+                //смотрим есть ли куда переключить
+                if (_inventoryService.GetEquipmentRepository()[index].IsEmpty) return; //некуда
+                _spawnedEquipments[_activeSlotID].OnUnEquip();
+                HideEquipment(_activeSlotID);
+                _activeSlotID = index;
+                SetSelectionOnSlot(_activeSlotID);
+                _inventoryService.SetCurrentEquipment(SpawnEquipment(_inventoryService.GetEquipmentRepository()[index]
+                    .GetEquipmentItem().EquipmentPrefab));
+                _spawnedEquipments[index].OnEquip();
+                return;
+            }
+            // если искать не надо
+            _spawnedEquipments[_activeSlotID].OnUnEquip();
+            HideEquipment(_activeSlotID);
+            _inventoryService.SetCurrentEquipment(_spawnedEquipments[index]);
+            _activeSlotID = index;
+            SetSelectionOnSlot(_activeSlotID);
+            _spawnedEquipments[index].gameObject.SetActive(true);
+            _spawnedEquipments[index].OnEquip();
+        }
+
+        private void SetSelectionOnSlot(int activeSlotID)
+        {
+            var notActiveSlotID = activeSlotID == 0 ? 1 : 0;
+            _inventoryService.GetEquipmentRepository()[activeSlotID].IsSelected = true;
+            _inventoryService.GetEquipmentRepository()[notActiveSlotID].IsSelected = false;
+        }
+        
     }
 }

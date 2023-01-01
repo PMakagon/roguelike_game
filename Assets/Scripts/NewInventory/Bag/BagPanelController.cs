@@ -1,7 +1,6 @@
 ﻿using System;
+using FarrokGames.Inventory.Runtime;
 using FarrokhGames.Inventory;
-using LiftGame.NewInventory.Case;
-using LiftGame.PlayerCore;
 using UnityEngine;
 using Zenject;
 
@@ -9,9 +8,9 @@ namespace LiftGame.NewInventory.Bag
 {
     public class BagPanelController : MonoBehaviour
     {
-        [SerializeField] private InventoryRenderer renderer;
+        [SerializeField] private InventoryRenderer inventoryRenderer;
         [SerializeField] private GameObject bagPanel;
-        private BagItemProvider _provider;
+        private BagItemRepository _repository;
         private IPlayerInventoryService _inventoryService;
 
         [Inject]
@@ -22,16 +21,15 @@ namespace LiftGame.NewInventory.Bag
 
         private void Start()
         {
-            _inventoryService.onInventoryLoad += Init;
+            _inventoryService.OnInventoryLoad += Init;
         }
         
 
         private void Init()
         {
-            if (_inventoryService.GetBag() == null) throw new NullReferenceException("Provider not exist");
-            _provider = _inventoryService.GetBag();
-            var inventoryManager = new InventoryManager(_provider,3,3);
-            renderer.SetInventory(inventoryManager,_provider.InventoryRenderMode);
+            _repository = _inventoryService.GetBagRepository();
+            if (_repository == null) throw new NullReferenceException("Provider not found");
+            inventoryRenderer.SetInventory(_inventoryService.GetBagRepositoryManager(),_repository.InventoryRenderMode);
         }
     }
 }

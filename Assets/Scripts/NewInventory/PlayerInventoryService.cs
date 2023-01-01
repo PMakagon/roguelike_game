@@ -12,50 +12,120 @@ namespace LiftGame.NewInventory
 {
     public class PlayerInventoryService : IPlayerInventoryService
     {
-        private InventoryData _inventoryData;
-        
-        public event Action onInventoryLoad;
+        private readonly InventoryData _inventoryData;
+        private BagRepositoryManager _bagRepositoryManager;
+        private CaseRepositoryManager _caseRepositoryManager;
+        private ContainerRepositoryManager _containerRepositoryManager;
+        private EquipmentRepositoryManager[] _equipmentRepositoryManagers = new EquipmentRepositoryManager[2];
+        public event Action OnInventoryLoad; 
+        public event Action OnInventoryOpen;
+        public event Action OnInventoryClose;
 
         [Inject]
         public PlayerInventoryService(IPlayerData playerData)
         {
             _inventoryData = playerData.GetInventoryData();
         }
-        
+
         public void InitializeInventory()
         {
             _inventoryData.ResetData();
-            onInventoryLoad?.Invoke();
+            OnInventoryLoad?.Invoke();
         }
 
-        public IPlayerEquipment GetCurrentEquipment()
+        public void InvokeEquipmentSlotRemove()
+        {
+            
+        }
+
+        public void SetInventoryOpen(bool state)
+        {
+            if (state)
+            {
+                OnInventoryOpen?.Invoke();
+            }
+            else
+            {
+                OnInventoryClose?.Invoke();
+            }
+        }
+
+        public PlayerEquipmentWorldView GetCurrentEquipment()
         {
             return _inventoryData.CurrentEquipment;
         }
 
-        public EquipmentSlotProvider[] GetEquipmentSlots()
+        public void SetCurrentEquipment(PlayerEquipmentWorldView equipment)
         {
-            return _inventoryData.EquipmentSlots;
+            _inventoryData.CurrentEquipment = equipment;
         }
 
-        public CaseItemProvider GetCase()
+        public BagRepositoryManager GetBagRepositoryManager()
         {
-            return _inventoryData.CaseInventory;
+            if (_bagRepositoryManager==null)
+            {
+                _bagRepositoryManager =  new BagRepositoryManager(GetBagRepository(), _inventoryData.BagSlotConfig.Widht,
+                    _inventoryData.BagSlotConfig.Height);
+                _inventoryData.OnWorldItemAddedToBag += _bagRepositoryManager.Rebuild;
+            }
+            return _bagRepositoryManager;
         }
 
-        public ContainerItemProvider GetContainer()
+        public BagItemRepository GetBagRepository()
+        {
+            return _inventoryData.BagRepository;
+        }
+
+        public CaseRepositoryManager GetCaseRepositoryManager()
+        {
+            if (_caseRepositoryManager==null)
+            {
+                _caseRepositoryManager = new CaseRepositoryManager(GetCaseRepository(), _inventoryData.CaseConfig.Widht,
+                    _inventoryData.CaseConfig.Height);
+                _inventoryData.OnWorldItemAddedToCase += _caseRepositoryManager.Rebuild;
+            }
+            return _caseRepositoryManager;
+        }
+
+        public CaseItemRepository GetCaseRepository()
+        {
+            return _inventoryData.CaseRepository;
+        }
+
+        public ContainerRepositoryManager GetContainerRepositoryManager()
+        {
+            if (_containerRepositoryManager==null)
+            {
+               _containerRepositoryManager =  new ContainerRepositoryManager();
+            }
+            return _containerRepositoryManager;
+        }
+
+        public ContainerItemRepository GetContainerRepository()
         {
             return _inventoryData.CurrentContainer;
         }
 
-        public FastSlotProvider GetFastSlots()
+        public EquipmentRepositoryManager GetEquipmentRepositoryManager(int index)
         {
-            return _inventoryData.FastSlots;
+            if (_equipmentRepositoryManagers[index]==null)
+            {
+                _equipmentRepositoryManagers[index] =  new EquipmentRepositoryManager(GetEquipmentRepository()[index]);
+                _inventoryData.OnWorldItemAddedToEquipmentSlot += _equipmentRepositoryManagers[index].InvokeOnWorldItemAdded;
+            }
+            return _equipmentRepositoryManagers[index];
         }
 
-        public BagItemProvider GetBag()
+        public EquipmentRepository[] GetEquipmentRepository()
         {
-            return _inventoryData.BagProvider;
+            return _inventoryData.EquipmentSlots;
         }
+
+        public PocketsItemRepository GetPocketsRepository()
+        {
+            return _inventoryData.PocketsRepository;
+        }
+
+        public InventoryData InventoryData => _inventoryData;
     }
 }

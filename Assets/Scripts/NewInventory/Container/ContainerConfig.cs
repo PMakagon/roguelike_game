@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using FarrokGames.Inventory.Runtime;
 using FarrokhGames.Inventory;
 using LiftGame.NewInventory.Items;
 using UnityEngine;
@@ -9,8 +10,8 @@ namespace LiftGame.NewInventory.Container
     public class ContainerConfig : ScriptableObject
     {
         [SerializeField] private string containerName;
-        [SerializeField] private int widht;
-        [SerializeField] private int height;
+        [SerializeField] [Range(1,5)]private int widht;
+        [SerializeField] [Range(1,4)] private int height;
         [SerializeField] private List<ItemDefinition> allowedItems;
         [SerializeField] private InventoryRenderMode renderMode = InventoryRenderMode.Grid;
         
