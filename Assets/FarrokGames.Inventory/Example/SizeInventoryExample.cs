@@ -1,5 +1,5 @@
-﻿using FarrokGames.Inventory.Runtime;
-using LiftGame.NewInventory.Items;
+﻿using LiftGame.Inventory.Core;
+using LiftGame.Inventory.Items;
 using UnityEngine;
 
 namespace FarrokhGames.Inventory.Examples

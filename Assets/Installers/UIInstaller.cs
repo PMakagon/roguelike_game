@@ -1,4 +1,5 @@
 ﻿using LiftGame.Ui;
+using LiftGame.Ui.HUD;
 using UnityEngine;
 using Zenject;
 

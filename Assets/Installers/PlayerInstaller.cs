@@ -1,6 +1,6 @@
 ﻿using LiftGame.GameCore.Input;
 using LiftGame.GameCore.Input.Data;
-using LiftGame.NewInventory;
+using LiftGame.Inventory;
 using LiftGame.PlayerCore;
 using LiftGame.PlayerCore.HealthSystem;
 using LiftGame.PlayerCore.MentalSystem;

@@ -2,6 +2,7 @@
 using LiftGame.GameCore.Input.Data;
 using LiftGame.PlayerCore;
 using LiftGame.Ui;
+using LiftGame.Ui.HUD;
 using UnityEngine;
 using Zenject;
 

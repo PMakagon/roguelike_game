@@ -1,43 +1,44 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using LiftGame.Inventory.Core;
+using LiftGame.Inventory.Items;
+using UnityEngine;
 
-namespace FarrokhGames.Inventory.Examples
+namespace LiftGame.Inventory.Bag
 {
-    public class InventoryRepository : IInventoryRepository
+    public class BagItemRepository : IInventoryRepository
     {
-        private List<IInventoryItem> _items;
-        private int _maximumAlowedItemCount;
+        private readonly List<IInventoryItem> _items;
+        private readonly int _maximumItemCount;
 
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        public InventoryRepository(InventoryRenderMode renderMode, int maximumAlowedItemCount)
+        public BagItemRepository(int widht, int height)
         {
-            InventoryRenderMode = renderMode;
-            _maximumAlowedItemCount = maximumAlowedItemCount;
-            _items = new List<IInventoryItem>(maximumAlowedItemCount);
+            _maximumItemCount = height*widht;
+            _items = new List<IInventoryItem>(_maximumItemCount);
         }
-
+        
         public int InventoryItemCount => _items.Count;
 
-        public InventoryRenderMode InventoryRenderMode { get; private set; }
+        public InventoryRenderMode InventoryRenderMode => InventoryRenderMode.Grid;
 
         public bool IsInventoryFull
         {
             get
             {
-                if (_maximumAlowedItemCount < 0)return false;
-                return InventoryItemCount >= _maximumAlowedItemCount;
+                if (_maximumItemCount < 0)return false;
+                return InventoryItemCount >= _maximumItemCount;
             }
         }
 
         public bool AddInventoryItem(IInventoryItem item)
         {
+            if (IsInventoryFull) return false;
             if (!_items.Contains(item))
             {
                 _items.Add(item);
+                Debug.Log("ITEM ADDED to BAG at" + item.position);
                 return true;
             }
+            Debug.Log("ITEM " + (item as ItemDefinition).Name + "ALREADY ADDED");
             return false;
         }
 

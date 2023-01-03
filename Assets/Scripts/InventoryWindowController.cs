@@ -1,7 +1,7 @@
 ﻿using LiftGame.FPSController.CameraController;
 using LiftGame.GameCore.Input.Data;
-using LiftGame.NewInventory;
-using LiftGame.NewInventory.Container;
+using LiftGame.Inventory;
+using LiftGame.Inventory.Container;
 using LiftGame.PlayerCore;
 using UnityEngine;
 using Zenject;

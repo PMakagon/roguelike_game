@@ -1,6 +1,6 @@
 ﻿using LiftGame.GameCore.Input.Data;
 using LiftGame.GameCore.Pause;
-using LiftGame.NewInventory;
+using LiftGame.Inventory;
 using LiftGame.PlayerCore.PlayerPowerSystem;
 using UnityEngine;
 using Zenject;

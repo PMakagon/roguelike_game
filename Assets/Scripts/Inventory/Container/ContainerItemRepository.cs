@@ -1,22 +1,24 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using LiftGame.Inventory.Core;
 
-namespace FarrokhGames.Inventory.Examples
+namespace LiftGame.Inventory.Container
 {
-    public class InventoryRepository : IInventoryRepository
+    public class ContainerItemRepository : IInventoryRepository
     {
+        private ContainerConfig _config;
         private List<IInventoryItem> _items;
-        private int _maximumAlowedItemCount;
+        private readonly int _maximumItemCount;
+        public bool isLootSpawned = false;
 
-        /// <summary>
-        /// CTOR
-        /// </summary>
-        public InventoryRepository(InventoryRenderMode renderMode, int maximumAlowedItemCount)
+        public ContainerItemRepository(ContainerConfig config)
         {
-            InventoryRenderMode = renderMode;
-            _maximumAlowedItemCount = maximumAlowedItemCount;
-            _items = new List<IInventoryItem>(maximumAlowedItemCount);
+            _config = config;
+            InventoryRenderMode =config.RenderMode;
+            _maximumItemCount = config.Height*config.Widht;
+            _items = new List<IInventoryItem>(_maximumItemCount);
         }
+
+        public ContainerConfig Config => _config;
 
         public int InventoryItemCount => _items.Count;
 
@@ -26,13 +28,14 @@ namespace FarrokhGames.Inventory.Examples
         {
             get
             {
-                if (_maximumAlowedItemCount < 0)return false;
-                return InventoryItemCount >= _maximumAlowedItemCount;
+                if (_maximumItemCount < 0)return false;
+                return InventoryItemCount >= _maximumItemCount;
             }
         }
 
         public bool AddInventoryItem(IInventoryItem item)
         {
+            if (IsInventoryFull) return false;
             if (!_items.Contains(item))
             {
                 _items.Add(item);
@@ -75,5 +78,7 @@ namespace FarrokhGames.Inventory.Examples
         {
             return _items.Remove(item);
         }
+        
+        
     }
 }

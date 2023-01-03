@@ -1,5 +1,5 @@
 ﻿using LiftGame.GameCore.Input;
-using LiftGame.NewInventory;
+using LiftGame.Inventory;
 using LiftGame.PlayerCore;
 using LiftGame.PlayerCore.MentalSystem;
 using LiftGame.PlayerCore.PlayerCostume;

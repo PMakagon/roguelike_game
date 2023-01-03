@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using LiftGame.FPSController.InteractionSystem;
+using LiftGame.Inventory.Items;
 using LiftGame.LiftStateMachine;
-using LiftGame.NewInventory.Items;
 using LiftGame.PlayerCore;
 using TMPro;
 using UnityEngine;

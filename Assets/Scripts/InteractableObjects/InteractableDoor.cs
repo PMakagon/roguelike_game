@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using FarrokGames.Inventory.Runtime;
 using FarrokhGames.Inventory;
 using LiftGame.FPSController.InteractionSystem;
-using LiftGame.NewInventory.Items;
+using LiftGame.Inventory.Core;
+using LiftGame.Inventory.Items;
 using LiftGame.PlayerCore;
 using ModestTree;
 using NaughtyAttributes;

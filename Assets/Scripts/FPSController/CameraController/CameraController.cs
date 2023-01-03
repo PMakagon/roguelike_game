@@ -2,7 +2,6 @@
 using LiftGame.GameCore.Input;
 using LiftGame.GameCore.Input.Data;
 using LiftGame.GameCore.Pause;
-using LiftGame.NewInventory;
 using NaughtyAttributes;
 using UnityEngine;
 
