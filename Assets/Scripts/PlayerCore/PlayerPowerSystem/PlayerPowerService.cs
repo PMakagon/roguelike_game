@@ -23,7 +23,6 @@ namespace LiftGame.PlayerCore.PlayerPowerSystem
         {
             _playerPowerData.IsPowerOn = state;
             if (state) UpdatePowerReduce();
-            Debug.Log(_playerPowerData.IsPowerOn);
         }
 
         public void AddPower(int powerToAdd)
@@ -74,5 +73,6 @@ namespace LiftGame.PlayerCore.PlayerPowerSystem
             OnPowerChange?.Invoke();
         }
         
+        public PlayerPowerData PlayerPowerData => _playerPowerData;
     }
 }

@@ -1,9 +1,11 @@
 ﻿using LiftGame.FPSController.CameraController;
 using LiftGame.FPSController.FirstPersonController;
-using LiftGame.GameCore.GameLoop;
+using LiftGame.FX;
 using LiftGame.GameCore.Input;
+using LiftGame.GameCore.LevelGameLoop;
 using LiftGame.PlayerCore.HealthSystem;
 using LiftGame.PlayerCore.MentalSystem;
+using LiftGame.ProxyEventHolders;
 using UnityEngine;
 using Zenject;
 
@@ -11,18 +13,17 @@ namespace LiftGame.PlayerCore
 {
     public class PlayerDeathHandler : MonoBehaviour
     {
-        private IPlayerHealthService _playerHealthService;
         private IPlayerMentalService _playerMentalService;
         private ILevelGameLoopEventHandler _gameLoopEventHandler;
         private IPlayerInputService _inputService;
         private FirstPersonController _fpsController;
         private CameraController _cameraController;
-
+        
+        // MonoBehaviour injection
         [Inject]
-        private void Construct(IPlayerHealthService playerHealthService,ILevelGameLoopEventHandler gameLoopEventHandler,IPlayerInputService inputService)
+        private void Construct(ILevelGameLoopEventHandler gameLoopEventHandler,IPlayerInputService inputService)
         {
             _gameLoopEventHandler = gameLoopEventHandler;
-            _playerHealthService = playerHealthService;
             _inputService = inputService;
         }
 
@@ -36,7 +37,7 @@ namespace LiftGame.PlayerCore
         private void Start()
         {
             Init();
-            _playerHealthService.OnPlayerDied += HandlePlayerDeath;
+            PlayerHealthEventHolder.OnPlayerDied += HandlePlayerDeath;
         }
 
         private void HandlePlayerDeath()

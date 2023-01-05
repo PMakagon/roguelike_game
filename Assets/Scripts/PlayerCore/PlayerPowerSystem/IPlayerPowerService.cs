@@ -11,5 +11,7 @@ namespace LiftGame.PlayerCore.PlayerPowerSystem
         void ResetPowerData();
         bool IsNoPower();
         void ReducePowerLoad();
+        
+        public PlayerPowerData PlayerPowerData { get; }
     }
 }

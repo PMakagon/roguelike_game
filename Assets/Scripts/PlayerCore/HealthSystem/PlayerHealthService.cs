@@ -1,20 +1,18 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using LiftGame.GameCore.GameLoop;
-using LiftGame.GameCore.Pause;
+using LiftGame.GameCore.LevelGameLoop;
 using LiftGame.PlayerCore.MentalSystem;
+using LiftGame.ProxyEventHolders;
 using UnityEngine;
 using Zenject;
 
 namespace LiftGame.PlayerCore.HealthSystem
 {
-    public class PlayerHealthService : IPlayerHealthService, IPauseable
+    public class PlayerHealthService : IPlayerHealthService
     {
         private readonly PlayerMentalData _playerMentalData;
         private readonly PlayerHealthData _playerHealthData;
-        public event Action<int> OnDamaged = delegate { };
-        public event Action OnPlayerDied = delegate { };
         private bool _isPaused;
         private CancellationTokenSource _cancellationToken = new();
 
@@ -27,25 +25,37 @@ namespace LiftGame.PlayerCore.HealthSystem
             LevelGameLoopEventHandler.OnLoopEnd += SetHealthSafeState;
         }
 
+        private void SubscribeToHealthEvents()
+        {
+            PlayerHealthEventHolder.OnDamageTaken += AddDamage;
+        } 
+        private void UnsubscribeFromHealthEvents()
+        {
+            PlayerHealthEventHolder.OnDamageTaken -= AddDamage;
+        }
+
         public void AddDamage(int damage)
         {
             if (!_playerHealthData._isDamageable) return;
             _playerHealthData.Health -= damage;
-            OnDamaged?.Invoke(damage);
+            PlayerHealthEventHolder.BroadcastOnDamageApplied(_playerHealthData,damage);
         }
 
         public void SetHealthStartState()
         {
+            SubscribeToHealthEvents();
             _playerHealthData.Health = PlayerHealthData.MAX_HEALTH;
             SetMortal(true);
             EnableDamage(true);
             EnableStressDamage(true);
             UpdateHealthStatus();
             EnableHealthUpdate();
+            Debug.Log("HEALTH SERVICE ENABLED");
         }
 
         public void SetHealthSafeState()
         {
+            UnsubscribeFromHealthEvents();
             SetMortal(false);
             EnableDamage(false);
             EnableStressDamage(false);
@@ -69,16 +79,16 @@ namespace LiftGame.PlayerCore.HealthSystem
 
         private async void EnableHealthUpdate()
         {
-            await ApplyDamage(_cancellationToken.Token);
+            await UpdateHealth(_cancellationToken.Token);
         }
 
-        private async UniTask ApplyDamage(CancellationToken cancelToken)
+        private async UniTask UpdateHealth(CancellationToken cancelToken)
         {
             while (_playerHealthData.IsDamageable)
             {
                 if (_isPaused)
                 {
-                    Debug.Log( "paused");
+                    // Debug.Log( "paused");
                     await UniTask.WaitUntil(() => _isPaused == false, cancellationToken: cancelToken);
                 }
 
@@ -140,48 +150,56 @@ namespace LiftGame.PlayerCore.HealthSystem
 
         private void UpdateHealthStatus()
         {
+            HealthStatus prevStatus = _playerHealthData.HealthStatus;
+            HealthStatus newStatus;
             switch (_playerHealthData.Health)
             {
                 case >= PlayerHealthData.MAX_HEALTH:
-                    _playerHealthData.HealthStatus = HealthStatus.Stable;
+                    newStatus = HealthStatus.Stable;
                     break;
                 case < PlayerHealthData.MAX_HEALTH and >= PlayerHealthData.MINOR_DAMAGE:
-                    _playerHealthData.HealthStatus = HealthStatus.Stable;
+                    newStatus = HealthStatus.Stable;
                     break;
                 case < PlayerHealthData.MINOR_DAMAGE and >= PlayerHealthData.MAJOR_DAMAGE:
-                    _playerHealthData.HealthStatus = HealthStatus.MinorDamage;
+                    newStatus = HealthStatus.MinorDamage;
                     break;
                 case < PlayerHealthData.MAJOR_DAMAGE and >= PlayerHealthData.SEVERE_DAMAGE:
-                    _playerHealthData.HealthStatus = HealthStatus.MajorDamage;
+                    newStatus = HealthStatus.MajorDamage;
                     break;
                 case < PlayerHealthData.SEVERE_DAMAGE and >= PlayerHealthData.CRITICAL_HEALTH:
-                    _playerHealthData.HealthStatus = HealthStatus.Severe;
+                    newStatus = HealthStatus.Severe;
                     break;
                 case < PlayerHealthData.CRITICAL_HEALTH and > PlayerHealthData.MIN_HEALTH:
-                    _playerHealthData.HealthStatus = HealthStatus.Critical;
+                    newStatus = HealthStatus.Critical;
                     break;
                 case <= PlayerHealthData.MIN_HEALTH:
-                    _playerHealthData.HealthStatus = HealthStatus.Dead;
+                    newStatus = HealthStatus.Dead;
                     break;
                 default:
-                    _playerHealthData.HealthStatus = HealthStatus.Stable;
+                    newStatus = HealthStatus.Stable;
                     Debug.Log("Default HealthStatus is Set" + _playerHealthData.Health);
                     break;
             }
+            
+            if (prevStatus!=newStatus)
+            {
+                PlayerHealthEventHolder.BroadcastOnHealthStatusChanged(prevStatus,newStatus);
+            }
+
+            _playerHealthData.HealthStatus = newStatus;
         }
 
         public bool IsPlayerDead()
         {
-            if (!_playerHealthData.IsMortal) return false;
-            if (_playerHealthData.HealthStatus == HealthStatus.Dead)
+            // if (!_playerHealthData.IsMortal) return false;
+            if (_playerHealthData.HealthStatus == HealthStatus.Dead || _playerHealthData.Health <=0)
             {
-                OnPlayerDied?.Invoke();
+                PlayerHealthEventHolder.BroadcastOnPlayerDied();
                 _cancellationToken.Cancel();
                 _cancellationToken = new CancellationTokenSource();
                 Debug.Log("PLAYER IS DEAD");
                 return true;
             }
-
             return false;
         }
 
@@ -189,10 +207,6 @@ namespace LiftGame.PlayerCore.HealthSystem
         {
             _isPaused = isPaused;
             if (_isPaused)
-            {
-                
-            }
-            else
             {
                 
             }

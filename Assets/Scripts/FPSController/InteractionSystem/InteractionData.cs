@@ -1,5 +1,4 @@
-﻿using LiftGame.InventorySystem;
-using LiftGame.PlayerCore;
+﻿using LiftGame.PlayerCore;
 using UnityEngine;
 
 namespace LiftGame.FPSController.InteractionSystem

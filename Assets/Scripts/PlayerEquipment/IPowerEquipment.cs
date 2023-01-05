@@ -1,12 +1,9 @@
-﻿using LiftGame.PlayerCore.PlayerPowerSystem;
-
-namespace LiftGame.PlayerEquipment
+﻿namespace LiftGame.PlayerEquipment
 {
-    public interface IPowerEquipment : IPlayerEquipment
+    public interface IPowerEquipment
     {
-        PlayerPowerData PlayerPowerData { get; set; }
-        bool IsTurnedOn { get; set; } 
-        void TurnOn();
-        void TurnOff();
+        bool IsTurnedOn { get; set; }
+        void OnTurnOn();
+        void OnTurnOff();
     }
 }

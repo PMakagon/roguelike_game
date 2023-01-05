@@ -1,5 +1,4 @@
-﻿using LiftGame.InventorySystem;
-using LiftGame.PlayerCore;
+﻿using LiftGame.PlayerCore;
 using NaughtyAttributes;
 using UnityEngine;
 
@@ -20,7 +19,7 @@ namespace LiftGame.FPSController.InteractionSystem
         public bool HoldInteract => holdInteract;
         public float HoldDuration => holdDuration;
 
-        public string TooltipMessage
+        public virtual string TooltipMessage
         {
             get => tooltipMessage;
             set => tooltipMessage = value;

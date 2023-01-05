@@ -1,4 +1,4 @@
-﻿using LiftGame.GameCore.GameLoop;
+﻿using LiftGame.GameCore.LevelGameLoop;
 using LiftGame.GameCore.Pause;
 using Zenject;
 

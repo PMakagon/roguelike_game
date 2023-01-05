@@ -2,6 +2,7 @@
 using LiftGame.GameCore.Input.Data;
 using LiftGame.PlayerCore;
 using LiftGame.Ui;
+using LiftGame.Ui.HUD;
 using UnityEngine;
 using Zenject;
 
@@ -26,8 +27,8 @@ namespace LiftGame.FPSController.InteractionSystem
 
         private bool _interacting;
         private float _holdTimer = 0f;
-
-
+        
+        //MonoBehaviour injection
         [Inject]
         private void Construct(InteractionUIPanel interactionUIPanel,IPlayerData playerData)
         {

@@ -1,10 +1,10 @@
 ﻿using System;
+using LiftGame.GameCore.Pause;
 
 namespace LiftGame.PlayerCore.MentalSystem
 {
-    public interface IPlayerMentalService
+    public interface IPlayerMentalService : IPauseable
     {
-        event Action<int> OnStressAdd;
         void AddStress(int stressAmount);
         void ReduceStress(int stressAmount);
         void EnableStressChange();

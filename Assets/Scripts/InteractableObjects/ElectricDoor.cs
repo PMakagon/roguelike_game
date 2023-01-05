@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using LiftGame.InventorySystem;
 using LiftGame.LightingSystem;
 using LiftGame.PlayerCore;
 using UnityEngine;
@@ -12,17 +11,21 @@ namespace LiftGame.InteractableObjects
         [SerializeField] private Light stateLight;
 
         #region BuiltIn Methods
+
         private void Awake()
         {
             animator = GetComponentInParent<Animator>();
             if (!masterSwitcher) return;
             masterSwitcher.OnSwitched += ChangeLightState;
             ChangeLightState();
+            SetToolTip();
         }
+
         private void OnDestroy()
         {
             masterSwitcher.OnSwitched -= ChangeLightState;
         }
+
         #endregion
 
         #region Properties
@@ -45,33 +48,36 @@ namespace LiftGame.InteractableObjects
         {
             stateLight.enabled = !masterSwitcher.IsSwitchedOn;
         }
-
+        
+        
         public override void OnInteract(IPlayerData playerData)
         {
-            var inventory=  playerData.GetInventoryData().InventoryContainer;
-            if (!isOpen)
+            if (isOpen)
             {
-                if (masterSwitcher.IsSwitchedOn)
-                {
-                    if (isLocked)
-                    {
-                        if (inventory.Items.Any(key => key.Name == keyName))
-                        {
-                            isLocked = false;
-                            OpenDoor();
-                            // Debug.Log("Opened with " + key.Name);
-                            return;
-                        }
-                        animator.SetBool(TryOpen, true);
-                        return;
-                    }
-                    OpenDoor();
-                    return;
-                }
+                CloseDoor();
+                return;
+            }
+
+            if (!masterSwitcher.IsSwitchedOn)
+            {
                 animator.SetBool(TryOpen, true);
                 return;
             }
-            CloseDoor();
+
+            if (!isLocked)
+            {
+                OpenDoor();
+                return;
+            }
+            var inventory = playerData.GetInventoryData();
+            if (CheckForKey(inventory.GetAllItems()))
+            {
+                OpenDoor();
+            }
+            else
+            {
+                animator.SetBool(TryOpen, true);
+            }
         }
     }
 }

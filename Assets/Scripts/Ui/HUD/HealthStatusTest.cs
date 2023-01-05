@@ -13,7 +13,7 @@ namespace LiftGame.Ui.HUD
         [SerializeField] private TextMeshProUGUI healthStatus;
         private PlayerHealthData _playerHealthData;
 
-
+// MonoBehaviour injection
         [Inject]
         private void Construct(IPlayerData playerData)
         {
