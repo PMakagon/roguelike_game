@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using LiftGame.FPSController.FirstPersonController;
+using LiftGame.InteractableObjects.Electricals;
 using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.Rendering;

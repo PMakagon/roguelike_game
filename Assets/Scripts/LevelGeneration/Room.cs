@@ -1,4 +1,5 @@
-﻿using LiftGame.LightingSystem;
+﻿using LiftGame.InteractableObjects.Electricals;
+using LiftGame.LightingSystem;
 using UnityEngine;
 
 namespace LiftGame.LevelGeneration

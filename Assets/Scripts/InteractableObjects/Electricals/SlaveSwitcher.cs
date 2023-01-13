@@ -1,21 +1,22 @@
 ﻿using LiftGame.FPSController.InteractionSystem;
-using LiftGame.PlayerCore;
 using UnityEngine;
 
-namespace LiftGame.LightingSystem
+namespace LiftGame.InteractableObjects.Electricals
 {
     public class SlaveSwitcher : Interactable
     {
         [SerializeField] private bool isEnabled;
         [SerializeField] private Transform button;
+        private Interaction _toSwitch = new Interaction("Toogle", true);
         private Transform _buttonTransform;
         private bool _isPowered;
         private MaterialPropertyBlock _matBlock;
         private Renderer _renderer;
+        private static readonly int EmissiveColor = Shader.PropertyToID("_EmissiveColor");
 
-
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             _buttonTransform = button;
             _renderer = button.GetComponent<Renderer>();
             _matBlock = new MaterialPropertyBlock();
@@ -23,10 +24,20 @@ namespace LiftGame.LightingSystem
             FetchButtonEmission();
         }
 
+        public override void BindInteractions()
+        {
+            _toSwitch.actionOnInteract = Switch;
+        }
+
+        public override void AddInteractions()
+        {
+            Interactions.Add(_toSwitch);
+        }
+
         private void FetchButtonEmission()
         {
             _renderer.GetPropertyBlock(_matBlock);
-            _matBlock.SetColor("_EmissiveColor", isEnabled ? Color.clear : (_isPowered ? Color.red : Color.clear ));
+            _matBlock.SetColor(EmissiveColor, isEnabled ? Color.clear : (_isPowered ? Color.red : Color.clear));
             _renderer.SetPropertyBlock(_matBlock);
         }
 
@@ -41,13 +52,13 @@ namespace LiftGame.LightingSystem
                 _buttonTransform.Rotate(9.0f, 0.0f, 0.0f, Space.Self);
             }
         }
-        
 
-        public override void OnInteract(IPlayerData playerData)
+        private bool Switch()
         {
             isEnabled = !isEnabled;
             ChangeButtonPosition();
             FetchButtonEmission();
+            return true;
         }
 
         public bool IsEnabled

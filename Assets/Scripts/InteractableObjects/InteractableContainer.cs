@@ -1,22 +1,24 @@
 ﻿using LiftGame.FPSController.InteractionSystem;
 using LiftGame.GameCore.Input.Data;
 using LiftGame.Inventory.Container;
-using LiftGame.PlayerCore;
 using UnityEngine;
 
-namespace LiftGame.Inventory
+namespace LiftGame.InteractableObjects
 {
     public class InteractableContainer : Interactable
     {
         [SerializeField] private ContainerConfig containerConfig;
         [SerializeField] private Animator containerAnimator;
+        [SerializeField] private float holdDuration = 0f;
+
         private ContainerItemRepository _containerRepository;
         public bool isExamined = false;
         private static readonly int Open = Animator.StringToHash("Open");
+        private Interaction _toOpen;
 
-        private void Awake()
+        private void Start()
         {
-            TooltipMessage = "Open " + containerConfig.ContainerName;
+            TooltipMessage = containerConfig.ContainerName;
         }
 
         private void OnDestroy()
@@ -24,25 +26,41 @@ namespace LiftGame.Inventory
             _containerRepository = null;
         }
 
+        public override void CreateInteractions()
+        {
+            _toOpen = holdDuration == 0 ? new Interaction("Open", true) : new Interaction("Open", holdDuration, true);
+        }
+
+        public override void BindInteractions()
+        {
+            _toOpen.actionOnInteract = OpenContainer;
+        }
+
+        public override void AddInteractions()
+        {
+            Interactions.Add(_toOpen);
+        }
+
         private void CloseContainer()
         {
-            if (containerAnimator) containerAnimator.SetBool(Open,false);
+            if (containerAnimator) containerAnimator.SetBool(Open, false);
             UIInputData.OnInventoryClicked -= CloseContainer;
         }
 
-        public override void OnInteract(IPlayerData playerData)
+        private bool OpenContainer()
         {
             UIInputData.OnInventoryClicked += CloseContainer;
-            if (containerAnimator) containerAnimator.SetBool(Open,true);
+            if (containerAnimator) containerAnimator.SetBool(Open, true);
             if (!isExamined)
             {
                 _containerRepository = new ContainerItemRepository(containerConfig);
                 isExamined = true;
             }
-            var inventoryData = playerData.GetInventoryData();
+
+            var inventoryData = CachedPlayerData.GetInventoryData();
             inventoryData.CurrentContainer = _containerRepository;
             inventoryData.OnWorldContainerOpen?.Invoke();
+            return true;
         }
     }
-    
 }

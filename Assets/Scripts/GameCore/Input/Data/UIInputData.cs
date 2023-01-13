@@ -7,7 +7,8 @@ namespace LiftGame.GameCore.Input.Data
     public class UIInputData : ScriptableObject
     {
         public static event Action OnInventoryClicked = delegate { };
-
+        public static event Action<float> OnScrolling = delegate { };
+        public float ScrollWheelDirection { get; set; }
         public bool InventoryClicked { get; set; }
 
         public bool InventoryReleased { get; set; }
@@ -15,6 +16,7 @@ namespace LiftGame.GameCore.Input.Data
         public void UpdateInputEvents()
         {
             if (InventoryClicked) OnInventoryClicked?.Invoke();
+            if (ScrollWheelDirection != 0) OnScrolling?.Invoke(ScrollWheelDirection);
         }
 
         public void ResetInput()

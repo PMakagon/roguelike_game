@@ -1,27 +1,38 @@
 ﻿using LiftGame.FPSController.InteractionSystem;
-using LiftGame.PlayerCore;
 using UnityEngine;
 
-namespace LiftGame.LiftStateMachine.Interactables
+namespace LiftGame.InteractableObjects.LiftInteractables
 {
     public class StartButton : Interactable
     {
         private Light _buttonLight;
         private InnerPanel _panel;
         private bool _startPressed;
-        
-        private void Awake()
+        private Interaction _toPush = new Interaction("Start", true);
+
+        protected override void Awake()
         {
+            base.Awake();
             _buttonLight = GetComponentInChildren<Light>();
-            _buttonLight.enabled = false;
             _panel = gameObject.GetComponentInParent<InnerPanel>();
+            _buttonLight.enabled = false;
+        }
+
+        public override void BindInteractions()
+        {
+            _toPush.actionOnInteract = PushStartButton;
+        }
+
+        public override void AddInteractions()
+        {
+            Interactions.Add(_toPush);
         }
         
-
-        public override void OnInteract(IPlayerData playerData)
+        private bool PushStartButton()
         {
             _startPressed = true;
             _buttonLight.enabled = _startPressed;
+            return true;
         }
 
         public bool StartPressed

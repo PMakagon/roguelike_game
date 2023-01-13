@@ -1,4 +1,4 @@
-﻿using System;
+﻿using LiftGame.FPSController.InteractionSystem;
 using UnityEngine;
 
 namespace LiftGame.PlayerEquipment
@@ -6,6 +6,8 @@ namespace LiftGame.PlayerEquipment
     [RequireComponent(typeof(Animator))]
     public abstract class PlayerEquipmentWorldView : MonoBehaviour
     {
+        [SerializeField] private EquipmentConfig equipmentConfig;
+        private EquipmentData _equipmentData;
         private Animator equipmentAnimator;
         protected static readonly int Use = Animator.StringToHash("Use");
         protected static readonly int Equip = Animator.StringToHash("Equip");
@@ -16,6 +18,14 @@ namespace LiftGame.PlayerEquipment
         private void Awake()
         {
             equipmentAnimator = GetComponent<Animator>();
+        }
+
+        public EquipmentConfig EquipmentConfig => equipmentConfig;
+
+        public EquipmentData EquipmentData
+        {
+            get { return _equipmentData ??= new EquipmentData(); }
+            set => _equipmentData = value;
         }
 
         public Animator EquipmentAnimator

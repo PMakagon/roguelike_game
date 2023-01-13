@@ -1,16 +1,28 @@
 using System;
 using LiftGame.FPSController.InteractionSystem;
-using LiftGame.PlayerCore;
 using UnityEngine;
 
-namespace LiftGame.LightingSystem
+namespace LiftGame.InteractableObjects.Electricals
 {
     public class MasterSwitcher : Interactable
     {
         [SerializeField] private bool isSwitchedOn;
         [SerializeField] private Transform button;
-       
+        private Interaction _toSwitch = new Interaction("Toogle", true);
+        private const string OFF = "Turn OFF";
+        private const string ON = "Turn ON";
+
         private Action onSwitched;
+
+        private void Start()
+        {
+            SetInteractionLabel();
+        }
+
+        private void SetInteractionLabel()
+        {
+            _toSwitch.Label = isSwitchedOn ? ON : OFF;
+        }
 
         public Action OnSwitched
         {
@@ -25,10 +37,20 @@ namespace LiftGame.LightingSystem
             set => isSwitchedOn = value;
         }
 
+        public override void BindInteractions()
+        {
+            _toSwitch.actionOnInteract = Switch;
+        }
+        
+        public override void AddInteractions()
+        {
+            Interactions.Add(_toSwitch);
+        }
 
-        public override void OnInteract(IPlayerData playerData)
+        private bool Switch()
         {
             isSwitchedOn = !isSwitchedOn;
+            SetInteractionLabel();
             onSwitched?.Invoke();
             if (isSwitchedOn)
             {
@@ -38,6 +60,8 @@ namespace LiftGame.LightingSystem
             {
                 button.Rotate(0.0f, 0.0f, -100.0f, Space.Self);
             }
+            return true;
         }
+        
     }
 }

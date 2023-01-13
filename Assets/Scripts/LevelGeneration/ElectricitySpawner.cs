@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using LiftGame.InteractableObjects.Electricals;
 using LiftGame.LightingSystem;
 using UnityEngine;
 using Random = UnityEngine.Random;

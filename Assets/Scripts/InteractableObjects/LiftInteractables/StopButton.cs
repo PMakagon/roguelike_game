@@ -1,26 +1,38 @@
 ﻿using LiftGame.FPSController.InteractionSystem;
-using LiftGame.PlayerCore;
 using UnityEngine;
 
-namespace LiftGame.LiftStateMachine.Interactables
+namespace LiftGame.InteractableObjects.LiftInteractables
 {
     public class StopButton : Interactable
     {
         private Light _buttonLight;
         private InnerPanel _panel;
         private bool _stopPressed;
-        
-        private void Awake()
+        private Interaction _toPush = new Interaction("Stop", true);
+
+        protected override void Awake()
         {
+            base.Awake();
             _buttonLight = GetComponentInChildren<Light>();
-            _buttonLight.enabled = false;
             _panel = gameObject.GetComponentInParent<InnerPanel>();
+            _buttonLight.enabled = false;
         }
 
-        public override void OnInteract(IPlayerData playerData)
+        public override void BindInteractions()
+        {
+            _toPush.actionOnInteract = PushStopButton;
+        }
+
+        public override void AddInteractions()
+        {
+            Interactions.Add(_toPush);
+        }
+        
+        private bool PushStopButton()
         {
             _stopPressed = !_stopPressed;
             _buttonLight.enabled = _stopPressed;
+            return true;
         }
 
         public bool StopPressed

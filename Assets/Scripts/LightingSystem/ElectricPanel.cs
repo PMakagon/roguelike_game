@@ -1,3 +1,4 @@
+using LiftGame.InteractableObjects.Electricals;
 using UnityEngine;
 
 namespace LiftGame.LightingSystem

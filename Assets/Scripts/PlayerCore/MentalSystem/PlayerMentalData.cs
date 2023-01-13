@@ -13,14 +13,14 @@ namespace LiftGame.PlayerCore.MentalSystem
         [SerializeField] private float updateTime = 2f;
 
         [Header("DARKNESS STRESS MODS")] 
-        [Slider(0f, 5f)] [SerializeField] private float totalDarknessMod = 3f;
-        [Slider(0f, 3f)] [SerializeField] private float lightAheadMod = 0.5f;
-        [Slider(0f, 2f)] [SerializeField] private float darkAheadMod = 0.3f;
-        [Slider(0f, 1f)] [SerializeField] private float inShadowMod = 0.1f;
+        [MinMaxSlider(0f, 5f)] [SerializeField] private float totalDarknessMod = 3f;
+        [MinMaxSlider(0f, 3f)] [SerializeField] private float lightAheadMod = 0.5f;
+        [MinMaxSlider(0f, 2f)] [SerializeField] private float darkAheadMod = 0.3f;
+        [MinMaxSlider(0f, 1f)] [SerializeField] private float inShadowMod = 0.1f;
 
         [Header("REGEN MODS")] 
-        [Slider(0f, 2f)] [SerializeField] private float baseRegen = 1f;
-        [Slider(0f, 5f)] [SerializeField] private float fastRegen = 2f;
+        [MinMaxSlider(0f, 2f)] [SerializeField] private float baseRegen = 1f;
+        [MinMaxSlider(0f, 5f)] [SerializeField] private float fastRegen = 2f;
 
         [Header("CONSTANTS")] 
         public const int MAX_STRESS_LEVEL = 220;
