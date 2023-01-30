@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace LiftGame.FPSController.InteractionSystem.InteractionMenu
+namespace LiftGame.FPSController.InteractionSystem.InteractionUI
 {
     public enum CrosshairType
     {

@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using LiftGame.InteractableObjects.Electricals;
-using LiftGame.LightingSystem;
-using LiftGame.PlayerCore;
+﻿using LiftGame.InteractableObjects.Electricals;
 using UnityEngine;
 
 namespace LiftGame.InteractableObjects
@@ -10,8 +7,7 @@ namespace LiftGame.InteractableObjects
     {
         [SerializeField] private MasterSwitcher masterSwitcher;
         [SerializeField] private Light stateLight;
-
-        #region BuiltIn Methods
+        
 
         protected override void Awake()
         {
@@ -23,17 +19,10 @@ namespace LiftGame.InteractableObjects
 
         private void OnDestroy()
         {
+            if (!masterSwitcher) return;
             masterSwitcher.OnSwitched -= ChangeLightState;
         }
 
-        #endregion
-
-        public MasterSwitcher MasterSwitcher
-        {
-            get => masterSwitcher;
-            set => masterSwitcher = value;
-        }
-        
         public void AddSwitcher(MasterSwitcher switcher)
         {
             masterSwitcher = switcher;
@@ -52,6 +41,12 @@ namespace LiftGame.InteractableObjects
             if (masterSwitcher.IsSwitchedOn) return base.ChangeDoorState();
             Animator.SetBool(TryOpen, true);
             return false;
+        }
+
+        public MasterSwitcher MasterSwitcher
+        {
+            get => masterSwitcher;
+            set => masterSwitcher = value;
         }
     }
 }

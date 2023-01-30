@@ -5,13 +5,13 @@ using LiftGame.PlayerCore;
 using ModestTree;
 using UnityEngine;
 
-namespace LiftGame.FPSController.InteractionSystem.InteractionMenu
+namespace LiftGame.FPSController.InteractionSystem.InteractionUI
 {
-    public class InteractionMenu : MonoBehaviour //rename InteractionMenu
+    public class InteractionMenu : MonoBehaviour
     {
+        [SerializeField] private RectTransform canvasTransform;
         [SerializeField] private InteractionTooltip tooltip;
         [SerializeField] private CrosshairSpriteChanger crosshair;
-        [SerializeField] private RectTransform canvasTransform;
 
         [SerializeField] private InteractionMenuOption menuOptionPrefab;
         [SerializeField] private RectTransform optionMenuTransform;
@@ -20,27 +20,23 @@ namespace LiftGame.FPSController.InteractionSystem.InteractionMenu
         private InteractionMenuOption[] _spawnedOptionsArr;
         private int _selectionIndex = 0;
         private InteractionMenuOption _selectedOption;
-        private float _scrollPosition = 1f;
 
         public InteractionMenuOption SelectedOption => _selectedOption;
 
         private bool _isOpen = false;
 
-        public void SetPanelActive(bool state)
+        public void ShowPanel()
         {
-            canvasTransform.gameObject.SetActive(state);
+            canvasTransform.gameObject.SetActive(true);
+        }
+        public void HidePanel()
+        {
+            canvasTransform.gameObject.SetActive(false);
         }
 
         public void SetCrosshair(IInteractable interactable)
         {
-            if (interactable.IsInteractable)
-            {
-                crosshair.ChangeCrosshair(CrosshairType.Hand);
-            }
-            else
-            {
-                crosshair.ChangeCrosshair(CrosshairType.Dot);
-            }
+            crosshair.ChangeCrosshair(interactable.IsInteractable ? CrosshairType.Hand : CrosshairType.Dot);
         }
 
         private void OnDisable()
@@ -59,30 +55,12 @@ namespace LiftGame.FPSController.InteractionSystem.InteractionMenu
         private void ScrollSelection(float scrollInput)
         {
             if (!_isOpen) return;
-            if (Math.Abs(scrollInput) < 0.2f) return;
-            _scrollPosition = Math.Clamp(_scrollPosition + scrollInput * 0.5f, 0, _spawnedOptionsArr.Length - 1);
-            Debug.Log(_scrollPosition);
-            int newIndex = _selectionIndex;
-            if (_scrollPosition is >= 0 and < 1)
-            {
-                newIndex = 0;
-            }
-
-            if (_scrollPosition is >= 1 and < 2)
-            {
-                newIndex = 1;
-            }
-
-            if (_scrollPosition >= 2)
-            {
-                newIndex = 2;
-            }
-
-            // Debug.Log("scrollInput=" + scrollInput + " _scrollPosition=" + _scrollPosition + " _selectionIndex=" +
-            //           _selectionIndex + " newIndex" + newIndex);
-            // if (newIndex==_selectionIndex) return;
+            if (Math.Abs(scrollInput) < 0.1f) return;
+            var direction  = Math.Sign(scrollInput);
+            int pointIndex = Math.Clamp(_selectionIndex + direction, 0, _spawnedOptionsArr.Length - 1);
+            if (pointIndex==_selectionIndex || _spawnedOptionsArr[pointIndex].IsHidden) return;
             _spawnedOptionsArr[_selectionIndex].UnSelect();
-            _selectionIndex = newIndex;
+            _selectionIndex = pointIndex;
             SetSelectedOption(_selectionIndex);
         }
 
@@ -100,23 +78,21 @@ namespace LiftGame.FPSController.InteractionSystem.InteractionMenu
                 newOption.gameObject.SetActive(newOption.RepresentedInteraction.IsExecutable);
                 menuIndex++;
             }
-            _isOpen = true;
         }
 
         public void UpdateOptionsState(IPlayerData playerData)
         {
             foreach (var option in _spawnedOptionsArr)
             {
-                option.Update();
+                option.UpdateOption();
                 option.RepresentedInteraction.CheckIsExecutable(playerData);
                 option.gameObject.SetActive(option.RepresentedInteraction.IsExecutable);
             }
-            ChooseNewSelection();
         }
 
-        private void ChooseNewSelection()
+        public void SetNewSelection()
         {
-            var counter = 0;
+            // var counter = 0;
             foreach (var option in _spawnedOptionsArr)
             {
                 if (option.gameObject.activeInHierarchy)
@@ -163,6 +139,7 @@ namespace LiftGame.FPSController.InteractionSystem.InteractionMenu
         public void ShowOptionMenu()
         {
             optionMenuTransform.gameObject.SetActive(true);
+            _isOpen = true;
             UIInputData.OnScrolling += ScrollSelection;
         }
 

@@ -39,7 +39,8 @@ namespace LiftGame.Ui.Menus
         private void OpenGameOverScreen()
         {
             screen.SetActive(true);
-            Debug.Log("HELLO");
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.Confined;
         }
 
         private void HideMenuButtons()

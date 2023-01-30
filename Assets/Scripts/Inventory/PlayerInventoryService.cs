@@ -4,8 +4,10 @@ using LiftGame.Inventory.Case;
 using LiftGame.Inventory.Container;
 using LiftGame.Inventory.Equipment;
 using LiftGame.Inventory.Pockets;
+using LiftGame.Inventory.PowerCellSlots;
 using LiftGame.PlayerCore;
 using LiftGame.PlayerEquipment;
+using UnityEngine;
 using Zenject;
 
 namespace LiftGame.Inventory
@@ -17,6 +19,7 @@ namespace LiftGame.Inventory
         private CaseRepositoryManager _caseRepositoryManager;
         private ContainerRepositoryManager _containerRepositoryManager;
         private EquipmentRepositoryManager[] _equipmentRepositoryManagers = new EquipmentRepositoryManager[2];
+        private PowerCellSlotRepositoryManager[] _powerCellRepositoryManagers = new PowerCellSlotRepositoryManager[3];
         public event Action OnInventoryLoad; 
         public event Action OnInventoryOpen;
         public event Action OnInventoryClose;
@@ -27,6 +30,8 @@ namespace LiftGame.Inventory
             _inventoryData = playerData.GetInventoryData();
         }
 
+        public bool IsInventoryOpen { get; private set; }
+
         public void InitializeInventory()
         {
             _inventoryData.ResetData();
@@ -35,6 +40,7 @@ namespace LiftGame.Inventory
 
         public void SetInventoryOpen(bool state)
         {
+            IsInventoryOpen = state;
             if (state)
             {
                 OnInventoryOpen?.Invoke();
@@ -61,7 +67,7 @@ namespace LiftGame.Inventory
             {
                 _bagRepositoryManager =  new BagRepositoryManager(GetBagRepository(), _inventoryData.BagSlotConfig.Widht,
                     _inventoryData.BagSlotConfig.Height);
-                _inventoryData.OnWorldItemAddedToBag += _bagRepositoryManager.Rebuild;
+                _inventoryData.OnWorldItemAddedToBag += _bagRepositoryManager.Rebuild; // to remove
             }
             return _bagRepositoryManager;
         }
@@ -77,7 +83,7 @@ namespace LiftGame.Inventory
             {
                 _caseRepositoryManager = new CaseRepositoryManager(GetCaseRepository(), _inventoryData.CaseConfig.Widht,
                     _inventoryData.CaseConfig.Height);
-                _inventoryData.OnWorldItemAddedToCase += _caseRepositoryManager.Rebuild;
+                _inventoryData.OnWorldItemAddedToCase += _caseRepositoryManager.Rebuild;// to remove
             }
             return _caseRepositoryManager;
         }
@@ -114,6 +120,26 @@ namespace LiftGame.Inventory
         public EquipmentRepository[] GetEquipmentRepository()
         {
             return _inventoryData.EquipmentSlots;
+        }
+
+        public PowerCellSlotRepositoryManager GetPowerCellSlotRepositoryManager(int index)
+        {
+            if (_powerCellRepositoryManagers[index]==null)
+            {
+                _powerCellRepositoryManagers[index] =  new PowerCellSlotRepositoryManager(GetPowerCellSlotRepository()[index]);
+                _inventoryData.OnWorldItemAddedToEquipmentSlot += _powerCellRepositoryManagers[index].InvokeOnWorldItemAdded;
+            }
+            return _powerCellRepositoryManagers[index];
+        }
+
+        public PowerCellSlotRepositoryManager[] GetAllPowerCellSlotRepositoryManagers()
+        {
+            return _powerCellRepositoryManagers;
+        }
+
+        public PowerCellSlotRepository[] GetPowerCellSlotRepository()
+        {
+            return _inventoryData.PowerCellSlots;
         }
 
         public PocketsItemRepository GetPocketsRepository()

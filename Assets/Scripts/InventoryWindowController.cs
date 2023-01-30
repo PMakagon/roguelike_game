@@ -1,5 +1,7 @@
-﻿using LiftGame.FPSController.CameraController;
+﻿using System;
+using LiftGame.FPSController.CameraController;
 using LiftGame.GameCore.Input.Data;
+using LiftGame.GameCore.LevelGameLoop;
 using LiftGame.Inventory;
 using LiftGame.Inventory.Container;
 using LiftGame.PlayerCore;
@@ -12,7 +14,6 @@ namespace LiftGame
     {
         [SerializeField] private GameObject inventoryWindow;
         [SerializeField] private ContainerPanelController containerController;
-        [SerializeField] private GameObject containerPanel;
         private CameraController _cameraController;
         private IPlayerInventoryService _playerInventoryService;
         private IPlayerData _playerData;
@@ -34,6 +35,15 @@ namespace LiftGame
             _playerInventoryService.InventoryData.OnWorldContainerOpen += OpenContainerPanel;
             UIInputData.OnInventoryClicked += SwitchWindowState;
             NonGameplayInputData.OnPauseMenuClicked += CloseInventory;
+            LevelGameLoopEventHandler.OnGameOver += CloseInventory;
+        }
+
+        private void OnDestroy()
+        {
+            _playerInventoryService.InventoryData.OnWorldContainerOpen -= OpenContainerPanel;
+            UIInputData.OnInventoryClicked -= SwitchWindowState;
+            NonGameplayInputData.OnPauseMenuClicked -= CloseInventory;
+            LevelGameLoopEventHandler.OnGameOver -= CloseInventory;
         }
 
         private void CloseInventory()
@@ -54,14 +64,14 @@ namespace LiftGame
         private void CloseContainerPanel()
         {
             _isContainerPanelActive = false;
-            containerPanel.SetActive(_isContainerPanelActive);
+            containerController.gameObject.SetActive(_isContainerPanelActive);
         }
         
         private void OpenContainerPanel()
         {
             SwitchWindowState();
             _isContainerPanelActive = true;
-            containerPanel.SetActive(_isContainerPanelActive);
+            containerController.gameObject.SetActive(_isContainerPanelActive);
         }
     }
 }

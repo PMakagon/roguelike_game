@@ -12,17 +12,16 @@ namespace LiftGame.Ui.HUD
         [SerializeField] private TextMeshProUGUI stressMod;
         [SerializeField] private TextMeshProUGUI stressState;
         private PlayerMentalData _playerMentalData;
-        
-        [Inject]
-        private void Construct(IPlayerData playerData)
+
+        public PlayerMentalData PlayerMentalData
         {
-            _playerMentalData = playerData.GetMentalData();
+            set => _playerMentalData = value;
         }
 
-        private void Update()
+        public void UpdateStatus()
         {
             stressMod.text = _playerMentalData.CurrentStressModificator.ToString();
-            stress.text = _playerMentalData.Stress.ToString();
+            stress.text = _playerMentalData.StressLevel.ToString();
             stressState.text =  "StressState: " + _playerMentalData.StressState;
         }
     }

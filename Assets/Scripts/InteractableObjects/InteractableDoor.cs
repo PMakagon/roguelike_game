@@ -13,7 +13,7 @@ namespace LiftGame.InteractableObjects
         [SerializeField] private string doorName = "Door";
         [SerializeField] protected bool isLocked;
         [SerializeField] private float timeToUnlock = 1;
-        [ShowIf("isLocked")] [SerializeField] protected string keyCode;
+        [ShowIf("isLocked")] [SerializeField] protected Key key;
 
         [Header("INTERACTIONS")] [SerializeField]
         private InteractionConfig breachConfig = null;
@@ -50,17 +50,18 @@ namespace LiftGame.InteractableObjects
             set => isLocked = value;
         }
 
-        public string KeyName
+        public Key Key
         {
-            get => keyCode;
-            set => keyCode = value;
+            get => key;
+            set => key = value;
         }
 
         #endregion
 
         protected void SetToolTip()
         {
-            TooltipMessage = doorName+ "\n" + (isLocked ? "" :  KeyName); 
+            TooltipMessage = doorName;
+            _toOpen.Label = IsOpen ? "Close" : "Open" ;
         }
 
         public override void CreateInteractions()
@@ -105,14 +106,12 @@ namespace LiftGame.InteractableObjects
         protected void OpenDoor()
         {
             IsOpen = true;
-            _toOpen.Label = "Close";
             Animator.SetBool(Open, IsOpen);
         }
 
         protected void CloseDoor()
         {
             IsOpen = false;
-            _toOpen.Label = "Open";
             Animator.SetBool(Open, IsOpen);
         }
 
@@ -122,8 +121,8 @@ namespace LiftGame.InteractableObjects
             foreach (var item in allItems)
             {
                 if (item == null) continue;
-                if ((item.GetType() != typeof(Key))) continue;
-                if ((item as Key)?.KeyCode == keyCode)
+                if ((item as ItemDefinition)?.ItemType != ItemType.Key) continue;
+                if ((item as Key)?.KeyCode == key.KeyCode)
                 {
                     isLocked = false;
                     // Debug.Log("Opened with " + key.Name);
@@ -183,7 +182,7 @@ namespace LiftGame.InteractableObjects
             {
                 OpenDoor();
             }
-
+            SetToolTip();
             return true;
         }
     }

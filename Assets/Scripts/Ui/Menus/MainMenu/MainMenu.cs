@@ -9,6 +9,7 @@ namespace LiftGame.Ui.Menus.MainMenu
     public class MainMenu : MonoBehaviour
     {
         [SerializeField] private Button newGameBtn;
+        [SerializeField] private Button StartDemoBtn;
         [SerializeField] private Button exitBtn;
         [SerializeField] private LoadingIcon loadingIcon;
         [SerializeField] private MainMenuAnimation _animation;
@@ -23,6 +24,7 @@ namespace LiftGame.Ui.Menus.MainMenu
         private void Start()
         {
             newGameBtn.onClick.AddListener(OnNewGameBtnClicked);
+            StartDemoBtn.onClick.AddListener(StartDemoBtnClicked);
             exitBtn.onClick.AddListener(OnExitBtnClicked);
             _animation.PlayOpenAnimation();
         }
@@ -41,6 +43,16 @@ namespace LiftGame.Ui.Menus.MainMenu
         private void OnMenuUnload()
         {
             loadingIcon.Disable();
+        }
+        
+        private async void StartDemoBtnClicked()
+        {
+            HideMenuButtons();
+            loadingIcon.gameObject.SetActive(true);
+            loadingIcon.Enable();
+            _animation.PlayCloseAnimation();
+            await UniTask.Delay(4000);
+            await _sceneLoaderService.LoadDemo();
         }
 
         private async void OnNewGameBtnClicked()

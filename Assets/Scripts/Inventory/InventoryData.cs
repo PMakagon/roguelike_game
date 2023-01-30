@@ -7,6 +7,7 @@ using LiftGame.Inventory.Core;
 using LiftGame.Inventory.Equipment;
 using LiftGame.Inventory.Items;
 using LiftGame.Inventory.Pockets;
+using LiftGame.Inventory.PowerCellSlots;
 using LiftGame.PlayerEquipment;
 using ModestTree;
 using UnityEngine;
@@ -18,20 +19,21 @@ namespace LiftGame.Inventory
     {
         //убрать в отдельный сервис
         [SerializeField] private EquipableContainerConfig bagSlotConfig;
-        [SerializeField] private EquipableContainerConfig pocketsConfig; 
+        [SerializeField] private EquipableContainerConfig pocketsConfig;
         private EquipableContainerConfig _caseConfig;
 
         private ContainerItemRepository _currentContainer;
         private CaseItemRepository _caseRepository;
         private PocketsItemRepository _pockets;
         private EquipmentRepository[] _equipmentSlots;
+        private PowerCellSlotRepository[] _powerCellSlots;
         private BagItemRepository _bagRepository;
         private PlayerEquipmentWorldView _currentEquipment;
         public event Action OnWorldItemAddedToBag;
         public event Action OnWorldItemAddedToCase;
         public event Action OnWorldItemAddedToEquipmentSlot;
         public event Action OnWorldItemAddedToPocket;
-        
+
         public Action OnWorldContainerOpen; //убрать как нибудь
         public Action OnEquipmentAdd;
         public Action OnInventoryChange;
@@ -46,7 +48,8 @@ namespace LiftGame.Inventory
             // _caseRepository = new CaseItemRepository(caseConfig.Widht, caseConfig.Height);
             _caseRepository = null;
             _pockets = new PocketsItemRepository();
-            _equipmentSlots = new EquipmentRepository[2] {new(0),new(1)};
+            _equipmentSlots = new EquipmentRepository[2] { new(0), new(1) };
+            _powerCellSlots = new PowerCellSlotRepository[3] { new(0), new(1), new(2) };
             _bagRepository = new BagItemRepository(bagSlotConfig.Widht, bagSlotConfig.Height);
             _currentContainer = null;
             _currentEquipment = null;
@@ -65,7 +68,8 @@ namespace LiftGame.Inventory
                     return true;
                 }
             }
-            if (_bagRepository!=null)
+
+            if (_bagRepository != null)
             {
                 if (_bagRepository.AddInventoryItem(itemToAdd))
                 {
@@ -74,7 +78,7 @@ namespace LiftGame.Inventory
                 }
             }
 
-            if (_caseRepository != null  && _caseRepository.IsInRange)
+            if (_caseRepository != null && _caseRepository.IsInRange)
             {
                 if (_caseRepository.AddInventoryItem(itemToAdd))
                 {
@@ -82,6 +86,7 @@ namespace LiftGame.Inventory
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -96,11 +101,12 @@ namespace LiftGame.Inventory
             var items = GetAllItems();
             foreach (var item in items)
             {
-                if ( ((ItemDefinition)item).Name == itemName)
+                if (((ItemDefinition)item).Name == itemName)
                 {
                     return item;
                 }
             }
+
             return null;
         }
 
@@ -142,6 +148,12 @@ namespace LiftGame.Inventory
         {
             get => _equipmentSlots;
             set => _equipmentSlots = value;
+        }
+
+        public PowerCellSlotRepository[] PowerCellSlots
+        {
+            get => _powerCellSlots;
+            set => _powerCellSlots = value;
         }
 
         public PlayerEquipmentWorldView CurrentEquipment

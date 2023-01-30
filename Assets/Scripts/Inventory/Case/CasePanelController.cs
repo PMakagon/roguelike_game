@@ -29,7 +29,7 @@ namespace LiftGame.Inventory.Case
         {
             if (_repository == null) return;
             _isPreviouslyInRange = _repository.IsInRange;
-            inventoryRenderer.SetInventory(_inventoryService.GetCaseRepositoryManager(),_repository.InventoryRenderMode);
+            inventoryRenderer.RenderInventory(_inventoryService.GetCaseRepositoryManager(),_repository.InventoryRenderMode);
         }
 
         private void Update()

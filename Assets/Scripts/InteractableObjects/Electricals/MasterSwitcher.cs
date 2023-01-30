@@ -21,7 +21,7 @@ namespace LiftGame.InteractableObjects.Electricals
 
         private void SetInteractionLabel()
         {
-            _toSwitch.Label = isSwitchedOn ? ON : OFF;
+            _toSwitch.Label = isSwitchedOn ? OFF : ON;
         }
 
         public Action OnSwitched

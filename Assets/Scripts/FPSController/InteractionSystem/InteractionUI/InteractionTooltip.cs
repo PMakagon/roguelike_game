@@ -1,7 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 
-namespace LiftGame.FPSController.InteractionSystem.InteractionMenu
+namespace LiftGame.FPSController.InteractionSystem.InteractionUI
 {
     public class InteractionTooltip : MonoBehaviour
     {

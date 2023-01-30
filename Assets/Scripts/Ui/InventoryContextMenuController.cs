@@ -1,7 +1,13 @@
 ﻿using LiftGame.GameCore.Input.Data;
+using LiftGame.Inventory;
 using LiftGame.Inventory.Core;
+using LiftGame.PlayerCore;
+using LiftGame.PlayerCore.HealthSystem;
+using LiftGame.PlayerCore.MentalSystem;
+using LiftGame.PlayerCore.PlayerPowerSystem;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Zenject;
 
 namespace LiftGame.Ui
 {
@@ -10,7 +16,14 @@ namespace LiftGame.Ui
     {
         [SerializeField] private InventoryContextMenu contextMenu;
         public static bool IsOpen;
-
+        // private InventoryItemInteractor _interactor;
+        //
+        // [Inject]
+        // public InventoryContextMenuController(InventoryItemInteractor interactor)
+        // {
+        //     _interactor = interactor;
+        // }
+        
         private static InventoryContextMenuController _currentContextMenuController;
 
         private void Awake()
@@ -19,7 +32,7 @@ namespace LiftGame.Ui
             {
                 _currentContextMenuController = this;
             }
-
+            // _currentContextMenuController.contextMenu.Interactor = _interactor;
             UIInputData.OnInventoryClicked += Hide;
             NonGameplayInputData.OnPauseMenuClicked += Hide;
         }
@@ -30,12 +43,12 @@ namespace LiftGame.Ui
             NonGameplayInputData.OnPauseMenuClicked -= Hide;
         }
 
-        public static void Show(IInventoryItem item)
+        public static void Show(IInventoryItem item,InventoryController controller)
         {
             if (item == null) return;
             IsOpen = true;
             _currentContextMenuController.contextMenu.gameObject.SetActive(true);
-            _currentContextMenuController.contextMenu.SetContextMenu(item);
+            _currentContextMenuController.contextMenu.SetContextMenu(item,controller);
             _currentContextMenuController.contextMenu.transform.position = Input.mousePosition;
             _currentContextMenuController.contextMenu.gameObject.SetActive(true);
         }

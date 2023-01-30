@@ -95,7 +95,7 @@ namespace LiftGame.Inventory.Core
                 if (currentController != null)
                 {
                     item.position = currentController.ScreenToGrid(value + _offset + GetDraggedItemOffset(currentController.inventoryRenderer, item));
-                    var canAdd = currentController.Repository.CanAddAt(item, item.position) || CanSwap();
+                    var canAdd = currentController.RepositoryManager.CanAddAt(item, item.position) || CanSwap();
                     currentController.inventoryRenderer.SelectItem(item, !canAdd, Color.white);
                 }
 
@@ -115,24 +115,24 @@ namespace LiftGame.Inventory.Core
                 var grid = currentController.ScreenToGrid(pos + _offset + GetDraggedItemOffset(currentController.inventoryRenderer, item));
 
                 // Try to add new item
-                if (currentController.Repository.CanAddAt(item, grid))
+                if (currentController.RepositoryManager.CanAddAt(item, grid))
                 {
-                    currentController.Repository.TryAddAt(item, grid); // Place the item in a new location
+                    currentController.RepositoryManager.TryAddAt(item, grid); // Place the item in a new location
                     mode = DropMode.Added;
                 }
                 // Adding did not work, try to swap
                 else if (CanSwap())
                 {
-                    var otherItem = currentController.Repository.allItems[0];
-                    currentController.Repository.TryRemove(otherItem);
-                    originalController.Repository.TryAdd(otherItem);
-                    currentController.Repository.TryAdd(item);
+                    var otherItem = currentController.RepositoryManager.allItems[0];
+                    currentController.RepositoryManager.TryRemove(otherItem);
+                    originalController.RepositoryManager.TryAdd(otherItem);
+                    currentController.RepositoryManager.TryAdd(item);
                     mode = DropMode.Swapped;
                 }
                 // Could not add or swap, return the item
                 else
                 {
-                    originalController.Repository.TryAddAt(item, originPoint); // Return the item to its previous location
+                    originalController.RepositoryManager.TryAddAt(item, originPoint); // Return the item to its previous location
                     mode = DropMode.Returned;
 
                 }
@@ -142,9 +142,9 @@ namespace LiftGame.Inventory.Core
             else
             {
                 mode = DropMode.Dropped;
-                if (!originalController.Repository.TryForceDrop(item)) // Drop the item on the ground
+                if (!originalController.RepositoryManager.TryForceDrop(item)) // Drop the item on the ground
                 {
-                    originalController.Repository.TryAddAt(item, originPoint);
+                    originalController.RepositoryManager.TryAddAt(item, originPoint);
                 }
             }
 
@@ -173,9 +173,9 @@ namespace LiftGame.Inventory.Core
          */
         private bool CanSwap()
         {
-            if (!currentController.Repository.CanSwap(item)) return false;
-            var otherItem = currentController.Repository.allItems[0];
-            return originalController.Repository.CanAdd(otherItem) && currentController.Repository.CanRemove(otherItem);
+            if (!currentController.RepositoryManager.CanSwap(item)) return false;
+            var otherItem = currentController.RepositoryManager.allItems[0];
+            return originalController.RepositoryManager.CanAdd(otherItem) && currentController.RepositoryManager.CanRemove(otherItem);
         }
     }
 }

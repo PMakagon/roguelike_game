@@ -11,13 +11,11 @@ namespace LiftGame.InteractableObjects
     {
         [SerializeField] private Costume costume;
         private IPlayerCostumeService _playerCostumeService;
-        private IPlayerPowerService _playerPowerService;
         private Interaction _toEquipCostume = new Interaction("Equip",2, true);
 
         [Inject]
-        private void Construct(PlayerServiceProvider playerServiceProvider,IPlayerPowerService playerPowerService)
+        private void Construct(PlayerServiceProvider playerServiceProvider)
         {
-            _playerPowerService = playerPowerService;
             _playerCostumeService = playerServiceProvider.PlayerCostumeService;
         }
         
@@ -34,7 +32,6 @@ namespace LiftGame.InteractableObjects
         private bool EquipCostume()
         {
             _playerCostumeService.SetCostumeActive(true);
-            _playerPowerService.SetActive(true);
             Destroy(gameObject);
             return true;
         }

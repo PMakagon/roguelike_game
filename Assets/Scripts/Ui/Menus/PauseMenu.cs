@@ -1,4 +1,5 @@
 ﻿using LiftGame.GameCore.Input.Data;
+using LiftGame.GameCore.LevelGameLoop;
 using LiftGame.GameCore.Pause;
 using LiftGame.GameCore.ScenesLoading;
 using UnityEngine;
@@ -33,11 +34,18 @@ namespace LiftGame.Ui.Menus
             exitBtn.onClick.AddListener(OnExitBtnClicked);
             screen.SetActive(false);
             NonGameplayInputData.OnPauseMenuClicked += OnPausePressed;
+            LevelGameLoopEventHandler.OnGameOver += Unsubscribe;
         }
 
         private void OnDestroy()
         {
+            Unsubscribe();
+        }
+
+        private void Unsubscribe()
+        {
             NonGameplayInputData.OnPauseMenuClicked -= OnPausePressed;
+            LevelGameLoopEventHandler.OnGameOver -= Unsubscribe;
         }
 
         private void OnPausePressed()
@@ -50,6 +58,8 @@ namespace LiftGame.Ui.Menus
         {
             screen.SetActive(state);
             _pauseHandler.SetPaused(state);
+            Cursor.visible = state;
+            Cursor.lockState = state? CursorLockMode.Confined : CursorLockMode.Locked ;
         }
         
         private void ContinueGame()

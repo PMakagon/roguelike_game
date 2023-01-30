@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using LiftGame.GameCore.Input.Data;
 using LiftGame.PlayerCore.PlayerPowerSystem;
+using LiftGame.ProxyEventHolders;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -8,7 +9,7 @@ namespace LiftGame.PlayerEquipment
 {
     public class HeadFlashlight : MonoBehaviour
     {
-        [SerializeField] private float power = 1;
+        [SerializeField] private float powerLoad = 1;
         [SerializeField] private float multiplier = 2f;
         [SerializeField] private bool isTurnedOn;
         [SerializeField] private float maxAngle = 80f;
@@ -35,14 +36,14 @@ namespace LiftGame.PlayerEquipment
         {
             _equipmentInputData.OnFlashlightClicked += SwitchFlashlightState;
             _equipmentInputData.OnFlashlightAdjust += AdjustFlashlightAngle;
-            _powerService.OnPowerOff += TurnOffWithBlink;
+            PlayerPowerEventHolder.OnPowerOff += TurnOffWithBlink;
         }
 
         private void OnDestroy()
         {
             _equipmentInputData.OnFlashlightClicked -= SwitchFlashlightState;
             _equipmentInputData.OnFlashlightAdjust -= AdjustFlashlightAngle;
-            _powerService.OnPowerOff -= TurnOffWithBlink;
+            PlayerPowerEventHolder.OnPowerOff -= TurnOffWithBlink;
         }
 
         private void AdjustFlashlightAngle(float adjust)
@@ -51,7 +52,6 @@ namespace LiftGame.PlayerEquipment
             _light.spotAngle = Mathf.Clamp(_light.spotAngle += adjust * 10, minAngle, maxAngle);
             _light.range = Mathf.Clamp(_light.range -= adjust, 10, 15);
             _isAdjusted = true;
-            
         }
 
         private void SwitchFlashlightState()
@@ -97,15 +97,14 @@ namespace LiftGame.PlayerEquipment
         private void TurnOn()
         {
             isTurnedOn = true;
-            _powerService.PlayerPowerData.CurrentPower -= power * multiplier;
-            _powerService.PlayerPowerData.PowerLoad += power;
+            _powerService.AddLoad(powerLoad, multiplier);
             _light.enabled = isTurnedOn;
         }
 
         private void TurnOff()
         {
             isTurnedOn = false;
-            _powerService.PlayerPowerData.PowerLoad -= power;
+            _powerService.RemoveLoad(powerLoad);
             _light.enabled = isTurnedOn;
         }
 

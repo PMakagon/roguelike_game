@@ -13,8 +13,9 @@ namespace LiftGame.InteractableObjects
         [SerializeField] private TextMeshPro textBox;
         private Interaction _toPutItem = new Interaction("Put Item", true);
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             LiftControllerData.OnLevelGameLoopFinished += ChangeText;
         }
 

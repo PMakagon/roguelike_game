@@ -1,4 +1,5 @@
 ﻿using LiftGame.Inventory.Core;
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace LiftGame.Inventory.Items
@@ -8,7 +9,7 @@ namespace LiftGame.Inventory.Items
         [SerializeField] private string _name;
         [SerializeField] private string _description;
         [SerializeField] private Sprite _sprite = null;
-        [SerializeField] private GameObject worldItemPrefab = null;
+        [ShowAssetPreview(128, 128)][SerializeField] private GameObject worldItemPrefab = null;
         [SerializeField] private InventoryShape _shape = null;
         [SerializeField] private ItemType _type = ItemType.Default;
         [SerializeField] private bool _canDrop = true;
@@ -17,9 +18,17 @@ namespace LiftGame.Inventory.Items
         /// <summary>
         /// The name of the item
         /// </summary>
-        public string Name => this.name;
+        public string Name 
+        {
+            get => name;
+            protected set => name = value;
+        }
 
-        public string Description => _description;
+        public string Description 
+        {
+            get => _description;
+            protected set => _description = value;
+        }
 
         /// <summary>
         /// The type of the item
@@ -31,7 +40,11 @@ namespace LiftGame.Inventory.Items
         }
 
         /// <inheritdoc />
-        public Sprite sprite => _sprite;
+        public Sprite sprite
+        {
+            get => _sprite;
+            protected set => _sprite = value;
+        }
 
         /// <inheritdoc />
         public int width => _shape.width;
@@ -65,15 +78,9 @@ namespace LiftGame.Inventory.Items
             return clone;
         }
 
-        public void SpawnWorldItem(Vector3 positionToSpawn,Transform parent)
+        public void SpawnWorldItem(Vector3 positionToSpawn)
         {
-            if (parent)
-            {
-                Instantiate(worldItemPrefab,positionToSpawn,Quaternion.identity,parent);
-            }else
-            {
-                Instantiate(worldItemPrefab,positionToSpawn,Quaternion.identity);
-            }
+            if (worldItemPrefab != null) Instantiate(worldItemPrefab,positionToSpawn,Quaternion.identity);
         }
     }
 }

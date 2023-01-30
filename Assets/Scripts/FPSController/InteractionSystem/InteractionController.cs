@@ -1,16 +1,17 @@
-﻿using LiftGame.FPSController.InteractionSystem.InteractionMenu;
+﻿using LiftGame.FPSController.InteractionSystem.InteractionUI;
 using LiftGame.GameCore.Input.Data;
+using LiftGame.GameCore.Pause;
+using LiftGame.Inventory;
 using LiftGame.PlayerCore;
-using LiftGame.Ui.HUD;
 using UnityEngine;
 using Zenject;
 
 namespace LiftGame.FPSController.InteractionSystem
 {
-    public class InteractionController : MonoBehaviour
+    public class InteractionController : MonoBehaviour , IPauseable
     {
-         [Space, Header("UI")] 
-        [SerializeField] private InteractionMenu.InteractionMenu interactionPanel;
+        [Space, Header("UI")] 
+        [SerializeField] private InteractionMenu interactionPanel;
 
         [Space, Header("Ray Settings")] 
         [SerializeField] private float rayDistance = 0f;
@@ -19,7 +20,9 @@ namespace LiftGame.FPSController.InteractionSystem
 
         private InteractionInputData _interactionInputData = null;
         private EquipmentInputData _equipmentInputData = null;
+        private IPauseHandler _pauseHandler;
         private IPlayerData _playerData;
+        private IPlayerInventoryService _playerInventoryService;
         private Camera _cam;
 
         private IInteractable _currentInteractable = null;
@@ -27,25 +30,38 @@ namespace LiftGame.FPSController.InteractionSystem
 
         private bool _interacting;
         private float _holdTimer = 0f;
+        private bool _isPaused;
 
         //MonoBehaviour injection
         [Inject]
-        private void Construct(InteractionMenu.InteractionMenu interactionMenu, IPlayerData playerData,InputDataProvider inputDataProvider)
+        private void Construct(InteractionMenu interactionMenu, IPlayerData playerData,
+            InputDataProvider inputDataProvider, IPlayerInventoryService playerInventoryService,IPauseHandler pauseHandler)
         {
+            _pauseHandler = pauseHandler;
             _interactionInputData = inputDataProvider.InteractionInputData;
+            _equipmentInputData = inputDataProvider.EquipmentInputData;
             _playerData = playerData;
             interactionPanel = interactionMenu;
+            _playerInventoryService = playerInventoryService;
         }
 
-        #region Built In Methods
+        #region Unity Callbacks
 
         void Awake()
         {
             _cam = GetComponentInChildren<Camera>();
+            _pauseHandler.Register(this);
+            _playerInventoryService.OnInventoryOpen += interactionPanel.HidePanel;
+        }
+
+        private void OnDestroy()
+        {
+            _playerInventoryService.OnInventoryOpen -= interactionPanel.HidePanel;
         }
 
         void Update()
         {
+            if (_playerInventoryService.IsInventoryOpen || _isPaused) return;
             CheckForInteractable();
             CheckForInteractableInput();
         }
@@ -72,14 +88,14 @@ namespace LiftGame.FPSController.InteractionSystem
 
             bool hitSomething = Physics.SphereCast(ray, raySphereRadius, out hitInfo, rayDistance, interactableLayer);
             Debug.DrawRay(ray.origin, ray.direction * rayDistance, hitSomething ? Color.green : Color.red);
-            
+
             if (hitSomething)
             {
                 IInteractable interactable = hitInfo.transform.GetComponent<IInteractable>();
 
                 if (interactable != null)
                 {
-                    interactionPanel.SetPanelActive(true);
+                    interactionPanel.ShowPanel();
                     if (IsEmpty() && IsPreviousInteractable(interactable))
                     {
                         interactable.PreInteract(_playerData);
@@ -88,6 +104,7 @@ namespace LiftGame.FPSController.InteractionSystem
                         interactionPanel.ShowTooltip(interactable.TooltipMessage);
                         interactionPanel.ShowOptionMenu();
                         interactionPanel.UpdateOptionsState(_playerData);
+                        interactionPanel.SetNewSelection();
                         return;
                     }
 
@@ -102,6 +119,7 @@ namespace LiftGame.FPSController.InteractionSystem
                         interactionPanel.CreateMenuOptions(_currentInteractable.Interactions);
                         interactionPanel.ShowOptionMenu();
                         interactionPanel.UpdateOptionsState(_playerData);
+                        interactionPanel.SetNewSelection();
                     }
 
                     if (!_interacting && !IsNewInteractable(interactable))
@@ -113,7 +131,7 @@ namespace LiftGame.FPSController.InteractionSystem
                 }
             }
 
-            interactionPanel.SetPanelActive(false);
+            interactionPanel.HidePanel();
             interactionPanel.ResetMenu();
             ClearInteractable();
         }
@@ -127,7 +145,6 @@ namespace LiftGame.FPSController.InteractionSystem
             {
                 _interacting = true;
                 _holdTimer = 0f;
-                
             }
 
             if (_interactionInputData.InteractedReleased)
@@ -147,12 +164,14 @@ namespace LiftGame.FPSController.InteractionSystem
                     interactionPanel.SelectedOption.SetProgressBarActive();
                     _holdTimer += Time.deltaTime;
 
-                    float heldPercent = (_holdTimer / interactionPanel.SelectedOption.RepresentedInteraction.HoldDuration) * 10;
+                    float heldPercent =
+                        (_holdTimer / interactionPanel.SelectedOption.RepresentedInteraction.HoldDuration) * 10;
                     interactionPanel.SelectedOption.UpdateProgressBar(heldPercent);
 
                     if (heldPercent > interactionPanel.SelectedOption.ProgressBar.maxValue)
                     {
-                        if (interactionPanel.SelectedOption.RepresentedInteraction.IsEquipmentUseNeeded && !_equipmentInputData.UsingClicked) return;
+                        if (interactionPanel.SelectedOption.RepresentedInteraction.IsEquipmentUseNeeded &&
+                            !_equipmentInputData.UsingClicked) return;
                         interactionPanel.SelectedOption.ResetProgressBar();
                         interactionPanel.SelectedOption.ConfirmSelection();
                         _currentInteractable.OnInteract(interactionPanel.SelectedOption.RepresentedInteraction);
@@ -173,5 +192,10 @@ namespace LiftGame.FPSController.InteractionSystem
         }
 
         #endregion
+
+        public void SetPaused(bool isPaused)
+        {
+            _isPaused = isPaused;
+        }
     }
 }

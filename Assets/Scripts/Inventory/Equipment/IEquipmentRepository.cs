@@ -4,7 +4,6 @@ using LiftGame.Inventory.Items;
 namespace LiftGame.Inventory.Equipment
 {
     public interface IEquipmentRepository
-
     {
     // public InventoryRenderMode InventoryRenderMode { get; }
 

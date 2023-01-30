@@ -2,6 +2,8 @@
 using LiftGame.PlayerCore;
 using LiftGame.PlayerCore.HealthSystem;
 using LiftGame.PlayerCore.MentalSystem;
+using LiftGame.PlayerCore.PlayerAirSystem;
+using LiftGame.PlayerCore.PlayerPowerSystem;
 using UnityEngine;
 using Zenject;
 
@@ -12,20 +14,25 @@ namespace LiftGame.GameCore.Pause
     {
         private IPauseHandler _pauseHandler;
         private PlayerServiceProvider _playerServiceProvider;
-        private IPlayerHealthService _playerHealthService;
-        private IPlayerMentalService _playerMentalService;
-        private IPlayerInputService _playerInputService;
+        private IPlayerHealthService _healthService;
+        private IPlayerMentalService _mentalService;
+        private IPlayerInputService _inputService;
+        private IPlayerAirService _airService;
+        private IPlayerPowerService _powerService;
 
         // MonoBehaviour injection
         [Inject]
-        private void Construct(IPauseHandler pauseHandler, PlayerServiceProvider playerServiceProvider,
-            IPlayerHealthService playerHealthService, IPlayerMentalService playerMentalService , IPlayerInputService inputService)
+        private void Construct(IPauseHandler pauseHandler, PlayerServiceProvider serviceProvider,
+            IPlayerHealthService healthService, IPlayerMentalService mentalService, IPlayerInputService inputService,
+            IPlayerAirService airService, IPlayerPowerService powerService)
         {
-            _playerHealthService = playerHealthService;
-            _playerServiceProvider = playerServiceProvider;
+            _healthService = healthService;
+            _playerServiceProvider = serviceProvider;
             _pauseHandler = pauseHandler;
-            _playerInputService = inputService;
-            _playerMentalService = playerMentalService;
+            _inputService = inputService;
+            _mentalService = mentalService;
+            _airService = airService;
+            _powerService = powerService;
         }
 
         private void Start()
@@ -41,19 +48,23 @@ namespace LiftGame.GameCore.Pause
         private void RegisterServices()
         {
             _pauseHandler.Register(_playerServiceProvider.FPSController);
-            _pauseHandler.Register(_playerInputService);
+            _pauseHandler.Register(_inputService);
             _pauseHandler.Register(_playerServiceProvider.CameraController);
-            _pauseHandler.Register(_playerHealthService);
-            _pauseHandler.Register(_playerMentalService);
+            _pauseHandler.Register(_healthService);
+            _pauseHandler.Register(_mentalService);
+            _pauseHandler.Register(_airService);
+            _pauseHandler.Register(_powerService);
         }
 
         private void UnregisterServices()
         {
             _pauseHandler.UnRegister(_playerServiceProvider.FPSController);
-            _pauseHandler.UnRegister(_playerInputService);
+            _pauseHandler.UnRegister(_inputService);
             _pauseHandler.UnRegister(_playerServiceProvider.CameraController);
-            _pauseHandler.UnRegister(_playerHealthService);
-            _pauseHandler.UnRegister(_playerMentalService);
+            _pauseHandler.UnRegister(_healthService);
+            _pauseHandler.UnRegister(_mentalService);
+            _pauseHandler.UnRegister(_airService);
+            _pauseHandler.UnRegister(_powerService);
         }
     }
 }

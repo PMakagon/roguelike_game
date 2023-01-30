@@ -30,7 +30,7 @@ namespace LiftGame.Inventory
 
         public override void CreateInteractions()
         {
-            _toEquip = new Interaction("Equip",true);
+            _toEquip = new Interaction("Take",true);
         }
 
         public override void BindInteractions()

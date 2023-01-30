@@ -28,13 +28,13 @@ namespace LiftGame.PlayerCore.MentalSystem
         public const int BASE_STRESS_LEVEL = 100;
         public const int MIN_STRESS_LEVEL = 60;
 
-        private float _stress;
+        private float _stressLevel;
         private int _playerLitLevel;
 
         public void ResetData()
         {
             stressState = StressState.Base;
-            _stress = BASE_STRESS_LEVEL;
+            _stressLevel = BASE_STRESS_LEVEL;
         }
         
         public PlayerLitState PlayerLitState
@@ -75,10 +75,10 @@ namespace LiftGame.PlayerCore.MentalSystem
 
         public float FastRegen => fastRegen;
 
-        public float Stress
+        public float StressLevel
         {
-            get => _stress;
-            set => _stress = value;
+            get => _stressLevel;
+            set => _stressLevel = value;
         }
 
         public int PlayerLitLevel

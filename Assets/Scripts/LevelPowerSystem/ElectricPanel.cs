@@ -1,7 +1,7 @@
 using LiftGame.InteractableObjects.Electricals;
 using UnityEngine;
 
-namespace LiftGame.LightingSystem
+namespace LiftGame.LevelPowerSystem
 {
     public class ElectricPanel : MonoBehaviour
     {

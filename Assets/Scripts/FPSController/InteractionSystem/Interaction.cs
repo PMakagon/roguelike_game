@@ -8,23 +8,15 @@ namespace LiftGame.FPSController.InteractionSystem
     {
         public string Label { get; set; }
         public InteractionRequirement Requirement { get; }
-
         public float HoldDuration { get; }
         public bool IsHoldInteract { get; }
-
         public EquipmentConfig EquipmentConfig { get; }
-
         public bool IsShouldBeTurnedOn { get; }
-        
         public bool IsEquipmentUseNeeded { get; }
-
         public ItemDefinition ItemDefinition { get; }
-
         public bool RemoveOnInteract { get; }
-        
         public Func<bool> actionOnInteract;
-
-
+        
         public Func<bool> ActionOnInteract
         {
             get => actionOnInteract;
@@ -32,10 +24,8 @@ namespace LiftGame.FPSController.InteractionSystem
         }
 
         public bool IsEnabled { get; set; }
-
         public bool IsExecutable { get; private set; }
-
-
+        
         public Interaction(InteractionConfig config,bool isEnabled)
         {
             Label = config.Label;
@@ -63,6 +53,7 @@ namespace LiftGame.FPSController.InteractionSystem
             RemoveOnInteract = false;
             IsEnabled = isEnabled;
         }
+        
         public Interaction(string name,float holdDuration,bool isEnabled)
         {
             Label = name;

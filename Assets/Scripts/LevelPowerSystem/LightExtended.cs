@@ -1,14 +1,13 @@
 ﻿using System.Collections;
-using LiftGame.FPSController.FirstPersonController;
 using LiftGame.InteractableObjects.Electricals;
 using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Random = UnityEngine.Random;
 
-namespace LiftGame.LightingSystem
+namespace LiftGame.LevelPowerSystem
 {
-    public class LightExtended : MonoBehaviour //разбить на несколько классов компонентов
+    public class LightExtended : MonoBehaviour //to full refactor
     {
         public enum LightMode 
         {
