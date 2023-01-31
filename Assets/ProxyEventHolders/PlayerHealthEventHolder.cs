@@ -5,18 +5,18 @@ namespace LiftGame.ProxyEventHolders
 {
     public static class PlayerHealthEventHolder
     {
-        public static event Action<PlayerHealthData, int> OnDamageApplied;
-        public static event Action<int> OnDamageTaken;
-        public static event Action<PlayerHealthData, int> OnHealthRestored;
+        public static event Action<PlayerHealthData, float> OnDamageApplied;
+        public static event Action<float> OnDamageTaken;
+        public static event Action<PlayerHealthData, float> OnHealthRestored;
         public static event Action<HealthStatus,HealthStatus> OnHealthStatusChanged;
         public static event Action OnPlayerDied;
 
-        public static void SendOnDamageTaken(int damage)
+        public static void SendOnDamageTaken(float damage)
         {
             OnDamageTaken?.Invoke(damage);
         }
         
-        public static void BroadcastOnDamageApplied(PlayerHealthData playerHealthData,int damage)
+        public static void BroadcastOnDamageApplied(PlayerHealthData playerHealthData,float damage)
         {
             OnDamageApplied?.Invoke(playerHealthData,damage);
         }

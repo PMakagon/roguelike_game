@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using LiftGame.LightingSystem;
-using LiftGame.PlayerCore;
+﻿using LiftGame.InteractableObjects.Electricals;
 using UnityEngine;
 
 namespace LiftGame.InteractableObjects
@@ -9,31 +7,20 @@ namespace LiftGame.InteractableObjects
     {
         [SerializeField] private MasterSwitcher masterSwitcher;
         [SerializeField] private Light stateLight;
+        
 
-        #region BuiltIn Methods
-
-        private void Awake()
+        protected override void Awake()
         {
-            animator = GetComponentInParent<Animator>();
+            base.Awake();
             if (!masterSwitcher) return;
             masterSwitcher.OnSwitched += ChangeLightState;
             ChangeLightState();
-            SetToolTip();
         }
 
         private void OnDestroy()
         {
+            if (!masterSwitcher) return;
             masterSwitcher.OnSwitched -= ChangeLightState;
-        }
-
-        #endregion
-
-        #region Properties
-
-        public MasterSwitcher MasterSwitcher
-        {
-            get => masterSwitcher;
-            set => masterSwitcher = value;
         }
 
         public void AddSwitcher(MasterSwitcher switcher)
@@ -42,42 +29,24 @@ namespace LiftGame.InteractableObjects
             switcher.OnSwitched += ChangeLightState;
         }
 
-        #endregion
-
         private void ChangeLightState()
         {
             stateLight.enabled = !masterSwitcher.IsSwitchedOn;
+           
         }
-        
-        
-        public override void OnInteract(IPlayerData playerData)
+
+        protected override bool ChangeDoorState()
         {
-            if (isOpen)
-            {
-                CloseDoor();
-                return;
-            }
+            if (IsOpen) return base.ChangeDoorState();
+            if (masterSwitcher.IsSwitchedOn) return base.ChangeDoorState();
+            Animator.SetBool(TryOpen, true);
+            return false;
+        }
 
-            if (!masterSwitcher.IsSwitchedOn)
-            {
-                animator.SetBool(TryOpen, true);
-                return;
-            }
-
-            if (!isLocked)
-            {
-                OpenDoor();
-                return;
-            }
-            var inventory = playerData.GetInventoryData();
-            if (CheckForKey(inventory.GetAllItems()))
-            {
-                OpenDoor();
-            }
-            else
-            {
-                animator.SetBool(TryOpen, true);
-            }
+        public MasterSwitcher MasterSwitcher
+        {
+            get => masterSwitcher;
+            set => masterSwitcher = value;
         }
     }
 }

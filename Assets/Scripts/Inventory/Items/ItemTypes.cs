@@ -3,7 +3,7 @@ namespace LiftGame.Inventory.Items
     public enum ItemType
     {
         Default,
-        Weapons,
+        PowerCell,
         Utility,
         Equipment,
         Consumable,

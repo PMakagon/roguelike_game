@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,7 +9,7 @@ namespace LiftGame.Inventory.Core
     /// <summary>
     /// Renders a given inventory
     /// /// </summary>
-    [RequireComponent(typeof(RectTransform))]
+    
     public class InventoryRenderer : MonoBehaviour
     {
         [SerializeField, Tooltip("The size of the cells building up the inventory")]
@@ -26,17 +27,33 @@ namespace LiftGame.Inventory.Core
         [SerializeField, Tooltip("The sprite to use for blocked cells")]
         private Sprite _cellSpriteBlocked = null;
 
-        internal IRepositoryManager Repository;
+        [SerializeField] private bool clampToCorner = false;
+        [ShowIf("clampToCorner")][SerializeField] private RectTransform.Edge xEdge = RectTransform.Edge.Left;
+        [ShowIf("clampToCorner")][SerializeField] private RectTransform.Edge yEdge = RectTransform.Edge.Top;
+        
+        internal IRepositoryManager RepositoryManager;
         InventoryRenderMode _renderMode;
         private bool _haveListeners;
         private Pool<Image> _imagePool;
         private Image[] _grids;
         private Dictionary<IInventoryItem, Image> _items = new Dictionary<IInventoryItem, Image>();
+        private bool _isReady;
+
+        /// <summary>
+        /// Returns the RectTransform for this renderer
+        /// </summary>
+        public RectTransform rectTransform { get; private set; }
+
+        /// <summary>
+        /// Returns the size of this inventory's cells
+        /// </summary>
+        public Vector2 cellSize => _cellSize;
 
         /*
          * Setup
          */
-        void Awake()
+
+        public void SetupRenderer()
         {
             rectTransform = GetComponent<RectTransform>();
 
@@ -55,45 +72,41 @@ namespace LiftGame.Inventory.Core
                     image.transform.localScale = Vector3.one;
                     return image;
                 });
+            _isReady = true;
         }
 
         /// <summary>
         /// Set what inventory to use when rendering
         /// </summary>
-        public void SetInventory(IRepositoryManager repositoryManager, InventoryRenderMode renderMode)
+        public void RenderInventory(IRepositoryManager repositoryManager, InventoryRenderMode renderMode)
         {
+            if (!_isReady)
+            {
+                Debug.LogWarning($"Renderer on {gameObject.name} is not ready. Call SetupRenderer before rendering.Trying now..");
+                SetupRenderer();
+            }
             OnDisable();
-            Repository = repositoryManager ?? throw new ArgumentNullException(nameof(repositoryManager)); 
+            RepositoryManager = repositoryManager ?? throw new ArgumentNullException(nameof(repositoryManager)); 
             _renderMode = renderMode;
             OnEnable();
         }
-
-        /// <summary>
-        /// Returns the RectTransform for this renderer
-        /// </summary>
-        public RectTransform rectTransform { get; private set; }
-
-        /// <summary>
-        /// Returns the size of this inventory's cells
-        /// </summary>
-        public Vector2 cellSize => _cellSize;
 
         /* 
         Invoked when the inventory inventoryRenderer is enabled
         */
         void OnEnable()
         {
-            if (Repository != null && !_haveListeners)
+            if (RepositoryManager != null && !_haveListeners)
             {
                 if (_cellSpriteEmpty == null) { throw new NullReferenceException("Sprite for empty cell is null"); }
                 if (_cellSpriteSelected == null) { throw new NullReferenceException("Sprite for selected cells is null."); }
                 if (_cellSpriteBlocked == null) { throw new NullReferenceException("Sprite for blocked cells is null."); }
 
-                Repository.onRebuilt += ReRenderAllItems;
-                Repository.onItemAdded += HandleItemAdded;
-                Repository.onItemRemoved += HandleItemRemoved;
-                Repository.onItemDropped += HandleItemRemoved;
-                Repository.onResized += HandleResized;
+                RepositoryManager.onRebuilt += ReRenderAllItems;
+                RepositoryManager.onItemAdded += HandleItemAdded;
+                RepositoryManager.onItemRemoved += HandleItemRemoved;
+                RepositoryManager.onItemDropped += HandleItemRemoved;
+                RepositoryManager.onResized += HandleResized;
                 _haveListeners = true;
 
                 // Render inventory
@@ -107,13 +120,13 @@ namespace LiftGame.Inventory.Core
         */
         void OnDisable()
         {
-            if (Repository != null && _haveListeners)
+            if (RepositoryManager != null && _haveListeners)
             {
-                Repository.onRebuilt -= ReRenderAllItems;
-                Repository.onItemAdded -= HandleItemAdded;
-                Repository.onItemRemoved -= HandleItemRemoved;
-                Repository.onItemDropped -= HandleItemRemoved;
-                Repository.onResized -= HandleResized;
+                RepositoryManager.onRebuilt -= ReRenderAllItems;
+                RepositoryManager.onItemAdded -= HandleItemAdded;
+                RepositoryManager.onItemRemoved -= HandleItemRemoved;
+                RepositoryManager.onItemDropped -= HandleItemRemoved;
+                RepositoryManager.onResized -= HandleResized;
                 _haveListeners = false;
             }
         }
@@ -136,7 +149,7 @@ namespace LiftGame.Inventory.Core
             _grids = null;
 
             // Render new grid
-            var containerSize = new Vector2(cellSize.x * Repository.width, cellSize.y * Repository.height);
+            var containerSize = new Vector2(cellSize.x * RepositoryManager.width, cellSize.y * RepositoryManager.height);
             Image grid;
             switch (_renderMode)
             {
@@ -152,17 +165,17 @@ namespace LiftGame.Inventory.Core
                     // Spawn grid images
                     var topLeft = new Vector3(-containerSize.x / 2, -containerSize.y / 2, 0); // Calculate topleft corner
                     var halfCellSize = new Vector3(cellSize.x / 2, cellSize.y / 2, 0); // Calulcate cells half-size
-                    _grids = new Image[Repository.width * Repository.height];
+                    _grids = new Image[RepositoryManager.width * RepositoryManager.height];
                     var c = 0;
-                    for (int y = 0; y < Repository.height; y++)
+                    for (int y = 0; y < RepositoryManager.height; y++)
                     {
-                        for (int x = 0; x < Repository.width; x++)
+                        for (int x = 0; x < RepositoryManager.width; x++)
                         {
                             grid = CreateImage(_cellSpriteEmpty, true);
                             grid.gameObject.name = "Grid " + c;
                             grid.rectTransform.SetAsFirstSibling();
                             grid.type = Image.Type.Sliced;
-                            grid.rectTransform.localPosition = topLeft + new Vector3(cellSize.x * ((Repository.width - 1) - x), cellSize.y * y, 0) + halfCellSize;
+                            grid.rectTransform.localPosition = topLeft + new Vector3(cellSize.x * ((RepositoryManager.width - 1) - x), cellSize.y * y, 0) + halfCellSize;
                             grid.rectTransform.sizeDelta = cellSize;
                             _grids[c] = grid;
                             c++;
@@ -175,6 +188,9 @@ namespace LiftGame.Inventory.Core
             // This is useful as it allowes custom graphical elements
             // suchs as a border to mimic the size of the inventory.
             rectTransform.sizeDelta = containerSize;
+            if (!clampToCorner) return;
+            rectTransform.SetInsetAndSizeFromParentEdge(xEdge, 0, rectTransform.rect.width);
+            rectTransform.SetInsetAndSizeFromParentEdge(yEdge, 0, rectTransform.rect.height);
         }
 
         /*
@@ -191,7 +207,7 @@ namespace LiftGame.Inventory.Core
             _items.Clear();
 
             // Add all items
-            foreach (var item in Repository.allItems)
+            foreach (var item in RepositoryManager.allItems)
             {
                 if (item!=null)
                 {
@@ -292,9 +308,9 @@ namespace LiftGame.Inventory.Core
                             if (item.IsPartOfShape(new Vector2Int(x, y)))
                             {
                                 var p = item.position + new Vector2Int(x, y);
-                                if (p.x >= 0 && p.x < Repository.width && p.y >= 0 && p.y < Repository.height)
+                                if (p.x >= 0 && p.x < RepositoryManager.width && p.y >= 0 && p.y < RepositoryManager.height)
                                 {
-                                    var index = p.y * Repository.width + ((Repository.width - 1) - p.x);
+                                    var index = p.y * RepositoryManager.width + ((RepositoryManager.width - 1) - p.x);
                                     _grids[index].sprite = blocked ? _cellSpriteBlocked : _cellSpriteSelected;
                                     _grids[index].color = color;
                                 }
@@ -322,9 +338,9 @@ namespace LiftGame.Inventory.Core
                     if (item.IsPartOfShape(new Vector2Int(x, y)))
                     {
                         var p = item.position + new Vector2Int(x, y);
-                        if (p.x >= 0 && p.x < Repository.width && p.y >= 0 && p.y < Repository.height)
+                        if (p.x >= 0 && p.x < RepositoryManager.width && p.y >= 0 && p.y < RepositoryManager.height)
                         {
-                            var index = p.y * Repository.width + ((Repository.width - 1) - p.x);
+                            var index = p.y * RepositoryManager.width + ((RepositoryManager.width - 1) - p.x);
                             _grids[index].sprite = _cellSpriteHovered;
                             _grids[index].color = Color.white;
                         }
@@ -350,8 +366,8 @@ namespace LiftGame.Inventory.Core
         */
         internal Vector2 GetItemOffset(IInventoryItem item)
         {
-            var x = (-(Repository.width * 0.5f) + item.position.x + item.width * 0.5f) * cellSize.x;
-            var y = (-(Repository.height * 0.5f) + item.position.y + item.height * 0.5f) * cellSize.y;
+            var x = (-(RepositoryManager.width * 0.5f) + item.position.x + item.width * 0.5f) * cellSize.x;
+            var y = (-(RepositoryManager.height * 0.5f) + item.position.y + item.height * 0.5f) * cellSize.y;
             return new Vector2(x, y);
         }
     }

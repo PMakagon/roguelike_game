@@ -15,9 +15,9 @@ namespace LiftGame.PlayerCore.HealthSystem
         private float _health;
 
         [Header("STRESS DAMAGE")] 
-        [Slider(0f, 30f)] [SerializeField] private float maxStressDamage = 3f;
-        [Slider(0f, 30f)] [SerializeField] private float midStressDamage = 0.5f;
-        [Slider(0f, 30f)] [SerializeField] private float healthRegen = 0.1f;
+        [MinMaxSlider(0f, 30f)] [SerializeField] private float maxStressDamage = 3f;
+        [MinMaxSlider(0f, 30f)] [SerializeField] private float midStressDamage = 0.5f;
+        [MinMaxSlider(0f, 30f)] [SerializeField] private float healthRegen = 0.1f;
         [SerializeField] private float updateTime = 0.5f;
         
         public const int MAX_HEALTH = 100;

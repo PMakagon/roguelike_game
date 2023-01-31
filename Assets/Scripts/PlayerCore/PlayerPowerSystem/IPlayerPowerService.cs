@@ -1,17 +1,21 @@
-﻿using System;
+﻿using LiftGame.GameCore.Pause;
 
 namespace LiftGame.PlayerCore.PlayerPowerSystem
 {
-    public interface IPlayerPowerService
+    public interface IPlayerPowerService : IPauseable
     {
-        public event Action OnPowerChange;
-        public event Action OnPowerOff;
-        void AddPower(int powerToAdd);
-        void SetActive(bool state);
-        void ResetPowerData();
+        void EnablePowerConsumption();
+        void DisablePowerConsumption();
+        float GetCurrentPower();
+        float GetCurrentLoad();
+        void AddLoad(float newLoad);
+        void AddLoad(float newLoad, float penalty);
+        void RemoveLoad(float load);
+        void AddPower(float powerToAdd);
+        void DamagePower(float powerDamage);
         bool IsNoPower();
-        void ReducePowerLoad();
-        
+        void ResetPowerData();
         public PlayerPowerData PlayerPowerData { get; }
+        
     }
 }

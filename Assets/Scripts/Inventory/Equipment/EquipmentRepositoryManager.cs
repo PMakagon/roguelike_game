@@ -28,7 +28,7 @@ namespace LiftGame.Inventory.Equipment
             Rebuild(false);
         }
 
-        public int ReturnPepositorySlotId()
+        public int ReturnRepositorySlotId()
         {
             return _repository.SlotId;
         }

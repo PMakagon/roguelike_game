@@ -4,7 +4,7 @@ namespace LiftGame.PlayerCore.HealthSystem
 {
     public interface IPlayerHealthService : IPauseable
     {
-        void AddDamage(int damage);
+        void AddDamage(float damage);
         void SetHealthStartState();
         void SetHealthSafeState();
         void SetMortal(bool isMortal);

@@ -35,7 +35,7 @@ namespace LiftGame.Inventory.Bag
             if (!_items.Contains(item))
             {
                 _items.Add(item);
-                Debug.Log("ITEM ADDED to BAG at" + item.position);
+                // Debug.Log("ITEM ADDED to BAG at" + item.position);
                 return true;
             }
             Debug.Log("ITEM " + (item as ItemDefinition).Name + "ALREADY ADDED");

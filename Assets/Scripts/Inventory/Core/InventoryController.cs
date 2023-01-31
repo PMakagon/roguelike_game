@@ -22,7 +22,7 @@ namespace LiftGame.Inventory.Core
         private IInventoryItem _itemToDrag;
         private IInventoryItem _lastHoveredItem;
         private PointerEventData _currentEventData;
-        internal IRepositoryManager Repository => inventoryRenderer.Repository;
+        internal IRepositoryManager RepositoryManager => inventoryRenderer.RepositoryManager;
 
         /// <inheritdoc />
         public Action<IInventoryItem> onItemHovered { get; set; }
@@ -63,7 +63,7 @@ namespace LiftGame.Inventory.Core
         private IInventoryItem GetItemFromGrid()
         {
             var grid = ScreenToGrid(_currentEventData.position);
-            var item = Repository.GetAtPoint(grid);
+            var item = RepositoryManager.GetAtPoint(grid);
             return item;
         }
 
@@ -109,11 +109,11 @@ namespace LiftGame.Inventory.Core
             var grid = ScreenToGrid(eventData.position);
             if (eventData.button == PointerEventData.InputButton.Right)
             {
-                InventoryContextMenuController.Show(Repository.GetAtPoint(grid));
+                InventoryContextMenuController.Show(RepositoryManager.GetAtPoint(grid),this);
                 return;
             }
 
-            _itemToDrag = Repository.GetAtPoint(grid);
+            _itemToDrag = RepositoryManager.GetAtPoint(grid);
         }
 
         /*
@@ -140,7 +140,7 @@ namespace LiftGame.Inventory.Core
             );
 
             // Remove the item from inventory
-            Repository.TryRemove(_itemToDrag);
+            RepositoryManager.TryRemove(_itemToDrag);
 
             onItemPickedUp?.Invoke(_itemToDrag);
         }

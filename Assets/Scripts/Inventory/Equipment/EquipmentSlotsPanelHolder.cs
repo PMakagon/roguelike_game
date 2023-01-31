@@ -1,4 +1,5 @@
-﻿using LiftGame.Inventory.Core;
+﻿using System;
+using LiftGame.Inventory.Core;
 using UnityEngine;
 using Zenject;
 
@@ -23,17 +24,26 @@ namespace LiftGame.Inventory.Equipment
             {
                 Debug.LogError("Equipment Slot Renderer not found");
             }
+            _inventoryService.OnInventoryLoad += Init;
+        }
+        
+
+        private void OnDestroy()
+        {
+            _inventoryService.OnInventoryLoad -= Init;
         }
 
-        private void Start()
+        private void Init()
         {
-            _inventoryService.OnInventoryLoad += SetInventoryToRenderers;
+            leftSlotRenderer.SetupRenderer();
+            rightSlotRenderer.SetupRenderer();
+            SetInventoryToRenderers();
         }
 
         private void SetInventoryToRenderers()
         {
-            leftSlotRenderer.SetInventory(_inventoryService.GetEquipmentRepositoryManager(0),InventoryRenderMode.Single);
-            rightSlotRenderer.SetInventory(_inventoryService.GetEquipmentRepositoryManager(1),InventoryRenderMode.Single);
+            leftSlotRenderer.RenderInventory(_inventoryService.GetEquipmentRepositoryManager(0),InventoryRenderMode.Single);
+            rightSlotRenderer.RenderInventory(_inventoryService.GetEquipmentRepositoryManager(1),InventoryRenderMode.Single);
         }
         
     }

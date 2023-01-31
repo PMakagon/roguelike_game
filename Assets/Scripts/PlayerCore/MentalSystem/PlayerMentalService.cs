@@ -28,7 +28,7 @@ namespace LiftGame.PlayerCore.MentalSystem
         public void SetStartState()
         {
             SubscribeToStressEvents();
-            _playerMentalData.Stress = PlayerMentalData.BASE_STRESS_LEVEL;
+            _playerMentalData.StressLevel = PlayerMentalData.BASE_STRESS_LEVEL;
             _playerMentalData.CurrentStressModificator = _playerMentalData.BaseStressModificator;
             EnableStressChange();
             UpdateStressState();
@@ -38,7 +38,7 @@ namespace LiftGame.PlayerCore.MentalSystem
         public void SetSafeState()
         {
             UnsubscribeFromStressEvents();
-            _playerMentalData.Stress = PlayerMentalData.BASE_STRESS_LEVEL;
+            _playerMentalData.StressLevel = PlayerMentalData.BASE_STRESS_LEVEL;
             _playerMentalData.CurrentStressModificator = _playerMentalData.BaseStressModificator;
             DisableStressChange();
             UpdateStressState();
@@ -56,12 +56,14 @@ namespace LiftGame.PlayerCore.MentalSystem
         public async void EnableStressChange()
         {
             _playerHealthData._isStressable = true;
+            IsStressChangeEnabled = true;
             await UpdateStressExposure(_cancellationToken.Token);
         }
 
         public void DisableStressChange()
         {
             _playerHealthData._isStressable = false;
+            IsStressChangeEnabled = false;
             _cancellationToken.Cancel();
         }
 
@@ -71,67 +73,81 @@ namespace LiftGame.PlayerCore.MentalSystem
             {
                 if (_isPaused)
                 {
-                    // Debug.Log( "paused");
                     await UniTask.WaitUntil(() => _isPaused == false, cancellationToken: cancelToken);
                 }
-
+                
+                if (!IsStressChangeEnabled)
+                {
+                    await UniTask.WaitUntil(() => IsStressChangeEnabled == true, cancellationToken: cancelToken);
+                }
+                
                 await UniTask.Delay(TimeSpan.FromSeconds(_playerMentalData.UpdateTime), ignoreTimeScale: false);
                 UpdateStressModificator();
                 ApplyStressExposure();
                 UpdateStressState();
-                _playerMentalData.Stress = Mathf.RoundToInt(_playerMentalData.Stress);
-                Debug.Log("STRESS UPDATED");
+                _playerMentalData.StressLevel = Mathf.RoundToInt(_playerMentalData.StressLevel);
             }
+        }
+
+        public bool IsStressChangeEnabled { get; private set; }
+        public float GetStressLevel()
+        {
+            return _playerMentalData.StressLevel;
+        }
+
+        public StressState GetCurrentState()
+        {
+            return _playerMentalData.StressState;
         }
 
         public void AddStress(int stressAmount)
         {
             if (!_playerHealthData._isStressable) return;
-            _playerMentalData.Stress += stressAmount;
+            _playerMentalData.StressLevel += stressAmount;
             PlayerMentalEventHolder.BroadcastOnStressApplied(_playerMentalData,stressAmount);
         }
 
         public void ReduceStress(int stressAmount)
         {
-            if (_playerMentalData.Stress - stressAmount >= PlayerMentalData.MIN_STRESS_LEVEL)
+            if (_playerMentalData.StressLevel - stressAmount >= PlayerMentalData.MIN_STRESS_LEVEL)
             {
-                _playerMentalData.Stress -= stressAmount;
+                _playerMentalData.StressLevel -= stressAmount;
             }
             else
             {
-                _playerMentalData.Stress = PlayerMentalData.MIN_STRESS_LEVEL;
+                _playerMentalData.StressLevel = PlayerMentalData.MIN_STRESS_LEVEL;
             }
         }
 
         private void ApplyStressExposure()
         {
-            if (_playerMentalData.Stress <= PlayerMentalData.MID_STRESS_LEVEL)
+            if (_playerMentalData.StressLevel <= PlayerMentalData.MID_STRESS_LEVEL)
             {
-                _playerMentalData.Stress += _playerMentalData.CurrentStressModificator;
+                _playerMentalData.StressLevel += _playerMentalData.CurrentStressModificator;
             }
 
-            switch (_playerMentalData.Stress)
+            switch (_playerMentalData.StressLevel)
             {
                 case >= PlayerMentalData.MAX_STRESS_LEVEL:
-                    _playerMentalData.Stress = PlayerMentalData.MAX_STRESS_LEVEL;
+                    _playerMentalData.StressLevel = PlayerMentalData.MAX_STRESS_LEVEL;
                     return;
                 case <= PlayerMentalData.MIN_STRESS_LEVEL:
-                    _playerMentalData.Stress = PlayerMentalData.MIN_STRESS_LEVEL;
+                    _playerMentalData.StressLevel = PlayerMentalData.MIN_STRESS_LEVEL;
                     return;
             }
         }
 
         private void ReduceStressExposure()
         {
-            if (_playerMentalData.Stress <= PlayerMentalData.MID_STRESS_LEVEL && _playerMentalData.Stress > PlayerMentalData.BASE_STRESS_LEVEL)
+            if (_playerMentalData.StressLevel <= PlayerMentalData.MID_STRESS_LEVEL && _playerMentalData.StressLevel > PlayerMentalData.BASE_STRESS_LEVEL)
             {
-                _playerMentalData.Stress -= _playerMentalData.BaseRegen;
+                _playerMentalData.StressLevel -= _playerMentalData.BaseRegen;
                 return;
             }
 
-            if (_playerMentalData.Stress > PlayerMentalData.MID_STRESS_LEVEL)
+            if (_playerMentalData.StressLevel > PlayerMentalData.MID_STRESS_LEVEL)
             {
-                _playerMentalData.Stress -= _playerMentalData.FastRegen;
+                _playerMentalData.StressLevel -= _playerMentalData.FastRegen;
             }
         }
         
@@ -169,7 +185,7 @@ namespace LiftGame.PlayerCore.MentalSystem
         {
             StressState prevState = _playerMentalData.StressState;
             StressState newState;
-            switch (_playerMentalData.Stress)
+            switch (_playerMentalData.StressLevel)
             {
                 case >= PlayerMentalData.MAX_STRESS_LEVEL:
                     newState = StressState.Max;

@@ -11,9 +11,11 @@ namespace LiftGame.InteractableObjects
     public class QuestCompleterTest : Interactable
     {
         [SerializeField] private TextMeshPro textBox;
+        private Interaction _toPutItem = new Interaction("Put Item", true);
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             LiftControllerData.OnLevelGameLoopFinished += ChangeText;
         }
 
@@ -22,17 +24,28 @@ namespace LiftGame.InteractableObjects
             textBox.text = "bring more";
         }
         
-        public override void OnInteract(IPlayerData playerData)
+        public override void BindInteractions()
         {
-            var inventory=  playerData.GetInventoryData();
+            _toPutItem.actionOnInteract = CompleteQuest;
+        }
+        
+        public override void AddInteractions()
+        {
+            Interactions.Add(_toPutItem);
+        }
+        private bool CompleteQuest()
+        {
+            var inventory=  CachedPlayerData.GetInventoryData();
             foreach (var item in inventory.GetAllItems().Where(item => ((ItemDefinition)item).ItemType == ItemType.Quest))
             {
                 inventory.TryToRemoveItem(item);
                 textBox.text = "DONE";
                 LiftControllerData.OnLevelGameLoopFinished?.Invoke();
-                return;
+                return true;
             }
             textBox.text = "kek";
+            return false;
         }
+        
     }
 }

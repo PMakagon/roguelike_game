@@ -112,7 +112,7 @@ namespace LiftGame.PlayerCore.MentalSystem
                 _playerLitState = PlayerLitState.Lit;
             }
 
-            Debug.Log(_playerLitState);
+            // Debug.Log(_playerLitState);
             return _playerLitState;
         }
 

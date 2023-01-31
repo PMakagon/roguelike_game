@@ -2,43 +2,34 @@
 using System.Globalization;
 using LiftGame.PlayerCore;
 using LiftGame.PlayerCore.PlayerPowerSystem;
+using LiftGame.ProxyEventHolders;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
 namespace LiftGame.Ui.HUD
 {
+    //to delete
     public class PowerUIBar: MonoBehaviour
-
     {
         [SerializeField] private Text power;
         [SerializeField] private Text currentLoad;
         [SerializeField] private Sprite[] sprites;
         [SerializeField] private Image status;
-        private IPlayerPowerService _powerService;
-        private PlayerPowerData _playerPowerData;
 
-        
-        [Inject]
-        private void Construct(IPlayerPowerService powerService,IPlayerData playerData)
-        {
-            _powerService = powerService;
-            _playerPowerData = playerData.GetPowerData();
-        }
-        
         private void Start()
         {
-            _powerService.OnPowerChange += UpdatePowerBar;
+            PlayerPowerEventHolder.OnPowerChanged += UpdatePowerBar;
         }
 
         private void OnDestroy()
         {
-            _powerService.OnPowerChange -= UpdatePowerBar;
+            PlayerPowerEventHolder.OnPowerChanged -= UpdatePowerBar;
         }
 
-        private void UpdatePowerBar()
+        private void UpdatePowerBar(PlayerPowerData powerData)
         {
-            float currentPower = _playerPowerData.CurrentPower;
+            float currentPower = powerData.CurrentPower;
             power.text = currentPower.ToString(CultureInfo.CurrentCulture);
             if (currentPower <=0)
             {
@@ -75,8 +66,8 @@ namespace LiftGame.Ui.HUD
                 status.sprite = sprites[5];
                 return;
             }
-            power.text = _playerPowerData.CurrentPower.ToString(CultureInfo.CurrentCulture);
-            currentLoad.text ="load " + _playerPowerData.PowerLoad.ToString(CultureInfo.CurrentCulture);
+            power.text = powerData.CurrentPower.ToString(CultureInfo.CurrentCulture);
+            currentLoad.text ="load " + powerData.PowerLoad.ToString(CultureInfo.CurrentCulture);
         }
     }
 }

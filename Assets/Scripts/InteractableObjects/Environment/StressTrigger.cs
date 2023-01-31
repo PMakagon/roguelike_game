@@ -21,7 +21,6 @@ namespace LiftGame.InteractableObjects.Environment
             { 
                 actionOnTrigger?.Invoke();
                 PlayerMentalEventHolder.SendOnStressTaken(stressDamage);
-                Debug.Log("AAA");
             }
         }
     }

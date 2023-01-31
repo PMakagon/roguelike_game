@@ -51,6 +51,7 @@ namespace LiftGame.GameCore.Input
         {
             _inputData.UIInputData.InventoryClicked = UnityEngine.Input.GetKeyDown(KeyCode.Tab);
             _inputData.UIInputData.InventoryReleased = UnityEngine.Input.GetKeyUp(KeyCode.Tab);
+            _inputData.UIInputData.ScrollWheelDirection = UnityEngine.Input.GetAxis("Mouse ScrollWheel");
             _inputData.UIInputData.UpdateInputEvents();
         }
 

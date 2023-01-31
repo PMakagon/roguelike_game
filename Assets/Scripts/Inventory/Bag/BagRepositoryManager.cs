@@ -230,7 +230,6 @@ namespace LiftGame.Inventory.Bag
         /// <inheritdoc />
         public bool TryAddAt(IInventoryItem item, Vector2Int point)
         {
-            Debug.Log("BAG TRYADD AT called");
             if (!CanAddAt(item, point) || !_repository.AddInventoryItem(item)) 
 			{
 				onItemAddedFailed?.Invoke(item);

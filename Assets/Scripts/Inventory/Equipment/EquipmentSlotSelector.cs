@@ -10,28 +10,26 @@ namespace LiftGame.Inventory.Equipment
         [SerializeField] private Image leftSelector;
         [SerializeField] private Image rightSelector;
         private IPlayerInventoryService _inventoryService;
-        private InputDataProvider _inputDataProvider;
 
         //MonoBehaviour injection
         [Inject]
-        private void Construct(IPlayerInventoryService inventoryService,InputDataProvider inputDataProvider)
+        private void Construct(IPlayerInventoryService inventoryService)
         {
             _inventoryService = inventoryService;
-            _inputDataProvider = inputDataProvider;
         }
         
         private void Start()
         {
             _inventoryService.OnInventoryLoad += UpdateSlotSelection;
             _inventoryService.OnInventoryOpen += UpdateSlotSelection;
-            _inputDataProvider.EquipmentInputData.OnSwitchWeaponPressed += UpdateSlotSelection;
+            EquipmentInputData.OnSwitchWeaponPressed += UpdateSlotSelection;
         }
 
         private void OnDestroy()
         {
             _inventoryService.OnInventoryLoad -= UpdateSlotSelection;
             _inventoryService.OnInventoryOpen -= UpdateSlotSelection;
-            _inputDataProvider.EquipmentInputData.OnSwitchWeaponPressed -= UpdateSlotSelection;
+           EquipmentInputData.OnSwitchWeaponPressed -= UpdateSlotSelection;
         }
         
         private void UpdateSlotSelection()

@@ -8,9 +8,8 @@ using Zenject;
 namespace LiftGame.PlayerEquipment
 {
     [RequireComponent(typeof(EquipmentSwitcher))]
-    public class EquipmentInteractionController : MonoBehaviour,IPauseable
+    public class EquipmentInteractionController : MonoBehaviour, IPauseable
     {
-        private InputDataProvider _inputDataProvider;
         private IPlayerInventoryService _inventoryService;
         private IPlayerPowerService _playerPowerService;
         private HeadFlashlight _headFlashlight;
@@ -19,10 +18,9 @@ namespace LiftGame.PlayerEquipment
 
         //MonoBehaviour injection
         [Inject]
-        private void Construct(IPlayerInventoryService playerInventoryService, InputDataProvider inputDataProvider,
-            IPlayerPowerService playerPowerService,IPauseHandler pauseHandler)
+        private void Construct(IPlayerInventoryService playerInventoryService,
+            IPlayerPowerService playerPowerService, IPauseHandler pauseHandler)
         {
-            _inputDataProvider = inputDataProvider;
             _inventoryService = playerInventoryService;
             _playerPowerService = playerPowerService;
             _pauseHandler = pauseHandler;
@@ -36,8 +34,8 @@ namespace LiftGame.PlayerEquipment
 
         private void Start()
         {
-            _headFlashlight.Initialize(_playerPowerService,_inputDataProvider);
-            _equipmentSwitcher.Initialize(_inventoryService,_playerPowerService);
+            _headFlashlight.Initialize(_playerPowerService);
+            _equipmentSwitcher.Initialize(_inventoryService, _playerPowerService);
             _pauseHandler.Register(this);
             _inventoryService.OnInventoryLoad += GetStarted;
             _inventoryService.OnInventoryOpen += DisableInputListeners;
@@ -45,7 +43,7 @@ namespace LiftGame.PlayerEquipment
             _inventoryService.InventoryData.OnWorldItemAddedToEquipmentSlot += GetStarted;
             EnableInputListeners();
         }
-        
+
         private void OnDestroy()
         {
             _pauseHandler.UnRegister(this);
@@ -57,21 +55,20 @@ namespace LiftGame.PlayerEquipment
 
         private void EnableInputListeners()
         {
-            _inputDataProvider.EquipmentInputData.OnSwitchWeaponPressed += SwapEquipment;
-            _inputDataProvider.EquipmentInputData.OnUsingClicked += UseEquipment;
+            EquipmentInputData.OnSwitchWeaponPressed += SwapEquipment;
+            EquipmentInputData.OnUsingClicked += UseEquipment;
             // _inputDataProvider.EquipmentInputData.OnTurnOnClicked += ;
             // _inputDataProvider.EquipmentInputData.OnTurnOnReleased += ;
-           
         }
 
         private void DisableInputListeners()
         {
-            _inputDataProvider.EquipmentInputData.OnSwitchWeaponPressed -= SwapEquipment;
-            _inputDataProvider.EquipmentInputData.OnUsingClicked -= UseEquipment;
+            EquipmentInputData.OnSwitchWeaponPressed -= SwapEquipment;
+            EquipmentInputData.OnUsingClicked -= UseEquipment;
             // _inputDataProvider.EquipmentInputData.OnTurnOnClicked -= ;
             // _inputDataProvider.EquipmentInputData.OnTurnOnReleased -= ;
         }
-        
+
         private void GetStarted()
         {
             _equipmentSwitcher.WithdrawEquipment();
@@ -85,7 +82,7 @@ namespace LiftGame.PlayerEquipment
 
         private void UseEquipment()
         {
-           _inventoryService.GetCurrentEquipment()?.OnUse();
+            _inventoryService.GetCurrentEquipment()?.OnUse();
         }
 
         public void SetPaused(bool isPaused)
@@ -95,6 +92,7 @@ namespace LiftGame.PlayerEquipment
                 DisableInputListeners();
                 return;
             }
+
             EnableInputListeners();
         }
     }

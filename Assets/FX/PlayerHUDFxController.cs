@@ -36,7 +36,7 @@ namespace LiftGame.FX
             
         }
 
-        private void ApplyHealthDamageFX(PlayerHealthData playerHealthData, int damage)
+        private void ApplyHealthDamageFX(PlayerHealthData playerHealthData, float damage)
         {
             if (damage > playerHealthData.MaxStressDamage)
             {

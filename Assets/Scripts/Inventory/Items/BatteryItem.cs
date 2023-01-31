@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using LiftGame.Ui;
+using UnityEngine;
 
 namespace LiftGame.Inventory.Items
 {
@@ -13,9 +14,9 @@ namespace LiftGame.Inventory.Items
             set => capacity = value;
         }
 
-        public override void Use()
+        public override void Use(InventoryItemInteractor interactor)
         {
-            base.Use();
+           interactor.PowerService.AddPower((int)capacity);
         }
     }
 }

@@ -1,13 +1,14 @@
 ﻿using LiftGame.Inventory.Core;
+using TMPro;
 using UnityEngine;
 using Zenject;
 
 namespace LiftGame.Inventory.Container
 {
-    [RequireComponent(typeof(InventoryRenderer))]
     public class ContainerPanelController : MonoBehaviour
     {
         [SerializeField] private InventoryRenderer inventoryRenderer;
+        [SerializeField] private TextMeshProUGUI containerLabel;
         private ContainerItemRepository _repository;
         private IPlayerInventoryService _inventoryService;
 
@@ -17,8 +18,9 @@ namespace LiftGame.Inventory.Container
             _inventoryService = inventoryService;
         }
         
-        private void Start()
+        private void Awake()
         {
+            inventoryRenderer.SetupRenderer();
             _inventoryService.OnInventoryLoad += Init;
         }
 
@@ -29,17 +31,20 @@ namespace LiftGame.Inventory.Container
 
         private void Init()
         {
-            
+           
         }
-        
+
         private void OnEnable()
         {
             _repository = _inventoryService.GetContainerRepository();
             if (_repository == null) return;
+            containerLabel.text = _inventoryService.InventoryData.CurrentContainer.Config.ContainerName;
             var repoManager = _inventoryService.GetContainerRepositoryManager();
             repoManager.SetContainer(_inventoryService.GetContainerRepository());
+            // to move
             if (!_repository.isLootSpawned) repoManager.SpawnRandomLoot(_repository.Config);
-            inventoryRenderer.SetInventory(repoManager,_repository.InventoryRenderMode);
+            //
+            inventoryRenderer.RenderInventory(repoManager,_repository.InventoryRenderMode);
         }
 
         private void OnDisable()

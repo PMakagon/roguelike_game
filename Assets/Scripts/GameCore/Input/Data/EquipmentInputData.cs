@@ -21,12 +21,14 @@ namespace LiftGame.GameCore.Input.Data
             SwitchWeaponPressed = false;
         }
 
-        public event Action OnFlashlightClicked = delegate { };
-        public event Action<float> OnFlashlightAdjust = delegate { };
-        public event Action OnTurnOnClicked = delegate { };
-        public event Action OnTurnOnReleased = delegate { };
-        public event Action OnUsingClicked = delegate { };
-        public event Action OnSwitchWeaponPressed = delegate { };
+        public static event Action OnFlashlightClicked = delegate { };
+        public static event Action<float> OnFlashlightAdjust = delegate { };
+        public static event Action OnTurnOnClicked = delegate { };
+        public static event Action OnTurnOnReleased = delegate { };
+        public static event Action OnAirBypassClicked = delegate { };
+        public static event Action OnAirBypassReleased = delegate { };
+        public static event Action OnUsingClicked = delegate { };
+        public static event Action OnSwitchWeaponPressed = delegate { };
 
         public void UpdateInputEvents()
         {
@@ -36,6 +38,8 @@ namespace LiftGame.GameCore.Input.Data
             if (TurnOnReleased) OnTurnOnReleased?.Invoke();
             if (UsingClicked) OnUsingClicked?.Invoke();
             if (SwitchWeaponPressed) OnSwitchWeaponPressed?.Invoke();
+            if (AirBypassClicked) OnAirBypassClicked?.Invoke();
+            if (AirBypassReleased) OnAirBypassReleased?.Invoke();
         }
 
         public float ScrollWheelDirection { get; set; }

@@ -34,7 +34,7 @@ namespace LiftGame.PlayerCore.HealthSystem
             PlayerHealthEventHolder.OnDamageTaken -= AddDamage;
         }
 
-        public void AddDamage(int damage)
+        public void AddDamage(float damage)
         {
             if (!_playerHealthData._isDamageable) return;
             _playerHealthData.Health -= damage;
@@ -88,7 +88,6 @@ namespace LiftGame.PlayerCore.HealthSystem
             {
                 if (_isPaused)
                 {
-                    // Debug.Log( "paused");
                     await UniTask.WaitUntil(() => _isPaused == false, cancellationToken: cancelToken);
                 }
 
@@ -104,7 +103,6 @@ namespace LiftGame.PlayerCore.HealthSystem
                     CheckStressStateAndDamage();
                 }
                 UpdateHealthStatus();
-                Debug.Log("HEALTH UPDATED");
             }
         }
 
@@ -206,10 +204,6 @@ namespace LiftGame.PlayerCore.HealthSystem
         public void SetPaused(bool isPaused)
         {
             _isPaused = isPaused;
-            if (_isPaused)
-            {
-                
-            }
         }
     }
 }

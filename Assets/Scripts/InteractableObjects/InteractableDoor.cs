@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using FarrokhGames.Inventory;
 using LiftGame.FPSController.InteractionSystem;
 using LiftGame.Inventory.Core;
 using LiftGame.Inventory.Items;
-using LiftGame.PlayerCore;
 using ModestTree;
 using NaughtyAttributes;
 using UnityEngine;
@@ -13,10 +10,21 @@ namespace LiftGame.InteractableObjects
 {
     public class InteractableDoor : Interactable
     {
+        [SerializeField] private string doorName = "Door";
         [SerializeField] protected bool isLocked;
-        [ShowIf("isLocked")] [SerializeField] protected string keyName;
-        protected Animator animator;
-        protected bool isOpen;
+        [SerializeField] private float timeToUnlock = 1;
+        [ShowIf("isLocked")] [SerializeField] protected Key key;
+
+        [Header("INTERACTIONS")] [SerializeField]
+        private InteractionConfig breachConfig = null;
+
+        protected Animator Animator;
+        protected bool IsOpen;
+        protected bool IsExamined;
+
+        private Interaction _toOpen;
+        private Interaction _toUnlock;
+        private Interaction _toBreach;
 
         protected static readonly int Open = Animator.StringToHash("Open");
         protected static readonly int TryOpen = Animator.StringToHash("TryOpen");
@@ -25,9 +33,10 @@ namespace LiftGame.InteractableObjects
 
         #region BuiltIn Methods
 
-        private void Awake()
+        protected override void Awake()
         {
-            animator = GetComponentInParent<Animator>();
+            base.Awake();
+            Animator = GetComponentInParent<Animator>();
             SetToolTip();
         }
 
@@ -41,101 +50,140 @@ namespace LiftGame.InteractableObjects
             set => isLocked = value;
         }
 
-        public string KeyName
+        public Key Key
         {
-            get => keyName;
-            set => keyName = value;
+            get => key;
+            set => key = value;
         }
 
         #endregion
 
+        protected void SetToolTip()
+        {
+            TooltipMessage = doorName;
+            _toOpen.Label = IsOpen ? "Close" : "Open" ;
+        }
+
+        public override void CreateInteractions()
+        {
+            _toOpen = new Interaction("Open", true);
+            _toUnlock = new Interaction("Unlock",timeToUnlock, false);
+            _toBreach = new Interaction(breachConfig, false);
+        }
+
+        public override void BindInteractions()
+        {
+            _toOpen.ActionOnInteract = ChangeDoorState;
+            _toUnlock.ActionOnInteract = Unlock;
+            _toBreach.ActionOnInteract = Breach;
+        }
+
+        public override void AddInteractions()
+        {
+            Interactions.Add(_toOpen);
+            Interactions.Add(_toUnlock);
+            Interactions.Add(_toBreach);
+            _toOpen.IsEnabled = true;
+        }
+
         public void ForceOpenDoor()
         {
-            if (isLocked) return;
-            isOpen = true;
-            animator.SetBool(ForceOpen, isOpen);
+            if (!IsExamined && isLocked) return;
+            isLocked = false;
+            IsOpen = true;
+            Animator.SetBool(ForceOpen, IsOpen);
             SetToolTip();
         }
 
         public void ForceCloseDoor()
         {
-            if (!isOpen) return;
-            isOpen = false;
-            animator.SetBool(ForceClose, isOpen);
+            if (!IsOpen) return;
+            IsOpen = false;
+            Animator.SetBool(ForceClose, IsOpen);
             SetToolTip();
-        }
-
-        protected void SetToolTip()
-        {
-            TooltipMessage = isOpen ? "Close" : "Open";
-        }
-
-        public void ChangeState()
-        {
-            if (isOpen)
-            {
-                CloseDoor();
-            }
-            else
-            {
-                OpenDoor();
-            }
         }
 
         protected void OpenDoor()
         {
-            isOpen = true;
-            animator.SetBool(Open, isOpen);
-            SetToolTip();
+            IsOpen = true;
+            Animator.SetBool(Open, IsOpen);
         }
 
         protected void CloseDoor()
         {
-            isOpen = false;
-            animator.SetBool(Open, isOpen);
-            SetToolTip();
+            IsOpen = false;
+            Animator.SetBool(Open, IsOpen);
         }
 
-        protected bool CheckForKey(List<IInventoryItem> allItems)
+        protected bool TryUnlock(List<IInventoryItem> allItems)
         {
             if (allItems.IsEmpty()) return false;
             foreach (var item in allItems)
             {
-                if (item==null) continue;
-                if ((item.GetType() != typeof(Key))) continue;
-                if ((item as Key)?.KeyCode == keyName)
+                if (item == null) continue;
+                if ((item as ItemDefinition)?.ItemType != ItemType.Key) continue;
+                if ((item as Key)?.KeyCode == key.KeyCode)
                 {
                     isLocked = false;
                     // Debug.Log("Opened with " + key.Name);
                     return true;
                 }
             }
+
             return false;
         }
 
-        public override void OnInteract(IPlayerData playerData)
+        public override void OnInteract(Interaction interaction)
         {
-            if (isOpen)
+            IsExamined = true;
+            base.OnInteract(interaction);
+        }
+
+        protected bool Breach()
+        {
+            ForceOpenDoor();
+            _toOpen.IsEnabled = true;
+            _toUnlock.IsEnabled = false;
+            _toBreach.IsEnabled = false;
+            return true;
+        }
+
+        protected bool Unlock()
+        {
+            var inventory = CachedPlayerData.GetInventoryData();
+            if (TryUnlock(inventory.GetAllItems()))
+            {
+                Animator.SetBool(TryOpen, true);
+                _toOpen.IsEnabled = true;
+                _toUnlock.IsEnabled = false;
+                _toBreach.IsEnabled = false;
+                return true;
+            }
+
+            return false;
+        }
+
+        protected virtual bool ChangeDoorState()
+        {
+            if (isLocked)
+            {
+                Animator.SetBool(TryOpen, true);
+                _toOpen.IsEnabled = false;
+                _toUnlock.IsEnabled = true;
+                _toBreach.IsEnabled = true;
+                return false;
+            }
+
+            if (IsOpen)
             {
                 CloseDoor();
-                return;
-            }
-
-            if (!isLocked)
-            {
-                OpenDoor();
-                return;
-            }
-
-            var inventory = playerData.GetInventoryData();
-            if (CheckForKey(inventory.GetAllItems()))
-            {
-                OpenDoor();
             }
             else
             {
-                animator.SetBool(TryOpen, true);
+                OpenDoor();
             }
+            SetToolTip();
+            return true;
         }
     }
 }
