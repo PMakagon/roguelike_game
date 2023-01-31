@@ -21,6 +21,7 @@ namespace LiftGame.PlayerCore.PlayerAirSystem
 
         public float CurrentAirUsage { get; set; }
         public bool IsActive { get; set; }
+        public bool IsBypassed { get; set; }
         public float HealthDamageOnEmpty => healthDamageOnEmpty;
         public float MaxStressUsage => maxStressUsage;
 
@@ -38,6 +39,7 @@ namespace LiftGame.PlayerCore.PlayerAirSystem
         {
             CurrentAirLevel = MAX_AIR;
             CurrentAirUsage = baseStressUsage;
+            IsBypassed = false;
         }
     }
 }

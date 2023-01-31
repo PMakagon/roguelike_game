@@ -20,30 +20,30 @@ namespace LiftGame.Ui.HUD
             _inventoryService = inventoryService;
         }
 
-        private void Start()
-        {
-            _inventoryService.OnInventoryLoad += ShowHUD;
-            _inventoryService.OnInventoryOpen += HideHUD;
-            _inventoryService.OnInventoryClose += ShowHUD;
-        }
-
-        private void OnDestroy()
-        {
-            _inventoryService.OnInventoryLoad -= ShowHUD;
-            _inventoryService.OnInventoryOpen -= HideHUD;
-            _inventoryService.OnInventoryClose -= ShowHUD;
-        }
-
-        private void ShowHUD()
-        {
-            mentalStatus.gameObject.SetActive(true);
-            healthStatus.gameObject.SetActive(true);
-        }
-        private void HideHUD()
-        {
-            mentalStatus.gameObject.SetActive(false);
-            healthStatus.gameObject.SetActive(false);
-        }
+        // private void Start()
+        // {
+        //     _inventoryService.OnInventoryLoad += ShowHUD;
+        //     _inventoryService.OnInventoryOpen += HideHUD;
+        //     _inventoryService.OnInventoryClose += ShowHUD;
+        // }
+        //
+        // private void OnDestroy()
+        // {
+        //     _inventoryService.OnInventoryLoad -= ShowHUD;
+        //     _inventoryService.OnInventoryOpen -= HideHUD;
+        //     _inventoryService.OnInventoryClose -= ShowHUD;
+        // }
+        //
+        // private void ShowHUD()
+        // {
+        //     mentalStatus.gameObject.SetActive(true);
+        //     healthStatus.gameObject.SetActive(true);
+        // }
+        // private void HideHUD()
+        // {
+        //     mentalStatus.gameObject.SetActive(false);
+        //     healthStatus.gameObject.SetActive(false);
+        // }
 
         private void Update()
         {

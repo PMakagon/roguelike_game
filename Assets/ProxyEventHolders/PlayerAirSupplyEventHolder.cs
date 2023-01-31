@@ -10,6 +10,7 @@ namespace LiftGame.ProxyEventHolders
         public static event Action<PlayerAirData> OnAirLevelChanged;
         public static event Action<PlayerAirData> OnAirUsageChanged;
         public static event Action OnAirEmpty;
+        public static event Action OnAirLow;
         
         public static void SendOnAirRestored(float airRestored)
         {
@@ -34,6 +35,9 @@ namespace LiftGame.ProxyEventHolders
         public static void BroadcastOnAirEmpty()
         {
             OnAirEmpty?.Invoke();
+        }public static void BroadcastOnAirLow()
+        {
+            OnAirLow?.Invoke();
         }
     }
 }

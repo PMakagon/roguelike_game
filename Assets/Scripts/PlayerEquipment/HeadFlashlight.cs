@@ -15,15 +15,13 @@ namespace LiftGame.PlayerEquipment
         [SerializeField] private float maxAngle = 80f;
         [SerializeField] private float minAngle = 30f;
         private IPlayerPowerService _powerService;
-        private EquipmentInputData _equipmentInputData;
         private Light _light;
         private bool _isBlinking;
         private bool _isAdjusted;
 
-        public void Initialize(IPlayerPowerService playerPowerService, InputDataProvider inputDataProvider)
+        public void Initialize(IPlayerPowerService playerPowerService)
         {
             _powerService = playerPowerService;
-            _equipmentInputData = inputDataProvider.EquipmentInputData;
         }
 
         private void Awake()
@@ -34,15 +32,15 @@ namespace LiftGame.PlayerEquipment
 
         private void Start()
         {
-            _equipmentInputData.OnFlashlightClicked += SwitchFlashlightState;
-            _equipmentInputData.OnFlashlightAdjust += AdjustFlashlightAngle;
+            EquipmentInputData.OnFlashlightClicked += SwitchFlashlightState;
+            EquipmentInputData.OnFlashlightAdjust += AdjustFlashlightAngle;
             PlayerPowerEventHolder.OnPowerOff += TurnOffWithBlink;
         }
 
         private void OnDestroy()
         {
-            _equipmentInputData.OnFlashlightClicked -= SwitchFlashlightState;
-            _equipmentInputData.OnFlashlightAdjust -= AdjustFlashlightAngle;
+            EquipmentInputData.OnFlashlightClicked -= SwitchFlashlightState;
+            EquipmentInputData.OnFlashlightAdjust -= AdjustFlashlightAngle;
             PlayerPowerEventHolder.OnPowerOff -= TurnOffWithBlink;
         }
 

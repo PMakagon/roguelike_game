@@ -22,7 +22,7 @@ namespace LiftGame.Ui.HUD
         {
             stressMod.text = _playerMentalData.CurrentStressModificator.ToString();
             stress.text = _playerMentalData.StressLevel.ToString();
-            stressState.text =  "StressState: " + _playerMentalData.StressState;
+            stressState.text = _playerMentalData.StressState.ToString();
         }
     }
 }

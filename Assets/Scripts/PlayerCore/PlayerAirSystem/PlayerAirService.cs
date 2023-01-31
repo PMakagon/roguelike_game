@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using LiftGame.GameCore.Input.Data;
 using LiftGame.GameCore.LevelGameLoop;
 using LiftGame.GameCore.Pause;
 using LiftGame.PlayerCore.HealthSystem;
@@ -20,15 +21,27 @@ namespace LiftGame.PlayerCore.PlayerAirSystem
         private CancellationTokenSource _cancellationToken = new();
         private StressState _lastState;
         private bool _isPaused;
-        
+
         [Inject]
-        public PlayerAirService (IPlayerData playerData, IPlayerMentalService mentalService,IPlayerHealthService healthService, IPauseHandler pauseHandler)
+        public PlayerAirService(IPlayerData playerData, IPlayerMentalService mentalService,
+            IPlayerHealthService healthService, IPauseHandler pauseHandler)
         {
             _airData = playerData.GetAirData();
             _mentalService = mentalService;
             _healthService = healthService;
             LevelGameLoopEventHandler.OnLoopStart += EnableAirSupply;
             LevelGameLoopEventHandler.OnLoopEnd += DisableAirSupply;
+            EquipmentInputData.OnAirBypassClicked += ChangeBypassState;
+        }
+
+        private void ChangeBypassState()
+        {
+            _airData.IsBypassed = !_airData.IsBypassed;
+        }
+
+        public bool IsBypassed()
+        {
+            return _airData.IsBypassed;
         }
 
         private void SubscribeToAirEvents()
@@ -95,10 +108,9 @@ namespace LiftGame.PlayerCore.PlayerAirSystem
                 {
                     await UniTask.WaitUntil(() => _isPaused == false, cancellationToken: cancelToken);
                 }
-
                 await UniTask.Delay(TimeSpan.FromSeconds(_airData.UpdateTime), ignoreTimeScale: false,
                     cancellationToken: cancelToken);
-               
+                if (_airData.IsBypassed) continue;
                 if (_airData.IsEmpty())
                 {
                     ApplyLowAirDamage();
@@ -118,12 +130,6 @@ namespace LiftGame.PlayerCore.PlayerAirSystem
         private void ApplyAirUsage()
         {
             if (!_airData.IsActive) return;
-            if (_airData.IsEmpty())
-            {
-                PlayerAirSupplyEventHolder.BroadcastOnAirEmpty();
-                return;
-            }
-
             var stressState = _mentalService.GetCurrentState();
             if (_lastState != stressState)
             {
@@ -141,6 +147,12 @@ namespace LiftGame.PlayerCore.PlayerAirSystem
 
             _airData.CurrentAirLevel -= _airData.CurrentAirUsage;
             PlayerAirSupplyEventHolder.BroadcastOnAirLevelChanged(_airData);
+            if (_airData.CurrentAirLevel <= _airData.MAX_AIR * 0.2 && _airData.CurrentAirLevel >_airData.MAX_AIR * 0.1 )/////
+            {
+                PlayerAirSupplyEventHolder.BroadcastOnAirLow();
+            }
+            if (!_airData.IsEmpty()) return;
+            PlayerAirSupplyEventHolder.BroadcastOnAirEmpty();
         }
 
 

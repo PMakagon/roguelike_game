@@ -1,5 +1,4 @@
-﻿using System;
-using LiftGame.FPSController.CameraController;
+﻿using LiftGame.FPSController.CameraController;
 using LiftGame.GameCore.Input.Data;
 using LiftGame.GameCore.LevelGameLoop;
 using LiftGame.Inventory;
@@ -8,7 +7,7 @@ using LiftGame.PlayerCore;
 using UnityEngine;
 using Zenject;
 
-namespace LiftGame
+namespace LiftGame.Ui
 {
     public class InventoryWindowController : MonoBehaviour
     {

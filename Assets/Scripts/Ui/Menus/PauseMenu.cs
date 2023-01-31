@@ -50,8 +50,7 @@ namespace LiftGame.Ui.Menus
 
         private void OnPausePressed()
         {
-            var isPaused = _pauseHandler.IsPaused;
-            SetPauseAndScreenState(!isPaused);
+            SetPauseAndScreenState(!_pauseHandler.IsPaused);
         }
 
         private void SetPauseAndScreenState(bool state)
