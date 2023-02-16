@@ -3,6 +3,7 @@ using System.Globalization;
 using LiftGame.PlayerCore;
 using LiftGame.PlayerCore.PlayerPowerSystem;
 using LiftGame.ProxyEventHolders;
+using LiftGame.ProxyEventHolders.Player;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;

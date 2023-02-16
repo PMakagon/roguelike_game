@@ -4,6 +4,7 @@ using LiftGame.GameCore.LevelGameLoop;
 using LiftGame.Inventory;
 using LiftGame.Inventory.Container;
 using LiftGame.PlayerCore;
+using LiftGame.ProxyEventHolders.Player;
 using UnityEngine;
 using Zenject;
 
@@ -21,17 +22,16 @@ namespace LiftGame.Ui
 
         //MonoBehaviour injection
         [Inject]
-        private void Construct(PlayerServiceProvider playerServiceProvider,
-            IPlayerInventoryService playerInventoryService)
+        private void Construct(PlayerServiceProvider playerServiceProvider)
         {
             _cameraController = playerServiceProvider.CameraController;
-            _playerInventoryService = playerInventoryService;
+            _playerInventoryService = playerServiceProvider.InventoryService;
         }
 
         void Start()
         {
             inventoryWindow.SetActive(false);
-            _playerInventoryService.InventoryData.OnWorldContainerOpen += OpenContainerPanel;
+            PlayerInventoryEventHolder.OnContainerOpen += OpenContainerPanel;
             UIInputData.OnInventoryClicked += SwitchWindowState;
             NonGameplayInputData.OnPauseMenuClicked += CloseInventory;
             LevelGameLoopEventHandler.OnGameOver += CloseInventory;
@@ -39,7 +39,7 @@ namespace LiftGame.Ui
 
         private void OnDestroy()
         {
-            _playerInventoryService.InventoryData.OnWorldContainerOpen -= OpenContainerPanel;
+            PlayerInventoryEventHolder.OnContainerOpen -= OpenContainerPanel;
             UIInputData.OnInventoryClicked -= SwitchWindowState;
             NonGameplayInputData.OnPauseMenuClicked -= CloseInventory;
             LevelGameLoopEventHandler.OnGameOver -= CloseInventory;

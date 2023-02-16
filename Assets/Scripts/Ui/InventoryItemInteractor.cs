@@ -29,15 +29,13 @@ namespace LiftGame.Ui
 
 
         [Inject]
-        public InventoryItemInteractor(IPlayerHealthService healthService, IPlayerMentalService mentalService,
-            IPlayerPowerService powerService, IPlayerInventoryService inventoryService,
-            PlayerServiceProvider serviceProvider)
+        public InventoryItemInteractor(PlayerServiceProvider serviceProvider)
         {
-            _healthService = healthService;
-            _mentalService = mentalService;
-            _powerService = powerService;
-            _inventoryService = inventoryService;
             _serviceProvider = serviceProvider;
+            _healthService = serviceProvider.HealthService;
+            _mentalService = serviceProvider.MentalService;
+            _powerService = serviceProvider.PowerService;
+            _inventoryService = serviceProvider.InventoryService;
         }
 
         public void UseItem(IInventoryItem item)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using LiftGame.Inventory.Core;
+using LiftGame.ProxyEventHolders.Player;
 using UnityEngine;
 
 namespace LiftGame.Inventory.Equipment
@@ -17,9 +18,10 @@ namespace LiftGame.Inventory.Equipment
             _repository = repository;
             Rebuild();
             Resize(width, height);
+            PlayerInventoryEventHolder.OnItemAddedToEquipmentSlot += InvokeOnItemAdded;
         }
 
-        public void InvokeOnWorldItemAdded()
+        private void InvokeOnItemAdded()
         {
             if (_repository.IsEmpty) return;
             var item = _repository.GetInventoryItem();
@@ -28,7 +30,7 @@ namespace LiftGame.Inventory.Equipment
             Rebuild(false);
         }
 
-        public int ReturnRepositorySlotId()
+        public int GetRepositorySlotId()
         {
             return _repository.SlotId;
         }

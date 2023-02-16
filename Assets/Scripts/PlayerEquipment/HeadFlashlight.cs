@@ -2,6 +2,7 @@
 using LiftGame.GameCore.Input.Data;
 using LiftGame.PlayerCore.PlayerPowerSystem;
 using LiftGame.ProxyEventHolders;
+using LiftGame.ProxyEventHolders.Player;
 using UnityEngine;
 using Random = UnityEngine.Random;
 

@@ -8,10 +8,10 @@ namespace LiftGame.PlayerCore.PlayerAirSystem
         void EnableAirSupply();
         void DisableAirSupply();
         void AddAir(float airToAdd);
+        float GetMaxLevel();
         float GetCurrentLevel();
         float GetCurrentUsage();
         bool IsEmpty();
-        
         void ResetAirData();
     }
 }

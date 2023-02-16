@@ -35,6 +35,7 @@ namespace LiftGame.PlayerCore.MentalSystem
         {
             stressState = StressState.Base;
             _stressLevel = BASE_STRESS_LEVEL;
+            playerLitState = PlayerLitState.Lit;
         }
         
         public PlayerLitState PlayerLitState

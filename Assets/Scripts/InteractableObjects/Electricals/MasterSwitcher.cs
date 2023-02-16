@@ -12,11 +12,12 @@ namespace LiftGame.InteractableObjects.Electricals
         private const string OFF = "Turn OFF";
         private const string ON = "Turn ON";
 
-        private Action onSwitched;
+        private Action<bool> _onSwitched;
 
         private void Start()
         {
             SetInteractionLabel();
+            _onSwitched?.Invoke(isSwitchedOn);
         }
 
         private void SetInteractionLabel()
@@ -24,44 +25,36 @@ namespace LiftGame.InteractableObjects.Electricals
             _toSwitch.Label = isSwitchedOn ? OFF : ON;
         }
 
-        public Action OnSwitched
+        public override void BindInteractions()
         {
-            get => onSwitched;
-            set => onSwitched = value;
+            _toSwitch.actionOnInteract = Switch;
         }
 
+        public override void AddInteractions()
+        {
+            Interactions.Add(_toSwitch);
+        }
+        
+
+        private bool Switch()
+        {
+            isSwitchedOn = !isSwitchedOn;
+            SetInteractionLabel();
+            _onSwitched?.Invoke(isSwitchedOn);
+            button.Rotate(0.0f, 0.0f, isSwitchedOn? -100.0f : +100.0f, Space.Self);
+            return true;
+        }
+
+        public Action<bool> OnSwitched
+        {
+            get => _onSwitched;
+            set => _onSwitched = value;
+        }
 
         public bool IsSwitchedOn
         {
             get => isSwitchedOn;
             set => isSwitchedOn = value;
         }
-
-        public override void BindInteractions()
-        {
-            _toSwitch.actionOnInteract = Switch;
-        }
-        
-        public override void AddInteractions()
-        {
-            Interactions.Add(_toSwitch);
-        }
-
-        private bool Switch()
-        {
-            isSwitchedOn = !isSwitchedOn;
-            SetInteractionLabel();
-            onSwitched?.Invoke();
-            if (isSwitchedOn)
-            {
-                button.Rotate(0.0f, 0.0f, +100.0f, Space.Self);
-            }
-            else
-            {
-                button.Rotate(0.0f, 0.0f, -100.0f, Space.Self);
-            }
-            return true;
-        }
-        
     }
 }

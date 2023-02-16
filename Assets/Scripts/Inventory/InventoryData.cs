@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using LiftGame.Inventory.Bag;
 using LiftGame.Inventory.Case;
@@ -29,14 +28,6 @@ namespace LiftGame.Inventory
         private PowerCellSlotRepository[] _powerCellSlots;
         private BagItemRepository _bagRepository;
         private PlayerEquipmentWorldView _currentEquipment;
-        public event Action OnWorldItemAddedToBag;
-        public event Action OnWorldItemAddedToCase;
-        public event Action OnWorldItemAddedToEquipmentSlot;
-        public event Action OnWorldItemAddedToPocket;
-
-        public Action OnWorldContainerOpen; //убрать как нибудь
-        public Action OnEquipmentAdd;
-        public Action OnInventoryChange;
 
         private void Awake()
         {
@@ -54,70 +45,6 @@ namespace LiftGame.Inventory
             _currentContainer = null;
             _currentEquipment = null;
             Debug.Log("RESET INVENTORY DATA");
-        }
-
-        public bool TryToAddItem(IInventoryItem itemToAdd)
-        {
-            if (((ItemDefinition)itemToAdd).ItemType == ItemType.Equipment)
-            {
-                foreach (var slot in _equipmentSlots)
-                {
-                    if (!slot.IsEmpty) continue;
-                    slot.AddEquipmentItem(itemToAdd);
-                    OnWorldItemAddedToEquipmentSlot?.Invoke();
-                    return true;
-                }
-            }
-
-            if (_bagRepository != null)
-            {
-                if (_bagRepository.AddInventoryItem(itemToAdd))
-                {
-                    OnWorldItemAddedToBag?.Invoke();
-                    return true;
-                }
-            }
-
-            if (_caseRepository != null && _caseRepository.IsInRange)
-            {
-                if (_caseRepository.AddInventoryItem(itemToAdd))
-                {
-                    OnWorldItemAddedToCase?.Invoke();
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public bool TryToRemoveItem(IInventoryItem itemToAdd)
-        {
-            var items = GetAllItems();
-            return items.Remove(itemToAdd);
-        }
-
-        public IInventoryItem GetItemByName(string itemName)
-        {
-            var items = GetAllItems();
-            foreach (var item in items)
-            {
-                if (((ItemDefinition)item).Name == itemName)
-                {
-                    return item;
-                }
-            }
-
-            return null;
-        }
-
-        public List<IInventoryItem> GetAllItems()
-        {
-            List<IInventoryItem> allItems = new List<IInventoryItem>();
-            if (_caseRepository != null) allItems.AddRange(_caseRepository.GetAllItems());
-            allItems.AddRange(_bagRepository.GetAllItems());
-            allItems.AddRange(_pockets.GetAllItems());
-            if (allItems.IsEmpty()) Debug.Log("INVENTORY IS EMPTY");
-            return allItems;
         }
 
         public BagItemRepository BagRepository

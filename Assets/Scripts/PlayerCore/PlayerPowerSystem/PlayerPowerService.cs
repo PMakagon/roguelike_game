@@ -5,6 +5,7 @@ using LiftGame.GameCore.LevelGameLoop;
 using LiftGame.GameCore.Pause;
 using LiftGame.Inventory;
 using LiftGame.ProxyEventHolders;
+using LiftGame.ProxyEventHolders.Player;
 using UnityEngine;
 using Zenject;
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using LiftGame.GameCore.Input.Data;
+using LiftGame.InteractableObjects;
 using LiftGame.PlayerCore;
 using ModestTree;
 using UnityEngine;
@@ -29,6 +30,7 @@ namespace LiftGame.FPSController.InteractionSystem.InteractionUI
         {
             canvasTransform.gameObject.SetActive(true);
         }
+
         public void HidePanel()
         {
             canvasTransform.gameObject.SetActive(false);
@@ -36,7 +38,9 @@ namespace LiftGame.FPSController.InteractionSystem.InteractionUI
 
         public void SetCrosshair(IInteractable interactable)
         {
-            crosshair.ChangeCrosshair(interactable.IsInteractable ? CrosshairType.Hand : CrosshairType.Dot);
+            crosshair.ChangeCrosshair(!interactable.IsInteractable || interactable.GetType() == typeof(InteractableUI)
+                ? CrosshairType.Dot
+                : CrosshairType.Hand);
         }
 
         private void OnDisable()
@@ -46,7 +50,7 @@ namespace LiftGame.FPSController.InteractionSystem.InteractionUI
 
         private void SetSelectedOption(int selectionIndex)
         {
-            if (_selectedOption!=null)_selectedOption.UnSelect();
+            if (_selectedOption != null) _selectedOption.UnSelect();
             _selectedOption = _spawnedOptionsArr[selectionIndex];
             _selectionIndex = selectionIndex;
             _selectedOption.Select();
@@ -56,9 +60,9 @@ namespace LiftGame.FPSController.InteractionSystem.InteractionUI
         {
             if (!_isOpen) return;
             if (Math.Abs(scrollInput) < 0.1f) return;
-            var direction  = Math.Sign(scrollInput);
+            var direction = Math.Sign(scrollInput);
             int pointIndex = Math.Clamp(_selectionIndex + direction, 0, _spawnedOptionsArr.Length - 1);
-            if (pointIndex==_selectionIndex || _spawnedOptionsArr[pointIndex].IsHidden) return;
+            if (pointIndex == _selectionIndex || _spawnedOptionsArr[pointIndex].IsHidden) return;
             _spawnedOptionsArr[_selectionIndex].UnSelect();
             _selectionIndex = pointIndex;
             SetSelectedOption(_selectionIndex);
@@ -80,19 +84,18 @@ namespace LiftGame.FPSController.InteractionSystem.InteractionUI
             }
         }
 
-        public void UpdateOptionsState(IPlayerData playerData)
+        public void UpdateOptionsState(PlayerServiceProvider serviceProvider)
         {
             foreach (var option in _spawnedOptionsArr)
             {
                 option.UpdateOption();
-                option.RepresentedInteraction.CheckIsExecutable(playerData);
+                option.RepresentedInteraction.CheckIsExecutable(serviceProvider);
                 option.gameObject.SetActive(option.RepresentedInteraction.IsExecutable);
             }
         }
 
         public void SetNewSelection()
         {
-            // var counter = 0;
             foreach (var option in _spawnedOptionsArr)
             {
                 if (option.gameObject.activeInHierarchy)
@@ -101,26 +104,6 @@ namespace LiftGame.FPSController.InteractionSystem.InteractionUI
                     return;
                 }
             }
-            // switch (counter)
-            // {
-            //     case 0:
-            //         return;
-            //     case 1:
-            //         SetSelectedOption(0);
-            //         break;
-            //     case 2:
-            //         SetSelectedOption(0);
-            //         break;
-            //     case 3:
-            //         SetSelectedOption(1);
-            //         break;
-            //     case 4:
-            //         SetSelectedOption(1);
-            //         break;
-            //     case 5:
-            //         SetSelectedOption(2);
-            //         break;
-            // }
         }
 
         private void ClearOptionMenu()

@@ -1,4 +1,5 @@
 ﻿using LiftGame.ProxyEventHolders;
+using LiftGame.ProxyEventHolders.Player;
 using UnityEngine;
 
 namespace LiftGame.PlayerCore.PlayerCostume

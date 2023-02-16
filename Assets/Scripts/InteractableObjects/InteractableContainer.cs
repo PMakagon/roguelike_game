@@ -1,6 +1,7 @@
 ﻿using LiftGame.FPSController.InteractionSystem;
 using LiftGame.GameCore.Input.Data;
 using LiftGame.Inventory.Container;
+using LiftGame.ProxyEventHolders.Player;
 using UnityEngine;
 
 namespace LiftGame.InteractableObjects
@@ -56,10 +57,8 @@ namespace LiftGame.InteractableObjects
                 _containerRepository = new ContainerItemRepository(containerConfig);
                 isExamined = true;
             }
-
-            var inventoryData = CachedPlayerData.GetInventoryData();
-            inventoryData.CurrentContainer = _containerRepository;
-            inventoryData.OnWorldContainerOpen?.Invoke();
+            CachedServiceProvider.InventoryService.SetCurrentContainerRepository(_containerRepository);
+            PlayerInventoryEventHolder.SendOnWorldContainerOpen();
             return true;
         }
     }

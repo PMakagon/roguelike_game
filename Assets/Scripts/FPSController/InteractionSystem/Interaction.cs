@@ -67,7 +67,7 @@ namespace LiftGame.FPSController.InteractionSystem
             IsEnabled = isEnabled;
         }
 
-        public void CheckIsExecutable(IPlayerData playerData)
+        public void CheckIsExecutable(PlayerServiceProvider serviceProvider)
         {
             if (!IsEnabled)
             {
@@ -82,7 +82,7 @@ namespace LiftGame.FPSController.InteractionSystem
                     break;
                 case InteractionRequirement.Equipment:
                 {
-                    var currentEquipment = playerData.GetInventoryData().CurrentEquipment;
+                    var currentEquipment = serviceProvider.InventoryService.GetCurrentEquipment();
                     if (currentEquipment == null)
                     {
                         IsExecutable = false;
