@@ -16,7 +16,7 @@ namespace LiftGame.InteractableObjects
         [Inject]
         private void Construct(PlayerServiceProvider playerServiceProvider)
         {
-            _playerCostumeService = playerServiceProvider.PlayerCostumeService;
+            _playerCostumeService = playerServiceProvider.CostumeService;
         }
         
         public override void BindInteractions()

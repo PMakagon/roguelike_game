@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using LiftGame.Inventory.Core;
+using LiftGame.ProxyEventHolders.Player;
 using UnityEngine;
 
 namespace LiftGame.Inventory.Bag
@@ -18,6 +19,7 @@ namespace LiftGame.Inventory.Bag
             _repository = repository;
             Rebuild();
             Resize(width, height);
+            PlayerInventoryEventHolder.OnItemAddedToBag += Rebuild;
         }
         
         /// <inheritdoc />

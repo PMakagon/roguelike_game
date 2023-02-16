@@ -2,6 +2,7 @@
 using System.Globalization;
 using LiftGame.FPSController.InteractionSystem;
 using LiftGame.ProxyEventHolders;
+using LiftGame.ProxyEventHolders.Player;
 using TMPro;
 using UnityEngine;
 
@@ -32,8 +33,8 @@ namespace LiftGame.InteractableObjects
         {
             if (airCapacity!=0)
             {
-                var data = CachedPlayerData.GetAirData();
-                var spaceToFill = data.MAX_AIR - data.CurrentAirLevel;
+                var airService = CachedServiceProvider.AirService;
+                var spaceToFill = airService.GetMaxLevel() - airService.GetCurrentLevel();
                 if (airCapacity<=spaceToFill)
                 { 
                     PlayerAirSupplyEventHolder.SendOnAirRestored(airCapacity);

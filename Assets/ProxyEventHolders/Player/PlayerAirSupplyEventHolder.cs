@@ -1,7 +1,7 @@
 ﻿using System;
 using LiftGame.PlayerCore.PlayerAirSystem;
 
-namespace LiftGame.ProxyEventHolders
+namespace LiftGame.ProxyEventHolders.Player
 {
     public static class PlayerAirSupplyEventHolder
     {

@@ -10,7 +10,7 @@ namespace LiftGame.FPSController.InteractionSystem
         [Header("INTERACTABLE SETTINGS")] 
         [BoxGroup()][SerializeField] private bool isInteractable = true;
         [BoxGroup()][SerializeField] private string tooltipMessage = "Interact";
-        public IPlayerData CachedPlayerData { get; set; }
+        public PlayerServiceProvider CachedServiceProvider { get; private set; }
         public List<Interaction> Interactions { get; } = new List<Interaction>();
         public bool IsInteractable => isInteractable;
 
@@ -22,53 +22,43 @@ namespace LiftGame.FPSController.InteractionSystem
         
         protected virtual void Awake()
         {
+            gameObject.layer = 6;
             CreateInteractions();
             BindInteractions();
             AddInteractions();
         }
         
-        public virtual void CreateInteractions()
-        {
-            
-        }
+        public virtual void CreateInteractions() { }
 
-        public virtual void BindInteractions()
-        {
-            
-        }
+        public virtual void BindInteractions() { }
         
-        public virtual void AddInteractions()
-        {
-            
-        }
+        public virtual void AddInteractions() { }
 
         private void CheckInteractions()
         {
             foreach (var interaction in Interactions)
             {
-                interaction.CheckIsExecutable(CachedPlayerData);
+                interaction.CheckIsExecutable(CachedServiceProvider);
             }
         }
 
         private void ResetCache()
         {
-            CachedPlayerData = null;
+            CachedServiceProvider = null;
         }
 
-        public virtual void PreInteract(IPlayerData playerData)
+        public virtual void PreInteract(PlayerServiceProvider serviceProvider)
         {
-            CachedPlayerData = playerData;
+            CachedServiceProvider = serviceProvider;
             CheckInteractions();
-            // Debug.Log("PRE_INTERACTED: " + gameObject.name);
         }
 
         public virtual void OnInteract(Interaction interaction)
         {
             CheckInteractions();
-            // Debug.Log("INTERACTED: " + gameObject.name);
         }
 
-        public void PostInteract()
+        public virtual void PostInteract()
         {
             ResetCache();
         }

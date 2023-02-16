@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using LiftGame.GameCore.LevelGameLoop;
 using LiftGame.PlayerCore.MentalSystem;
 using LiftGame.ProxyEventHolders;
+using LiftGame.ProxyEventHolders.Player;
 using UnityEngine;
 using Zenject;
 

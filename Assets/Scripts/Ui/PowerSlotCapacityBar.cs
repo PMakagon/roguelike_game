@@ -2,6 +2,7 @@
 using LiftGame.Inventory.PowerCellSlots;
 using LiftGame.PlayerCore.PlayerPowerSystem;
 using LiftGame.ProxyEventHolders;
+using LiftGame.ProxyEventHolders.Player;
 using UnityEngine;
 using UnityEngine.UI;
 

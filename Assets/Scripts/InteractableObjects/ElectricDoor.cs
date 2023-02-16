@@ -14,7 +14,7 @@ namespace LiftGame.InteractableObjects
             base.Awake();
             if (!masterSwitcher) return;
             masterSwitcher.OnSwitched += ChangeLightState;
-            ChangeLightState();
+            ChangeLightState(masterSwitcher.IsSwitchedOn);
         }
 
         private void OnDestroy()
@@ -29,10 +29,9 @@ namespace LiftGame.InteractableObjects
             switcher.OnSwitched += ChangeLightState;
         }
 
-        private void ChangeLightState()
+        private void ChangeLightState(bool state)
         {
-            stateLight.enabled = !masterSwitcher.IsSwitchedOn;
-           
+            stateLight.enabled = !state;
         }
 
         protected override bool ChangeDoorState()

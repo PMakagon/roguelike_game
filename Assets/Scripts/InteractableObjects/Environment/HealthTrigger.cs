@@ -1,6 +1,7 @@
 ﻿using LiftGame.FX;
 using LiftGame.PlayerCore.HealthSystem;
 using LiftGame.ProxyEventHolders;
+using LiftGame.ProxyEventHolders.Player;
 using UnityEngine;
 using UnityEngine.Events;
 using Zenject;

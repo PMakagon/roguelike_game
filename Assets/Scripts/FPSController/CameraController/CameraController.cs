@@ -177,5 +177,13 @@ namespace LiftGame.FPSController.CameraController
         {
             LockCursor(!isPaused);
         }
+
+        public Camera PlayerCamera => m_cam;
+
+        public Vector2 Sensitivity
+        {
+            get => sensitivity;
+            set => sensitivity = value;
+        }
     }
 }

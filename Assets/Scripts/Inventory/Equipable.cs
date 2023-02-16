@@ -46,8 +46,7 @@ namespace LiftGame.Inventory
         private bool Equip()
         {
             if (!isEquipable) return false;
-            var inventory = CachedPlayerData.GetInventoryData();
-            if (inventory.TryToAddItem(itemToEquip))
+            if (CachedServiceProvider.InventoryService.TryToAddItem(itemToEquip))
             {
                 if (destroyOnEquip) Destroy(gameObject);
                 Debug.Log("Equipped: " + gameObject.name);

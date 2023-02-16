@@ -1,8 +1,7 @@
 ﻿using System;
-using LiftGame.PlayerCore.HealthSystem;
 using LiftGame.PlayerCore.MentalSystem;
 
-namespace LiftGame.ProxyEventHolders
+namespace LiftGame.ProxyEventHolders.Player
 {
     public static class PlayerMentalEventHolder
     {

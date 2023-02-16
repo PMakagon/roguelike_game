@@ -150,8 +150,7 @@ namespace LiftGame.InteractableObjects
 
         protected bool Unlock()
         {
-            var inventory = CachedPlayerData.GetInventoryData();
-            if (TryUnlock(inventory.GetAllItems()))
+            if (TryUnlock(CachedServiceProvider.InventoryService.GetAllItems()))
             {
                 Animator.SetBool(TryOpen, true);
                 _toOpen.IsEnabled = true;

@@ -1,9 +1,8 @@
 ﻿using System;
-using LiftGame.Inventory.Items;
 using LiftGame.PlayerCore.PlayerPowerSystem;
 using UnityEngine;
 
-namespace LiftGame.ProxyEventHolders
+namespace LiftGame.ProxyEventHolders.Player
 {
     public static class PlayerPowerEventHolder
     {

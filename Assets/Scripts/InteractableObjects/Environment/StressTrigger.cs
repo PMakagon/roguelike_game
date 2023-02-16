@@ -1,5 +1,6 @@
 ﻿using LiftGame.PlayerCore.MentalSystem;
 using LiftGame.ProxyEventHolders;
+using LiftGame.ProxyEventHolders.Player;
 using UnityEngine;
 using UnityEngine.Events;
 using Zenject;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using LiftGame.Inventory.Core;
+using LiftGame.ProxyEventHolders.Player;
 using UnityEngine;
 
 namespace LiftGame.Inventory.Case
@@ -18,6 +19,7 @@ namespace LiftGame.Inventory.Case
             _repository = repository;
             Rebuild();
             Resize(width, height);
+            PlayerInventoryEventHolder.OnItemAddedToCase += Rebuild;
         }
         
         /// <inheritdoc />

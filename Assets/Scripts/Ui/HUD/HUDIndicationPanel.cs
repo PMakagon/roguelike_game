@@ -4,6 +4,7 @@ using LiftGame.PlayerCore.MentalSystem;
 using LiftGame.PlayerCore.PlayerAirSystem;
 using LiftGame.PlayerCore.PlayerPowerSystem;
 using LiftGame.ProxyEventHolders;
+using LiftGame.ProxyEventHolders.Player;
 using UnityEngine;
 using Zenject;
 
@@ -46,7 +47,7 @@ namespace LiftGame.Ui.HUD
 
         private void UpdateBypassState()
         {
-            bypassIcon.SetActive(_airService.IsBypassed());
+            bypassIcon.SetActive(!_airService.IsBypassed());
         }
 
         

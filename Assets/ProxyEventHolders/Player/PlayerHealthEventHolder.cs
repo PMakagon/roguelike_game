@@ -1,7 +1,7 @@
 ﻿using System;
 using LiftGame.PlayerCore.HealthSystem;
 
-namespace LiftGame.ProxyEventHolders
+namespace LiftGame.ProxyEventHolders.Player
 {
     public static class PlayerHealthEventHolder
     {

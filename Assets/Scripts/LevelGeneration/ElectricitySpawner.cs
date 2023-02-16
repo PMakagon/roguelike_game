@@ -61,14 +61,14 @@ namespace LiftGame.LevelGeneration
                 _lightMasterSwitcher = mSwitchers[Random.Range(0, mSwitchers.Length)];
                 foreach (var lightExtended in currentRoot.LightExtended)
                 {
-                    lightExtended.MasterSwitcher = _lightMasterSwitcher;
+                    // lightExtended.MasterSwitcher = _lightMasterSwitcher;
                     _allLights.Add(lightExtended);
                 }
                 foreach (var spawnedRoom in spawnedRooms)
                 {
                     foreach (var lightExtended in spawnedRoom.LightExtended)
                     {
-                        lightExtended.MasterSwitcher = _lightMasterSwitcher;
+                        // lightExtended.MasterSwitcher = _lightMasterSwitcher;
                         _allLights.Add(lightExtended);
                     }
                 }
