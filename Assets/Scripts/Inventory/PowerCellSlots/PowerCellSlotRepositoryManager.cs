@@ -3,6 +3,7 @@ using System.Linq;
 using LiftGame.Inventory.Core;
 using LiftGame.Inventory.Items;
 using LiftGame.ProxyEventHolders;
+using LiftGame.ProxyEventHolders.Player;
 using UnityEngine;
 
 namespace LiftGame.Inventory.PowerCellSlots

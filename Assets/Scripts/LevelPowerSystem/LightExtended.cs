@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using LiftGame.InteractableObjects.Electricals;
 using NaughtyAttributes;
 using UnityEngine;
@@ -9,7 +10,7 @@ namespace LiftGame.LevelPowerSystem
 {
     public class LightExtended : MonoBehaviour //to full refactor
     {
-        public enum LightMode 
+        public enum LightMode
         {
             Static,
             Blinking,
@@ -22,31 +23,30 @@ namespace LiftGame.LevelPowerSystem
         [SerializeField] private Renderer objectWithEmission;
         [SerializeField] private LensFlareComponentSRP lensFlare;
 
-        [Header("Flickering Settings")] 
-        [SerializeField] private float minIntensity = 0.3f;
+        [Header("Flickering Settings")] [SerializeField]
+        private float minIntensity = 0.3f;
+
         [SerializeField] private float maxIntensity = 10f;
         [SerializeField] private float noiseSpeed = 0.15f;
 
-        [Header("Blinking Settings")] 
-        [SerializeField] private float randomTimerValueMin = 5f;
+        [Header("Blinking Settings")] [SerializeField]
+        private float randomTimerValueMin = 5f;
+
         [SerializeField] private float randomTimerValueMax = 20f;
 
         [Space] [Header("Light Control")] 
-        [SerializeField] private bool manualControl = false;
-        [HideIf("manualControl")] 
-        [SerializeField] private bool isPowered;
+        [SerializeField] private bool isAlwaysOn = false;
         [SerializeField] private bool isOn;
-        [SerializeField] private MasterSwitcher masterSwitcher;
         [SerializeField] private SlaveSwitcher slaveSwitcher;
-        
-        
+
+
         [SerializeField] private bool isBroken;
 
         private float _startIntensity;
         private float _randomTimerValue;
         private float _startTimerValue = 0.01f;
         private Color _color;
-        
+
         private MaterialPropertyBlock _matBlock;
 
         private void Awake()
@@ -57,112 +57,66 @@ namespace LiftGame.LevelPowerSystem
                 _matBlock = new MaterialPropertyBlock();
                 _color = objectWithEmission.material.color;
             }
-            if (slaveSwitcher)
-            {
-                slaveSwitcher.IsPowered = true;
-            }
-            ChangeState(IsStateChanged());
+            if (slaveSwitcher) slaveSwitcher.OnSwitch += ChangeState;
+            ChangeState(CheckState());
         }
 
-        private bool IsStateChanged()
+        private void OnDestroy()
         {
-            bool isActuallyOn;
-            if (masterSwitcher)
-            {
-                isPowered = masterSwitcher.IsSwitchedOn; //если есть автомат то запитываемся от него
-            }
-            else
-            {
-                if (!manualControl)
-                {
-                    isPowered = true;  // если нет всегда запитано
-                }
-            }
-            
-            if (slaveSwitcher)
-            {
-                slaveSwitcher.IsPowered = isPowered; //если есть выключатель 
-                isActuallyOn = slaveSwitcher.IsEnabled;
-            }
-            else
-            {
-                isActuallyOn = isPowered; // если нет то автомат управляет светом
-            }
-            
-            if (!isPowered)
-            {
-                isActuallyOn = false;
-            }
-            return isActuallyOn;
+            if (slaveSwitcher) slaveSwitcher.OnSwitch -= ChangeState;
         }
 
-        public void SwitchState()
+        private bool CheckState()
         {
-            isPowered = !isPowered;
+            if (isBroken) return false;
+            if (isAlwaysOn) return true;
+            if (slaveSwitcher) return slaveSwitcher.IsEnabled;
+            return isOn;
+        }
+
+        //for interactions
+        public void ChangeState()
+        {
+            ChangeState(!isOn);
         }
 
         private void ChangeState(bool state)
         {
+            if (isBroken) return;
+            if (isAlwaysOn) state = true;
+            isOn = state;
             _light.enabled = state;
-            if (hotSpotLight)
-            {
-                hotSpotLight.enabled = state;
-            }
-            
-            if (lensFlare)
-            {
-                lensFlare.enabled = state;
-            }
+            if (hotSpotLight) hotSpotLight.enabled = state;
+            if (lensFlare) lensFlare.enabled = state;
             FetchEmission();
-        }
-
-        private bool GetLightComponentState()
-        {
-            return _light.enabled;
+            if (currentLightMode != LightMode.Blinking) return;
+            if (isOn) StartCoroutine(Blinking());
         }
 
         private void FetchEmission()
         {
-            if (objectWithEmission)
+            if (!objectWithEmission) return;
+            objectWithEmission.GetPropertyBlock(_matBlock);
+            if (_light.enabled)
             {
-                objectWithEmission.GetPropertyBlock(_matBlock);
-                if (_light.enabled)
-                {
-                    _matBlock.SetColor("_EmissiveColor", _color * _light.intensity);
-                }
-                else
-                {
-                    _matBlock.SetColor("_EmissiveColor", _color * 0f);
-                }
-                objectWithEmission.SetPropertyBlock(_matBlock);
+                _matBlock.SetColor("_EmissiveColor", _color * _light.intensity);
             }
+            else
+            {
+                _matBlock.SetColor("_EmissiveColor", _color * 0f);
+            }
+            objectWithEmission.SetPropertyBlock(_matBlock);
         }
 
         private void Update()
         {
-            if (isBroken) return;
-            bool state =  IsStateChanged();
-            if (isOn != state)
+            if (currentLightMode != LightMode.Flickering) return;
+            if (isOn)
             {
-                isOn = state;
-                ChangeState(isOn);
+                _light.intensity = Mathf.Lerp(minIntensity, maxIntensity,
+                    Mathf.PerlinNoise(10, Time.time / noiseSpeed));
             }
-
-            if (currentLightMode == LightMode.Blinking)
-            {
-                if (!isOn) return;
-                StartCoroutine(Blinking());
-            }
-
-            if (currentLightMode == LightMode.Flickering)
-            {
-                if (isOn)
-                {
-                    _light.intensity = Mathf.Lerp(minIntensity, maxIntensity,
-                        Mathf.PerlinNoise(10, Time.time / noiseSpeed));
-                }
-                FetchEmission();
-            }
+            FetchEmission();
         }
 
         private IEnumerator Blinking()
@@ -173,7 +127,7 @@ namespace LiftGame.LevelPowerSystem
             {
                 _randomTimerValue = Random.Range(randomTimerValueMin, randomTimerValueMax);
                 yield return new WaitForSeconds(_randomTimerValue);
-                ChangeState(GetLightComponentState());
+                ChangeState(_light.enabled);
                 ////ЗАТЫЧКА
                 if (!isOn || currentLightMode != LightMode.Blinking)
                 {
@@ -197,22 +151,10 @@ namespace LiftGame.LevelPowerSystem
             set => _light = value;
         }
 
-        public MasterSwitcher MasterSwitcher
-        {
-            get => masterSwitcher;
-            set => masterSwitcher = value;
-        }
-
         public SlaveSwitcher SlaveSwitcher
         {
             get => slaveSwitcher;
             set => slaveSwitcher = value;
-        }
-
-        public bool IsPowered
-        {
-            get => isPowered;
-            set => isPowered = value;
         }
 
         public bool IsOn

@@ -2,6 +2,7 @@
 using LiftGame.GameCore.Pause;
 using LiftGame.Inventory;
 using LiftGame.PlayerCore.PlayerPowerSystem;
+using LiftGame.ProxyEventHolders.Player;
 using UnityEngine;
 using Zenject;
 
@@ -40,7 +41,7 @@ namespace LiftGame.PlayerEquipment
             _inventoryService.OnInventoryLoad += GetStarted;
             _inventoryService.OnInventoryOpen += DisableInputListeners;
             _inventoryService.OnInventoryClose += EnableInputListeners;
-            _inventoryService.InventoryData.OnWorldItemAddedToEquipmentSlot += GetStarted;
+            PlayerInventoryEventHolder.OnItemAddedToEquipmentSlot += GetStarted;
             EnableInputListeners();
         }
 
@@ -72,7 +73,7 @@ namespace LiftGame.PlayerEquipment
         private void GetStarted()
         {
             _equipmentSwitcher.WithdrawEquipment();
-            _inventoryService.InventoryData.OnWorldItemAddedToEquipmentSlot -= GetStarted;
+            PlayerInventoryEventHolder.OnItemAddedToEquipmentSlot -= GetStarted;
         }
 
         private void SwapEquipment()

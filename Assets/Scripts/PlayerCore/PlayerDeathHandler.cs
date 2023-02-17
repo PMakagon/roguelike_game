@@ -6,6 +6,7 @@ using LiftGame.GameCore.LevelGameLoop;
 using LiftGame.PlayerCore.HealthSystem;
 using LiftGame.PlayerCore.MentalSystem;
 using LiftGame.ProxyEventHolders;
+using LiftGame.ProxyEventHolders.Player;
 using UnityEngine;
 using Zenject;
 

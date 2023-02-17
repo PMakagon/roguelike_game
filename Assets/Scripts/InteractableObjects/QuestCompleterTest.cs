@@ -35,7 +35,7 @@ namespace LiftGame.InteractableObjects
         }
         private bool CompleteQuest()
         {
-            var inventory=  CachedPlayerData.GetInventoryData();
+            var inventory = CachedServiceProvider.InventoryService;
             foreach (var item in inventory.GetAllItems().Where(item => ((ItemDefinition)item).ItemType == ItemType.Quest))
             {
                 inventory.TryToRemoveItem(item);

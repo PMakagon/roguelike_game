@@ -7,6 +7,7 @@ using LiftGame.GameCore.Pause;
 using LiftGame.PlayerCore.HealthSystem;
 using LiftGame.PlayerCore.MentalSystem;
 using LiftGame.ProxyEventHolders;
+using LiftGame.ProxyEventHolders.Player;
 using ModestTree;
 using UnityEngine;
 using Zenject;
@@ -73,6 +74,11 @@ namespace LiftGame.PlayerCore.PlayerAirSystem
         {
             _airData.CurrentAirLevel += airToAdd;
             PlayerAirSupplyEventHolder.BroadcastOnAirRestoreApplied(_airData, airToAdd);
+        }
+
+        public float GetMaxLevel()
+        {
+            return _airData.MAX_AIR;
         }
 
         public float GetCurrentLevel()

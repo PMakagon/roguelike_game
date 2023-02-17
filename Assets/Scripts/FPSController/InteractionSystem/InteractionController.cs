@@ -1,14 +1,14 @@
 ﻿using LiftGame.FPSController.InteractionSystem.InteractionUI;
 using LiftGame.GameCore.Input.Data;
 using LiftGame.GameCore.Pause;
-using LiftGame.Inventory;
+using LiftGame.InteractableObjects;
 using LiftGame.PlayerCore;
 using UnityEngine;
 using Zenject;
 
 namespace LiftGame.FPSController.InteractionSystem
 {
-    public class InteractionController : MonoBehaviour , IPauseable
+    public class InteractionController : MonoBehaviour, IPauseable
     {
         [Space, Header("UI")] 
         [SerializeField] private InteractionMenu interactionPanel;
@@ -21,9 +21,8 @@ namespace LiftGame.FPSController.InteractionSystem
         private InteractionInputData _interactionInputData = null;
         private EquipmentInputData _equipmentInputData = null;
         private IPauseHandler _pauseHandler;
-        private IPlayerData _playerData;
-        private IPlayerInventoryService _playerInventoryService;
-        private Camera _cam;
+        private PlayerServiceProvider _serviceProvider;
+        private Transform _camTransform;
 
         private IInteractable _currentInteractable = null;
         private IInteractable _cachedInteractable = null;
@@ -34,34 +33,32 @@ namespace LiftGame.FPSController.InteractionSystem
 
         //MonoBehaviour injection
         [Inject]
-        private void Construct(InteractionMenu interactionMenu, IPlayerData playerData,
-            InputDataProvider inputDataProvider, IPlayerInventoryService playerInventoryService,IPauseHandler pauseHandler)
+        private void Construct(InteractionMenu interactionMenu, InputDataProvider inputDataProvider,IPauseHandler pauseHandler)
         {
             _pauseHandler = pauseHandler;
             _interactionInputData = inputDataProvider.InteractionInputData;
             _equipmentInputData = inputDataProvider.EquipmentInputData;
-            _playerData = playerData;
             interactionPanel = interactionMenu;
-            _playerInventoryService = playerInventoryService;
         }
 
         #region Unity Callbacks
 
         void Awake()
         {
-            _cam = GetComponentInChildren<Camera>();
+            _serviceProvider = GetComponent<PlayerServiceProvider>();
+            _camTransform = GetComponentInChildren<Camera>().transform;
             _pauseHandler.Register(this);
-            _playerInventoryService.OnInventoryOpen += interactionPanel.HidePanel;
+            _serviceProvider.InventoryService.OnInventoryOpen += interactionPanel.HidePanel;
         }
 
         private void OnDestroy()
         {
-            _playerInventoryService.OnInventoryOpen -= interactionPanel.HidePanel;
+            _serviceProvider.InventoryService.OnInventoryOpen -= interactionPanel.HidePanel;
         }
 
         void Update()
         {
-            if (_playerInventoryService.IsInventoryOpen || _isPaused) return;
+            if (_serviceProvider.InventoryService.IsInventoryOpen || _isPaused) return;
             CheckForInteractable();
             CheckForInteractableInput();
         }
@@ -73,17 +70,20 @@ namespace LiftGame.FPSController.InteractionSystem
         private bool IsNewInteractable(IInteractable newInteractable) => _currentInteractable != newInteractable;
         private bool IsPreviousInteractable(IInteractable newInteractable) => _cachedInteractable == newInteractable;
         private bool IsEmpty() => _currentInteractable == null;
-        private void ClearInteractable() => _currentInteractable = null;
+        private void ClearInteractable()
+        {
+            _currentInteractable?.PostInteract();
+            _currentInteractable = null;
+        }
 
         private void SetCachedInteractable(IInteractable newInteractable)
         {
-            _cachedInteractable?.PostInteract();
             _cachedInteractable = newInteractable;
         }
 
         private void CheckForInteractable()
         {
-            Ray ray = new Ray(_cam.transform.position, _cam.transform.forward);
+            Ray ray = new Ray(_camTransform.position, _camTransform.forward);
             RaycastHit hitInfo;
 
             bool hitSomething = Physics.SphereCast(ray, raySphereRadius, out hitInfo, rayDistance, interactableLayer);
@@ -96,35 +96,32 @@ namespace LiftGame.FPSController.InteractionSystem
                 if (interactable != null)
                 {
                     interactionPanel.ShowPanel();
-                    if (IsEmpty() && IsPreviousInteractable(interactable))
-                    {
-                        interactable.PreInteract(_playerData);
-                        _currentInteractable = interactable;
-                        interactionPanel.SetCrosshair(interactable); //хуйня идея
-                        interactionPanel.ShowTooltip(interactable.TooltipMessage);
-                        interactionPanel.ShowOptionMenu();
-                        interactionPanel.UpdateOptionsState(_playerData);
-                        interactionPanel.SetNewSelection();
-                        return;
-                    }
-
-
+                    
                     if (IsEmpty() || IsNewInteractable(interactable))
                     {
-                        interactable.PreInteract(_playerData);
+                        interactable.PreInteract(_serviceProvider);
                         _currentInteractable = interactable;
-                        SetCachedInteractable(interactable);
-                        interactionPanel.SetCrosshair(interactable); //хуйня идея
+                        interactionPanel.SetCrosshair(interactable);
                         interactionPanel.ShowTooltip(interactable.TooltipMessage);
-                        interactionPanel.CreateMenuOptions(_currentInteractable.Interactions);
+                        if (!interactable.IsInteractable)
+                        {
+                            interactionPanel.ResetMenu();
+                            return;
+                        }
                         interactionPanel.ShowOptionMenu();
-                        interactionPanel.UpdateOptionsState(_playerData);
+                        if (!IsPreviousInteractable(interactable))
+                        {
+                            SetCachedInteractable(interactable);
+                            interactionPanel.CreateMenuOptions(_currentInteractable.Interactions);
+                        }
+                        interactionPanel.ShowOptionMenu();
+                        interactionPanel.UpdateOptionsState(_serviceProvider);
                         interactionPanel.SetNewSelection();
                     }
 
                     if (!_interacting && !IsNewInteractable(interactable))
                     {
-                        interactionPanel.UpdateOptionsState(_playerData);
+                        interactionPanel.UpdateOptionsState(_serviceProvider);
                     }
 
                     return;
@@ -175,7 +172,7 @@ namespace LiftGame.FPSController.InteractionSystem
                         interactionPanel.SelectedOption.ResetProgressBar();
                         interactionPanel.SelectedOption.ConfirmSelection();
                         _currentInteractable.OnInteract(interactionPanel.SelectedOption.RepresentedInteraction);
-                        interactionPanel.UpdateOptionsState(_playerData);
+                        interactionPanel.UpdateOptionsState(_serviceProvider);
                         ClearInteractable();
                         _interacting = false;
                     }
@@ -184,7 +181,7 @@ namespace LiftGame.FPSController.InteractionSystem
                 {
                     interactionPanel.SelectedOption.ConfirmSelection();
                     _currentInteractable.OnInteract(interactionPanel.SelectedOption.RepresentedInteraction);
-                    interactionPanel.UpdateOptionsState(_playerData);
+                    interactionPanel.UpdateOptionsState(_serviceProvider);
                     ClearInteractable();
                     _interacting = false;
                 }

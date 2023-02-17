@@ -2,6 +2,7 @@
 using System.Globalization;
 using LiftGame.PlayerCore.PlayerAirSystem;
 using LiftGame.ProxyEventHolders;
+using LiftGame.ProxyEventHolders.Player;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

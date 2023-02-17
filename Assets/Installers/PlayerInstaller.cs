@@ -57,7 +57,7 @@ namespace LiftGame.Installers
                 Container.InstantiatePrefabForComponent<PlayerServiceProvider>(playerPrefab, spawnPoint.position, Quaternion.identity,
                     null);
             Container.Bind<PlayerServiceProvider>().FromInstance(player).AsSingle();
-            Container.Bind<IPlayerCostumeService>().To<PlayerCostumeService>().FromInstance(player.PlayerCostumeService).AsSingle();
+            Container.Bind<IPlayerCostumeService>().To<PlayerCostumeService>().FromInstance(player.CostumeService).AsSingle();
         }
         private void BindPlayerData()
         {

@@ -7,20 +7,17 @@ namespace LiftGame.FPSController.InteractionSystem
     {
         bool IsInteractable { get; }
         string TooltipMessage { get; set; }
-        IPlayerData CachedPlayerData { get; set; }
+        PlayerServiceProvider CachedServiceProvider { get; }
         public List<Interaction> Interactions { get; }
-        void CreateInteractions();
-        void BindInteractions();
-        void AddInteractions();
 
         //Always call base. of following functions when overriding
         //Called on first registration of Interactable
-        void PreInteract(IPlayerData playerData);
+        void PreInteract(PlayerServiceProvider serviceProvider);
         
         //Called on Confirmed Interaction , can be called multiple times
         void OnInteract(Interaction interaction);
         
-        //Called on clearing cached Interactable in InteractionController
+        //Called on clearing cached Interactable in InteractionController.Dont call base if you dont need cache cleared
         void PostInteract();
     }
 }  
