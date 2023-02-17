@@ -1,6 +1,6 @@
-﻿using LiftGame.LevelGeneration;
+﻿using LiftGame.InteractableObjects.LiftInteractables;
+using LiftGame.LevelGeneration;
 using LiftGame.LiftStateMachine;
-using LiftGame.LiftStateMachine.Interactables;
 using UnityEngine;
 using UnityEngine.UI;
 

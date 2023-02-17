@@ -13,14 +13,14 @@ namespace LiftGame.PlayerCore.MentalSystem
         [SerializeField] private float updateTime = 2f;
 
         [Header("DARKNESS STRESS MODS")] 
-        [Slider(0f, 5f)] [SerializeField] private float totalDarknessMod = 3f;
-        [Slider(0f, 3f)] [SerializeField] private float lightAheadMod = 0.5f;
-        [Slider(0f, 2f)] [SerializeField] private float darkAheadMod = 0.3f;
-        [Slider(0f, 1f)] [SerializeField] private float inShadowMod = 0.1f;
+        [MinMaxSlider(0f, 5f)] [SerializeField] private float totalDarknessMod = 3f;
+        [MinMaxSlider(0f, 3f)] [SerializeField] private float lightAheadMod = 0.5f;
+        [MinMaxSlider(0f, 2f)] [SerializeField] private float darkAheadMod = 0.3f;
+        [MinMaxSlider(0f, 1f)] [SerializeField] private float inShadowMod = 0.1f;
 
         [Header("REGEN MODS")] 
-        [Slider(0f, 2f)] [SerializeField] private float baseRegen = 1f;
-        [Slider(0f, 5f)] [SerializeField] private float fastRegen = 2f;
+        [MinMaxSlider(0f, 2f)] [SerializeField] private float baseRegen = 1f;
+        [MinMaxSlider(0f, 5f)] [SerializeField] private float fastRegen = 2f;
 
         [Header("CONSTANTS")] 
         public const int MAX_STRESS_LEVEL = 220;
@@ -28,14 +28,13 @@ namespace LiftGame.PlayerCore.MentalSystem
         public const int BASE_STRESS_LEVEL = 100;
         public const int MIN_STRESS_LEVEL = 60;
 
-        private float _stress;
+        private float _stressLevel;
         private int _playerLitLevel;
-        private bool _isEnabled;
 
         public void ResetData()
         {
             stressState = StressState.Base;
-            _stress = BASE_STRESS_LEVEL;
+            _stressLevel = BASE_STRESS_LEVEL;
         }
         
         public PlayerLitState PlayerLitState
@@ -76,10 +75,10 @@ namespace LiftGame.PlayerCore.MentalSystem
 
         public float FastRegen => fastRegen;
 
-        public float Stress
+        public float StressLevel
         {
-            get => _stress;
-            set => _stress = value;
+            get => _stressLevel;
+            set => _stressLevel = value;
         }
 
         public int PlayerLitLevel
@@ -87,11 +86,6 @@ namespace LiftGame.PlayerCore.MentalSystem
             get => _playerLitLevel;
             set => _playerLitLevel = value;
         }
-
-        public bool IsEnabled
-        {
-            get => _isEnabled;
-            set => _isEnabled = value;
-        }
+        
     }
 }

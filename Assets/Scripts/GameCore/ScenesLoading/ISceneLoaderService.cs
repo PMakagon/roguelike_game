@@ -8,6 +8,7 @@ namespace LiftGame.GameCore.ScenesLoading
         UniTask LoadMainMenu();
         UniTask UnloadMainMenu(Action onMenuUnload);
         UniTask LoadNewGame(Action onNewGameLoad);
+        UniTask LoadDemo();
         UniTask UnloadGame();
         UniTask LoadHub(Action onHubLoad);
         UniTask UnloadHub(Action onHubUnload);

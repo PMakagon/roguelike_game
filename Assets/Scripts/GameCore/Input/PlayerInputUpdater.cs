@@ -1,5 +1,4 @@
-﻿using System;
-using LiftGame.GameCore.Input.Data;
+﻿using LiftGame.GameCore.Input.Data;
 using UnityEngine;
 using Zenject;
 
@@ -7,18 +6,20 @@ namespace LiftGame.GameCore.Input
 {
     public class PlayerInputUpdater : MonoBehaviour
     {
-        [SerializeField] private InputDataProvider inputDataProvider;
+        private InputDataProvider _inputDataProvider;
         private IPlayerInputService _inputService;
 
+        //MonoBehaviour injection
         [Inject]
-        private void Construct(IPlayerInputService playerInputService)
+        private void Construct(IPlayerInputService playerInputService,InputDataProvider inputDataProvider)
         {
             _inputService = playerInputService;
+            _inputDataProvider = inputDataProvider;
         }
 
         private void Start()
         {
-            _inputService.Initialize(inputDataProvider);
+            _inputService.Initialize(_inputDataProvider);
         }
 
         private void Update()

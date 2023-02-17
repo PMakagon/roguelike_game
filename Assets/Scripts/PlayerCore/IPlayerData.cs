@@ -1,6 +1,7 @@
-﻿using LiftGame.InventorySystem;
+﻿using LiftGame.Inventory;
 using LiftGame.PlayerCore.HealthSystem;
 using LiftGame.PlayerCore.MentalSystem;
+using LiftGame.PlayerCore.PlayerAirSystem;
 using LiftGame.PlayerCore.PlayerPowerSystem;
 
 namespace LiftGame.PlayerCore
@@ -11,5 +12,6 @@ namespace LiftGame.PlayerCore
         PlayerHealthData GetHealthData();
         PlayerMentalData GetMentalData();
         PlayerPowerData GetPowerData();
+        PlayerAirData GetAirData();
     }
 }

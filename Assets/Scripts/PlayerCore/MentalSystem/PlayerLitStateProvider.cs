@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using LiftGame.GameCore.Pause;
 using UnityEngine;
 using Zenject;
 
@@ -13,19 +16,35 @@ namespace LiftGame.PlayerCore.MentalSystem
         Lit
     }
 
-    public class PlayerLitStateProvider : MonoBehaviour
+    public class PlayerLitStateProvider : MonoBehaviour,IPauseable
     {
         [SerializeField] private PlayerLightSensor playerSensor;
         [SerializeField] private PlayerLightSensor viewSensor;
+        [SerializeField] private int updateRate;
         private PlayerMentalData _playerMentalData;
         private PlayerLitState _playerLitState;
+        private IPauseHandler _pauseHandler;
+        private CancellationTokenSource _cancellationToken = new();
         private bool _isActive;
+        private bool _isPaused;
 
 
+        //MonoBehaviour injection
         [Inject]
-        private void Construct(IPlayerData playerData)
+        private void Construct(IPlayerData playerData,IPauseHandler pauseHandler)
         {
             _playerMentalData = playerData.GetMentalData();
+            _pauseHandler = pauseHandler;
+        }
+
+        private void Start()
+        {
+            _pauseHandler.Register(this);
+        }
+
+        private void OnDestroy()
+        {
+            _pauseHandler.UnRegister(this);
         }
 
         public void SetSensorsActive(bool state)
@@ -33,16 +52,36 @@ namespace LiftGame.PlayerCore.MentalSystem
             _isActive = state;
             playerSensor.gameObject.SetActive(state);
             viewSensor.gameObject.SetActive(state);
-        }
-
-        private void FixedUpdate()
-        {
             if (_isActive)
             {
-               _playerLitState = GetPlayerLitState();
-                _playerMentalData.PlayerLitState = _playerLitState;
+                EnableUpdate();
+            }
+            else
+            {
+                _cancellationToken.Cancel();
             }
         }
+
+        private async void EnableUpdate()
+        {
+           await UpdateLitStatus(_cancellationToken.Token);
+        }
+        
+        private async UniTask UpdateLitStatus(CancellationToken cancelToken)
+        {
+            while (_isActive)
+            {
+                if (_isPaused)
+                {
+                    await UniTask.WaitUntil(() => _isPaused == false, cancellationToken: cancelToken);
+                }
+
+                await UniTask.Delay(TimeSpan.FromMilliseconds(updateRate), ignoreTimeScale: false,
+                    cancellationToken: cancelToken);
+                _playerMentalData.PlayerLitState = GetPlayerLitState();
+            }
+        }
+        
 
         private PlayerLitState GetPlayerLitState()
         {
@@ -73,13 +112,13 @@ namespace LiftGame.PlayerCore.MentalSystem
                 _playerLitState = PlayerLitState.Lit;
             }
 
-            Debug.Log(_playerLitState);
+            // Debug.Log(_playerLitState);
             return _playerLitState;
-            // _isTotalDark = player + view == 0;
-            // _isDarkAhead = player >= 10 && view <= 5;
-            // _isLightAhead = player == 0 && view >= 3;
-            // _isInShadow = player <= 10 && view <= 10;
-            // _isInLight = player >= 30 && view >= 10;
+        }
+
+        public void SetPaused(bool isPaused)
+        {
+            _isPaused = isPaused;
         }
     }
 }

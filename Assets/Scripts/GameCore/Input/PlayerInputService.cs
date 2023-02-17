@@ -1,5 +1,6 @@
 ﻿using LiftGame.GameCore.Input.Data;
 using UnityEngine;
+using Zenject;
 
 namespace LiftGame.GameCore.Input
 {
@@ -7,6 +8,12 @@ namespace LiftGame.GameCore.Input
     {
         private InputDataProvider _inputData;
         private bool _isInputActive;
+
+        [Inject]
+        public void Construct(InputDataProvider inputData)
+        {
+            _inputData = inputData;
+        }
 
         public void Initialize(InputDataProvider inputDataProvider)
         {
@@ -16,13 +23,13 @@ namespace LiftGame.GameCore.Input
         
         public void UpdateInput()
         {
-            GetNonGameplayInputData();
+            UpdateNonGameplayInputData();
             if (!_isInputActive) return;
-            GetUiInputData();
-            GetCameraInput();
-            GetMovementInputData();
-            GetInteractionInputData();
-            GetEquipmentInputData();
+            UpdateUiInputData();
+            UpdateCameraInput();
+            UpdateMovementInputData();
+            UpdateInteractionInputData();
+            UpdateEquipmentInputData();
         }
 
         public void SetInputActive(bool state)
@@ -31,27 +38,30 @@ namespace LiftGame.GameCore.Input
             _isInputActive = state;
         }
 
-        private void GetNonGameplayInputData()
+        private void UpdateNonGameplayInputData()
         {
             _inputData.NonGameplayInputData.PauseMenuClicked = UnityEngine.Input.GetKeyDown(KeyCode.Escape);
             _inputData.NonGameplayInputData.PauseMenuReleased = UnityEngine.Input.GetKeyUp(KeyCode.Escape);
             _inputData.NonGameplayInputData.TildeClicked = UnityEngine.Input.GetKeyDown(KeyCode.Tilde);
             _inputData.NonGameplayInputData.TildeReleased = UnityEngine.Input.GetKeyUp(KeyCode.Tilde);
+            _inputData.NonGameplayInputData.UpdateInputEvents();
         }
 
-        private void GetUiInputData()
+        private void UpdateUiInputData()
         {
             _inputData.UIInputData.InventoryClicked = UnityEngine.Input.GetKeyDown(KeyCode.Tab);
             _inputData.UIInputData.InventoryReleased = UnityEngine.Input.GetKeyUp(KeyCode.Tab);
+            _inputData.UIInputData.ScrollWheelDirection = UnityEngine.Input.GetAxis("Mouse ScrollWheel");
+            _inputData.UIInputData.UpdateInputEvents();
         }
 
-        private void GetInteractionInputData()
+        private void UpdateInteractionInputData()
         {
             _inputData.InteractionInputData.InteractedClicked = UnityEngine.Input.GetKeyDown(KeyCode.E);
             _inputData.InteractionInputData.InteractedReleased = UnityEngine.Input.GetKeyUp(KeyCode.E);
         }
 
-        private void GetCameraInput()
+        private void UpdateCameraInput()
         {
             _inputData.CameraInputData.InputVectorX = UnityEngine.Input.GetAxis("Mouse X");
             _inputData.CameraInputData.InputVectorY = UnityEngine.Input.GetAxis("Mouse Y");
@@ -60,7 +70,7 @@ namespace LiftGame.GameCore.Input
             _inputData.CameraInputData.ZoomReleased = UnityEngine.Input.GetMouseButtonUp(2);
         }
 
-        private void GetMovementInputData()
+        private void UpdateMovementInputData()
         {
             _inputData.MovementInputData.InputVectorX = UnityEngine.Input.GetAxisRaw("Horizontal");
             _inputData.MovementInputData.InputVectorY = UnityEngine.Input.GetAxisRaw("Vertical");
@@ -78,12 +88,15 @@ namespace LiftGame.GameCore.Input
             _inputData.MovementInputData.CrouchClicked = UnityEngine.Input.GetKeyDown(KeyCode.LeftControl);
         }
 
-        private void GetEquipmentInputData()
+        private void UpdateEquipmentInputData()
         {
-            _inputData.EquipmentInputData.FlashlightClicked = UnityEngine.Input.GetKeyDown(KeyCode.F);
+            _inputData.EquipmentInputData.FlashlightClicked = UnityEngine.Input.GetKey(KeyCode.F);//getKey allow read held key
+            _inputData.EquipmentInputData.ScrollWheelDirection = UnityEngine.Input.GetAxis("Mouse ScrollWheel");
             _inputData.EquipmentInputData.FlashlightReleased = UnityEngine.Input.GetKeyUp(KeyCode.F);
             _inputData.EquipmentInputData.UsingClicked = UnityEngine.Input.GetMouseButtonDown(0);
             _inputData.EquipmentInputData.UsingReleased = UnityEngine.Input.GetMouseButtonUp(0);
+            _inputData.EquipmentInputData.SwitchWeaponPressed = UnityEngine.Input.GetKeyDown(KeyCode.Q);
+            _inputData.EquipmentInputData.SwitchWeaponReleased = UnityEngine.Input.GetKeyUp(KeyCode.Q);
             _inputData.EquipmentInputData.TurnOnClicked = UnityEngine.Input.GetMouseButtonUp(1);
             _inputData.EquipmentInputData.TurnOnReleased = UnityEngine.Input.GetMouseButtonUp(1);
             _inputData.EquipmentInputData.VisorUpClicked = UnityEngine.Input.GetKeyDown(KeyCode.V);
@@ -99,6 +112,7 @@ namespace LiftGame.GameCore.Input
             _inputData.EquipmentInputData.ThirdEquipmentReleased = UnityEngine.Input.GetKeyUp(KeyCode.Alpha3);
             _inputData.EquipmentInputData.FourthEquipmentClicked = UnityEngine.Input.GetKeyDown(KeyCode.Alpha4);
             _inputData.EquipmentInputData.FourthEquipmentReleased = UnityEngine.Input.GetKeyUp(KeyCode.Alpha4);
+            _inputData.EquipmentInputData.UpdateInputEvents();
         }
 
         public void ResetInput()

@@ -19,7 +19,17 @@ namespace LiftGame.GameCore.ScenesLoading
             var operation = new MenuLoadingOperation();
             await operation.Unload();
         }
-        
+
+        public async UniTask LoadDemo()
+        {
+            var operations = new Queue<ILoadingOperation>();
+            operations.Enqueue(new DemoLoadingOperation());
+            foreach (var operation in operations)
+            {
+                await operation.Load();
+            }
+        }
+
         public async UniTask UnloadGame()
         {
             var operations = new Queue<ILoadingOperation>();

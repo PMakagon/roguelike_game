@@ -1,10 +1,9 @@
-﻿
-using LiftGame.FPSController;
+﻿using LiftGame.FPSController;
 using LiftGame.FPSController.CameraController;
 using LiftGame.FPSController.FirstPersonController;
-using LiftGame.GameCore.Input;
 using LiftGame.PlayerCore.MentalSystem;
 using LiftGame.PlayerCore.PlayerCostume;
+using LiftGame.PlayerEquipment;
 using UnityEngine;
 
 namespace LiftGame.PlayerCore
@@ -16,12 +15,13 @@ namespace LiftGame.PlayerCore
         [SerializeField] private PlayerAnimationController playerAnimationController;
         [SerializeField] private PlayerCostumeService playerCostumeService;//убрать
         [SerializeField] private PlayerLitStateProvider playerLitStateProvider;
-        
-        
+        [SerializeField] private EquipmentSwitcher equipmentSwitcher;
+
         public FirstPersonController FPSController => fpsController;
         public CameraController CameraController => cameraController;
         public PlayerAnimationController PlayerAnimationController => playerAnimationController;
         public PlayerCostumeService PlayerCostumeService => playerCostumeService;
         public PlayerLitStateProvider PlayerLitStateProvider => playerLitStateProvider;
+        public EquipmentSwitcher EquipmentSwitcher => equipmentSwitcher;
     }
 }

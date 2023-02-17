@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace LiftGame.GameCore.Input.Data
 {
@@ -9,7 +10,15 @@ namespace LiftGame.GameCore.Input.Data
         private bool _pauseMenuReleased;
         private bool _tildeClicked;
         private bool _tildeReleased;
+        public static event Action OnPauseMenuClicked = delegate { };
+        public static event Action OnTildeClicked = delegate { };
 
+        public void UpdateInputEvents()
+        {
+            if (_pauseMenuClicked) OnPauseMenuClicked?.Invoke();
+            if (_tildeClicked) OnTildeClicked?.Invoke();
+        }
+        
         public bool TildeClicked
         {
             get => _tildeClicked;

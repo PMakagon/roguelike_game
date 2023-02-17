@@ -1,57 +1,85 @@
-﻿using LiftGame.FPSController.ScriptableObjects;
+﻿using LiftGame.FPSController.InteractionSystem.InteractionUI;
 using LiftGame.GameCore.Input.Data;
+using LiftGame.GameCore.Pause;
+using LiftGame.Inventory;
 using LiftGame.PlayerCore;
-using LiftGame.Ui;
 using UnityEngine;
 using Zenject;
 
 namespace LiftGame.FPSController.InteractionSystem
 {
-    public class InteractionController : MonoBehaviour
+    public class InteractionController : MonoBehaviour , IPauseable
     {
-        [Space, Header("Data")] 
-        [SerializeField] private InteractionInputData interactionInputData = null;
-        [SerializeField] private InteractionData interactionData = null;
-        
         [Space, Header("UI")] 
-        [SerializeField] private InteractionUIPanel uiPanel;
+        [SerializeField] private InteractionMenu interactionPanel;
 
-        [Space, Header("Ray Settings")]
+        [Space, Header("Ray Settings")] 
         [SerializeField] private float rayDistance = 0f;
         [SerializeField] private float raySphereRadius = 0f;
         [SerializeField] private LayerMask interactableLayer = ~0;
 
+        private InteractionInputData _interactionInputData = null;
+        private EquipmentInputData _equipmentInputData = null;
+        private IPauseHandler _pauseHandler;
         private IPlayerData _playerData;
+        private IPlayerInventoryService _playerInventoryService;
         private Camera _cam;
+
+        private IInteractable _currentInteractable = null;
+        private IInteractable _cachedInteractable = null;
 
         private bool _interacting;
         private float _holdTimer = 0f;
+        private bool _isPaused;
 
-
+        //MonoBehaviour injection
         [Inject]
-        private void Construct(InteractionUIPanel interactionUIPanel,IPlayerData playerData)
+        private void Construct(InteractionMenu interactionMenu, IPlayerData playerData,
+            InputDataProvider inputDataProvider, IPlayerInventoryService playerInventoryService,IPauseHandler pauseHandler)
         {
+            _pauseHandler = pauseHandler;
+            _interactionInputData = inputDataProvider.InteractionInputData;
+            _equipmentInputData = inputDataProvider.EquipmentInputData;
             _playerData = playerData;
-            uiPanel = interactionUIPanel;
+            interactionPanel = interactionMenu;
+            _playerInventoryService = playerInventoryService;
         }
 
-        #region Built In Methods
+        #region Unity Callbacks
 
         void Awake()
         {
             _cam = GetComponentInChildren<Camera>();
+            _pauseHandler.Register(this);
+            _playerInventoryService.OnInventoryOpen += interactionPanel.HidePanel;
+        }
+
+        private void OnDestroy()
+        {
+            _playerInventoryService.OnInventoryOpen -= interactionPanel.HidePanel;
         }
 
         void Update()
         {
+            if (_playerInventoryService.IsInventoryOpen || _isPaused) return;
             CheckForInteractable();
             CheckForInteractableInput();
         }
 
         #endregion
 
-
         #region Custom methods
+
+        private bool IsNewInteractable(IInteractable newInteractable) => _currentInteractable != newInteractable;
+        private bool IsPreviousInteractable(IInteractable newInteractable) => _cachedInteractable == newInteractable;
+        private bool IsEmpty() => _currentInteractable == null;
+        private void ClearInteractable() => _currentInteractable = null;
+
+        private void SetCachedInteractable(IInteractable newInteractable)
+        {
+            _cachedInteractable?.PostInteract();
+            _cachedInteractable = newInteractable;
+        }
 
         private void CheckForInteractable()
         {
@@ -59,88 +87,115 @@ namespace LiftGame.FPSController.InteractionSystem
             RaycastHit hitInfo;
 
             bool hitSomething = Physics.SphereCast(ray, raySphereRadius, out hitInfo, rayDistance, interactableLayer);
+            Debug.DrawRay(ray.origin, ray.direction * rayDistance, hitSomething ? Color.green : Color.red);
 
             if (hitSomething)
             {
-                IInteractable interactable = hitInfo.transform.GetComponent<Interactable>();
+                IInteractable interactable = hitInfo.transform.GetComponent<IInteractable>();
 
                 if (interactable != null)
                 {
-                    uiPanel.SetPanelActive(true);
-                    if (interactionData.IsEmpty())
+                    interactionPanel.ShowPanel();
+                    if (IsEmpty() && IsPreviousInteractable(interactable))
                     {
-                        interactionData.Interactable = interactable;
-                        uiPanel.SetTooltipActive(true);
-                        uiPanel.SetTooltip(interactable.TooltipMessage); 
+                        interactable.PreInteract(_playerData);
+                        _currentInteractable = interactable;
+                        interactionPanel.SetCrosshair(interactable); //хуйня идея
+                        interactionPanel.ShowTooltip(interactable.TooltipMessage);
+                        interactionPanel.ShowOptionMenu();
+                        interactionPanel.UpdateOptionsState(_playerData);
+                        interactionPanel.SetNewSelection();
+                        return;
                     }
-                    else
+
+
+                    if (IsEmpty() || IsNewInteractable(interactable))
                     {
-                        if (!interactionData.IsSameInteractable(interactable))
-                        {
-                            interactionData.Interactable = interactable;
-                            uiPanel.SetTooltipActive(true);
-                            uiPanel.SetTooltip(interactable.TooltipMessage);
-                        }
+                        interactable.PreInteract(_playerData);
+                        _currentInteractable = interactable;
+                        SetCachedInteractable(interactable);
+                        interactionPanel.SetCrosshair(interactable); //хуйня идея
+                        interactionPanel.ShowTooltip(interactable.TooltipMessage);
+                        interactionPanel.CreateMenuOptions(_currentInteractable.Interactions);
+                        interactionPanel.ShowOptionMenu();
+                        interactionPanel.UpdateOptionsState(_playerData);
+                        interactionPanel.SetNewSelection();
                     }
+
+                    if (!_interacting && !IsNewInteractable(interactable))
+                    {
+                        interactionPanel.UpdateOptionsState(_playerData);
+                    }
+
                     return;
                 }
             }
-            //когда будешь юзать слои верни сюда else
-            if (uiPanel != null)
-            {
-                uiPanel.ResetUI();
-            }
-            interactionData.ResetData();
-            Debug.DrawRay(ray.origin, ray.direction * rayDistance, hitSomething ? Color.green : Color.red);
+
+            interactionPanel.HidePanel();
+            interactionPanel.ResetMenu();
+            ClearInteractable();
         }
 
         private void CheckForInteractableInput()
         {
-            if (interactionData.IsEmpty())
+            if (IsEmpty())
                 return;
 
-            if (interactionInputData.InteractedClicked)
+            if (_interactionInputData.InteractedClicked)
             {
                 _interacting = true;
                 _holdTimer = 0f;
             }
 
-            if (interactionInputData.InteractedReleased)
+            if (_interactionInputData.InteractedReleased)
             {
                 _interacting = false;
                 _holdTimer = 0f;
-                uiPanel.UpdateProgressBar(0f);
+                if (_currentInteractable.IsInteractable) interactionPanel.SelectedOption.ResetProgressBar();
             }
 
             if (_interacting)
             {
-                if (!interactionData.Interactable.IsInteractable)
+                if (!_currentInteractable.IsInteractable)
                     return;
 
-                if (interactionData.Interactable.HoldInteract)
+                if (interactionPanel.SelectedOption.RepresentedInteraction.IsHoldInteract)
                 {
-                    uiPanel.SetProgressBarActive(true);
+                    interactionPanel.SelectedOption.SetProgressBarActive();
                     _holdTimer += Time.deltaTime;
 
-                    float heldPercent =  (_holdTimer / interactionData.Interactable.HoldDuration) * 10;
-                    uiPanel.UpdateProgressBar(heldPercent);
+                    float heldPercent =
+                        (_holdTimer / interactionPanel.SelectedOption.RepresentedInteraction.HoldDuration) * 10;
+                    interactionPanel.SelectedOption.UpdateProgressBar(heldPercent);
 
-                    if (heldPercent > uiPanel.ProgressBar.maxValue)
+                    if (heldPercent > interactionPanel.SelectedOption.ProgressBar.maxValue)
                     {
-                        interactionData.Interact(_playerData);
-                        uiPanel.SetProgressBarActive(false);
+                        if (interactionPanel.SelectedOption.RepresentedInteraction.IsEquipmentUseNeeded &&
+                            !_equipmentInputData.UsingClicked) return;
+                        interactionPanel.SelectedOption.ResetProgressBar();
+                        interactionPanel.SelectedOption.ConfirmSelection();
+                        _currentInteractable.OnInteract(interactionPanel.SelectedOption.RepresentedInteraction);
+                        interactionPanel.UpdateOptionsState(_playerData);
+                        ClearInteractable();
                         _interacting = false;
                     }
                 }
                 else
                 {
-                    interactionData.Interact(_playerData);
-                    uiPanel.SetProgressBarActive(false);
+                    interactionPanel.SelectedOption.ConfirmSelection();
+                    _currentInteractable.OnInteract(interactionPanel.SelectedOption.RepresentedInteraction);
+                    interactionPanel.UpdateOptionsState(_playerData);
+                    ClearInteractable();
                     _interacting = false;
                 }
             }
         }
 
         #endregion
+
+        public void SetPaused(bool isPaused)
+        {
+            _isPaused = isPaused;
+        }
     }
 }

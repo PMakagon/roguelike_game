@@ -10,6 +10,11 @@ namespace LiftGame.LevelGeneration
 
         private void Awake()
         {
+            GetComponents();
+        }
+
+        public void GetComponents()
+        {
             _doorConnector = GetComponentInChildren<MConnector>();
             _door = GetComponentInChildren<InteractableDoor>();
         }

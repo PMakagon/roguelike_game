@@ -1,13 +1,10 @@
-﻿using System;
-using LiftGame.GameCore.Pause;
+﻿using LiftGame.GameCore.Pause;
 
 namespace LiftGame.PlayerCore.HealthSystem
 {
     public interface IPlayerHealthService : IPauseable
     {
-        event Action<int> OnDamaged;
-        event Action OnPlayerDied;
-        void AddDamage(int damage);
+        void AddDamage(float damage);
         void SetHealthStartState();
         void SetHealthSafeState();
         void SetMortal(bool isMortal);
